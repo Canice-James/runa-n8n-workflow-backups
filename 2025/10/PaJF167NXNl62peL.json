@@ -1,0 +1,49 @@
+{
+  "active": true,
+  "connections": {},
+  "createdAt": "2025-10-15T20:12:23.598Z",
+  "id": "PaJF167NXNl62peL",
+  "isArchived": false,
+  "meta": null,
+  "name": "Spam Traps",
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "markops-spam-traps",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "097da938-8b0f-4381-a244-ce070159a249",
+      "name": "Webhook",
+      "webhookId": "1cdac8ce-2e29-4534-9449-d301381f3698",
+      "alwaysOutputData": true
+    }
+  ],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-15T20:12:23.598Z",
+      "updatedAt": "2025-10-15T20:12:23.598Z",
+      "role": "workflow:owner",
+      "workflowId": "PaJF167NXNl62peL",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-12-02T17:37:44.230Z",
+  "versionId": "20060a2c-5d01-4b95-b69a-8743ce9e2ed1"
+}
