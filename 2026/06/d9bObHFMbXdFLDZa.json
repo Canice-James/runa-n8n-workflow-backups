@@ -1,0 +1,69 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-06-09T13:45:35.850Z",
+  "id": "d9bObHFMbXdFLDZa",
+  "isArchived": false,
+  "meta": null,
+  "name": "Test scaicedo",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "454d8c76-7e5c-4319-9099-546ef2e2a3d6",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://rewardmanager.intra-apps.com/bonuses/new",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "6e9e958b-3b66-43dc-b5b1-2953f2205ab1",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-06-09T13:45:35.850Z",
+      "updatedAt": "2026-06-09T13:45:35.850Z",
+      "role": "workflow:owner",
+      "workflowId": "d9bObHFMbXdFLDZa",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-06-17T14:22:35.414Z",
+  "versionId": "1a91972f-eb61-4180-b3fb-d397a0bd9177"
+}
