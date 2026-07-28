@@ -1,0 +1,625 @@
+{
+  "active": false,
+  "connections": {
+    "Manual Trigger (Issue Key)": {
+      "main": [
+        [
+          {
+            "node": "Jira > Get Issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira > Get Issue": {
+      "main": [
+        [
+          {
+            "node": "Naming Conventions API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Naming Conventions API": {
+      "main": [
+        [
+          {
+            "node": "CMS & MM Login",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CMS & MM Login": {
+      "main": [
+        [
+          {
+            "node": "OSN Static Fields Mapping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OSN Static Fields Mapping": {
+      "main": [
+        [
+          {
+            "node": "Jira > Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira > Download Image": {
+      "main": [
+        [
+          {
+            "node": "CMS > Upload Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CMS > Upload Image": {
+      "main": [
+        [
+          {
+            "node": "CMS > Create Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CMS > Create Notification": {
+      "main": [
+        [
+          {
+            "node": "CMS > Get ContentId By Slug",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CMS > Get ContentId By Slug": {
+      "main": [
+        [
+          {
+            "node": "MM > Generate Audience CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MM > Generate Audience CSV": {
+      "main": [
+        [
+          {
+            "node": "MM > Upload Audience",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MM > Upload Audience": {
+      "main": [
+        [
+          {
+            "node": "Wait 5s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5s": {
+      "main": [
+        [
+          {
+            "node": "MM > Check Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MM > Check Status": {
+      "main": [
+        [
+          {
+            "node": "Is SUCCESS?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is SUCCESS?": {
+      "main": [
+        [
+          {
+            "node": "MM > Create Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 5s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MM > Create Campaign": {
+      "main": [
+        [
+          {
+            "node": "MM > Search Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MM > Search Campaign": {
+      "main": [
+        [
+          {
+            "node": "MM > Activate Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MM > Activate Campaign": {
+      "main": [
+        [
+          {
+            "node": "Playwright: Short Copy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Playwright: Short Copy": {
+      "main": [
+        [
+          {
+            "node": "Playwright: Long Copy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Playwright: Long Copy": {
+      "main": [
+        [
+          {
+            "node": "Jira > Attach Short",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira > Attach Short": {
+      "main": [
+        [
+          {
+            "node": "Jira > Attach Long",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira > Attach Long": {
+      "main": [
+        [
+          {
+            "node": "Jira > Post Evidence Comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-06-15T14:43:27.737Z",
+  "id": "H6JtSVWjnerjhfsS",
+  "isArchived": false,
+  "meta": null,
+  "name": "OSN Notification Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "85a43263-fc34-44ea-aff4-396f065f492f",
+      "name": "Manual Trigger (Issue Key)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        -3664,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "jiraVersion": "server",
+        "operation": "get",
+        "issueKey": "={{ $json.ticketKey }}",
+        "additionalFields": {}
+      },
+      "id": "7d178f5c-b615-40ec-b95c-ada705646cc9",
+      "name": "Jira > Get Issue",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        -3440,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://naming-conventions.10.161.101.24.nip.io/api/generate",
+        "authentication": "predefined",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"issueKey\": \"{{ $('Jira > Get Issue').item.json.key }}\"\n}",
+        "options": {}
+      },
+      "id": "7bd72357-fc35-4bd1-9895-abdb7d13d8df",
+      "name": "Naming Conventions API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -3232,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://contentmanager.intra-apps.com/api/v1/session",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"username\": \"api_user\",\n  \"password\": \"api_password\"\n}",
+        "options": {}
+      },
+      "id": "aac295de-20f8-4ad4-9e1b-a9b45886feed",
+      "name": "CMS & MM Login",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -3008,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const jiraBrand = $('Jira > Get Issue').item.json.fields?.customfield_11504?.[0]?.value;\nconst jiraRegion = $('Jira > Get Issue').item.json.fields?.customfield_11507?.[0]?.value;\n\nconst mappingTable = {\n  \"BVD\": { region: \"UFM\", regionId: \"3619feea-27fe-4ce5-b3fd-c67ad37fd601\", brandName: \"Bovada\", brandCode: \"BVD\", bucket: \"Default\", territory: \"DEFAULT\", pageUrl: \"https://www.bovada.lv/\" },\n  \"BVX\": { region: \"UFM\", regionId: \"f18c0794-2606-4e78-ab97-c20d8480330b\", brandName: \"BVX\", brandCode: \"BVX\", bucket: \"Default\", territory: \"DEFAULT\", pageUrl: \"https://www.playbvx.lv/\" },\n  \"CAFE CASINO\": { region: \"UFM\", regionId: \"7b25844b-cafa-41b4-a1bf-b05da0b9aeb6\", brandName: \"CafeCasino\", brandCode: \"CFC\", bucket: \"Default\", territory: \"DEFAULT\", pageUrl: \"https://www.cafecasino.lv/\" },\n  \"IGN\": {\n    \"UFM\": { regionId: \"3451d0c2-b1af-11e8-96f8-529269fb1459\", brandName: \"IgnitionCasino\", brandCode: \"IGN\", bucket: \"Default\", territory: \"DEFAULT\", pageUrl: \"https://www.ignitioncasino.eu/\" },\n    \"AUS\": { regionId: \"c6472782-b026-11e8-96f8-529269fb1459\", brandName: \"IgnitionCasino\", brandCode: \"IGN\", bucket: \"Default\", territory: \"DEFAULT\", pageUrl: \"https://www.ignitioncasino.ooo/\" },\n    \"LATAM\": { regionId: \"ca15924b-653e-4f90-84cc-fab313852a8e\", brandName: \"Bodog\", brandCode: \"BDG\", bucket: \"Latam\", territory: \"LATAM\", pageUrl: \"https://www.ignitionpoker.com/\" }\n  },\n  \"JOE FORTUNE\": { region: \"AUS\", regionId: \"5ad12f9e-94dc-11e8-9eb6-529269fb1459\", brandName: \"JoeFortune\", brandCode: \"JFN\", bucket: \"Default\", territory: \"DEFAULT\", pageUrl: \"https://www.joefortune.win/\" },\n  \"OZOON\": { region: \"CAN\", regionId: \"879370bf-0480-458b-a3ad-11e7138eac30\", brandName: \"Bodog\", brandCode: \"BDG\", bucket: \"Canada\", territory: \"CANADA\", pageUrl: \"https://www.ozoon.eu/\" },\n  \"RBL\": { region: \"UFM\", regionId: \"070f3d79-d2a9-4747-9fe7-a2fa74a39272\", brandName: \"Lucky Rebel\", brandCode: \"RBL\", bucket: \"Default\", territory: \"DEFAULT\", pageUrl: \"https://www.luckyrebel.la/\" },\n  \"SLOTS\": {\n    \"UFM\": { regionId: \"660dae1a-b7cd-11e7-abc4-cec278b6b50a\", brandName: \"Slots LV\", brandCode: \"SLLV\", bucket: \"Default\", territory: \"DEFAULT\", pageUrl: \"https://www.slots.lv/\" },\n    \"CAN\": { regionId: \"660dab9a-b7cd-11e7-abc4-cec278b6b50a\", brandName: \"Slots LV\", brandCode: \"SLLV\", bucket: \"Default\", territory: \"DEFAULT\", pageUrl: \"https://www.slots.lv/\" }\n  }\n};\n\nlet resolved = jiraBrand ? mappingTable[jiraBrand] : null;\n\nif (resolved && !resolved.brandCode) {\n  resolved = jiraRegion ? resolved[jiraRegion] : null;\n}\n\nreturn {\n  sessionId: $('CMS & MM Login').item.json.sessionId,\n  name: $('Naming Conventions API').item.json.name,\n  slug: $('Naming Conventions API').item.json.slug,\n  ...(resolved || { error: \"No mapping found\", jiraBrand, jiraRegion })\n};"
+      },
+      "id": "abba2916-70ec-4e87-9c5e-c6ea2de02f8c",
+      "name": "OSN Static Fields Mapping",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2784,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "jiraVersion": "server",
+        "operation": "getAttachment"
+      },
+      "id": "30d441dd-c6cb-42af-9c66-f3938fd34ade",
+      "name": "Jira > Download Image",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        -2560,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://contentmanager.intra-apps.com/services/resource/v1/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/files",
+        "authentication": "predefined",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "id": "4856ae5e-c944-4f29-9a41-0a21ecbd20b1",
+      "name": "CMS > Upload Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -2352,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://contentmanager.intra-apps.com/services/content/v4/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/buckets/{{ $('OSN Static Fields Mapping').item.json.bucket.toLowerCase() }}/contents",
+        "authentication": "predefined",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "= {\n  \"status\": \"published\",\n  \"contentType\": \"notification\",\n  \"publishAll\": false,\n  \"languages\": [\"en\"],\n  \"name\": \"{{ $('OSN Static Fields Mapping').item.json.name }}\",\n  \"fields\": {\n    \"nonLocalised\": {\n      \"internal_name\": \"{{ $('OSN Static Fields Mapping').item.json.name }}\",\n      \"slugname\": \"{{ $('OSN Static Fields Mapping').item.json.slug }}\",\n      \"tags\": \"\"\n    },\n    \"localised\": {\n      \"en\": [\n        {\n          \"subject\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_26526 }}\",\n          \"notification_body\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_14907 }}\",\n          \"notification_url\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_12423 }}\",\n          \"notification_url_label\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_26527 }}\",\n          \"message_url\": \"/\",\n          \"message_url_label\": \"DEPOSIT NOW\",\n          \"notification_image\": {\n            \"url\": \"{{ '/cms' + $json[0].fileLocation + $json[0].fileName }}\",\n            \"alt\": \"Alt\"\n          },\n          \"message_body\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_26522 }}\",\n          \"version\": \"control\"\n        }\n      ]\n    },\n    \"review\": {}\n  },\n  \"actionType\": \"Publish\"\n}",
+        "options": {}
+      },
+      "id": "b822292b-517d-4ba3-8f81-6f23f769ba8e",
+      "name": "CMS > Create Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -2128,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://contentmanager.intra-apps.com/services/content/v4/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/buckets/{{ $('OSN Static Fields Mapping').item.json.bucket.toLowerCase() }}/contents?status=published&category=content&size=10&slugname={{ $('OSN Static Fields Mapping').item.json.slug }}",
+        "authentication": "predefined",
+        "options": {}
+      },
+      "id": "f268955f-463c-4140-83f0-5b2d1e4fb18f",
+      "name": "CMS > Get ContentId By Slug",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -1904,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const brand = $('OSN Static Fields Mapping').item.json.brandCode;\nconst region = $('OSN Static Fields Mapping').item.json.region || \"UFM\";\nconst csvContent = `AUDIENCE_CODE,PLAYER_ID\\n123456,TEST_PLAYER_UUID_MOCK`;\n\nreturn {\n  helpers: {\n    binary: {\n      createFromText: true\n    }\n  },\n  json: {\n    fileName: `${brand}-${region}.csv`\n  },\n  binary: {\n    data: {\n      data: btoa(csvContent),\n      mimeType: 'text/csv',\n      fileName: `${brand}-${region}.csv`\n    }\n  }\n};"
+      },
+      "id": "ba7816da-e973-4b0e-af23-a28ae5f099d2",
+      "name": "MM > Generate Audience CSV",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1680,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v3/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/audience/upload",
+        "authentication": "predefined",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "id": "5ebb3428-3d1e-4dc6-90c4-2b9c7d42c914",
+      "name": "MM > Upload Audience",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -1472,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "id": "29341f59-f865-4e5e-924d-19cec6a3342f",
+      "name": "Wait 5s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        -1248,
+        352
+      ],
+      "webhookId": "701809de-bf23-4e25-9b98-c4d0a9780cb9"
+    },
+    {
+      "parameters": {
+        "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v3/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/audience/upload/{{ $('MM > Upload Audience').item.json.jobId }}",
+        "authentication": "predefined",
+        "options": {}
+      },
+      "id": "1cd36f92-18d6-4a24-b202-c3b5bc08353b",
+      "name": "MM > Check Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -1024,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.status }}",
+              "value2": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "id": "021e1442-da23-4c3a-bb7b-f3e85d4e0448",
+      "name": "Is SUCCESS?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v2/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/campaigns",
+        "authentication": "predefined",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "= {\n  \"brandCode\": \"{{ $('OSN Static Fields Mapping').item.json.brandCode }}\",\n  \"territory\": \"{{ $('OSN Static Fields Mapping').item.json.territory }}\",\n  \"name\": \"INTERNALONLY {{ $('OSN Static Fields Mapping').item.json.name }}\",\n  \"campaignStatus\": \"FINAL\",\n  \"campaignType\": \"REGULAR\",\n  \"jobStatus\": \"PENDING\",\n  \"segments\": [\n    {\n      \"name\": \"{{ $('MM > Check Status').item.json.audienceName }}\",\n      \"activities\": [\n        {\n          \"type\": \"NOTIFICATION\",\n          \"notificationContentId\": \"{{ $('OSN Static Fields Mapping').item.json.slug }}\",\n          \"expirationAmount\": \"30\",\n          \"expirationUnit\": \"DAYS\"\n        }\n      ]\n    }\n  ],\n  \"regionIds\": [\"{{ $('OSN Static Fields Mapping').item.json.regionId }}\"],\n  \"audience\": \"{{ $('MM > Check Status').item.json.audienceId }}\",\n  \"audienceName\": \"{{ $('MM > Check Status').item.json.audienceName }}\",\n  \"uploadedAudience\": true,\n  \"scheduleConfiguration\": {\n    \"type\": \"ONE_TIME_NOW\"\n  }\n}",
+        "options": {}
+      },
+      "id": "aaf72462-1a44-4ed0-a9e1-c48534feb00a",
+      "name": "MM > Create Campaign",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -560,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v2/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/campaigns?searchQuery=INTERNALONLY {{ encodeURIComponent($('OSN Static Fields Mapping').item.json.name) }}&campaignStatus=FINAL&sortBy=MOST_RECENT&campaignType=REGULAR",
+        "authentication": "predefined",
+        "options": {}
+      },
+      "id": "bf843964-4456-479c-ac57-1b2cdc7c6e58",
+      "name": "MM > Search Campaign",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -352,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v2/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/campaigns/{{ $json.items[0].campaignId }}/activate",
+        "authentication": "predefined",
+        "options": {}
+      },
+      "id": "ef98ed94-4742-42d6-922b-b439b06871b7",
+      "name": "MM > Activate Campaign",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -128,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('OSN Static Fields Mapping').item.json.pageUrl }}",
+        "browserOptions": {}
+      },
+      "id": "b5dd44d3-954f-4cad-b83e-5bbaa3bc585b",
+      "name": "Playwright: Short Copy",
+      "type": "n8n-nodes-playwright.playwright",
+      "typeVersion": 1,
+      "position": [
+        128,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('OSN Static Fields Mapping').item.json.pageUrl }}/account/messages",
+        "browserOptions": {}
+      },
+      "id": "cd454ef7-0c15-4e22-9eda-1b1dbec5f933",
+      "name": "Playwright: Long Copy",
+      "type": "n8n-nodes-playwright.playwright",
+      "typeVersion": 1,
+      "position": [
+        336,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jiraVersion": "server",
+        "operation": "addAttachment"
+      },
+      "id": "3f962a29-3bc8-4da4-b997-98dc26124fa3",
+      "name": "Jira > Attach Short",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        560,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jiraVersion": "server",
+        "operation": "addAttachment"
+      },
+      "id": "0c6660d8-0f58-41d0-ade8-d87ba2111802",
+      "name": "Jira > Attach Long",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        784,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jiraVersion": "server",
+        "operation": "addComment"
+      },
+      "id": "da837f0c-154e-4adc-92dd-6ccc300b1a57",
+      "name": "Jira > Post Evidence Comment",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        240
+      ]
+    }
+  ],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-06-15T14:43:27.737Z",
+      "updatedAt": "2026-06-15T14:43:27.737Z",
+      "role": "workflow:owner",
+      "workflowId": "H6JtSVWjnerjhfsS",
+      "projectId": "NZagkQVMdCK7PHMO"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-06-15T16:56:12.980Z",
+  "versionId": "5bcc2364-4a9e-41c5-8cef-3ff1113cc325"
+}
