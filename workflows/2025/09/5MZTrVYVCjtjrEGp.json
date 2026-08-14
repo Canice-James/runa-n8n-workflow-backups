@@ -1,0 +1,2463 @@
+{
+  "active": false,
+  "connections": {
+    "Share Alert": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Sender Scores from Everest": {
+      "main": [
+        [
+          {
+            "node": "If IP rep dropped",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Unresolved and Unsuppressed Alerts ": {
+      "main": [
+        [
+          {
+            "node": "Get many reactions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many reactions": {
+      "main": [
+        [
+          {
+            "node": "If Newly Resolved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Newly Resolved": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If Newly Suppressed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Newly Suppressed": {
+      "main": [
+        [
+          {
+            "node": "Update a row1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If Newly Escalated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Newly Escalated": {
+      "main": [
+        [
+          {
+            "node": "Update a row2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If Newly Acknowledged ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Newly Acknowledged ": {
+      "main": [
+        [
+          {
+            "node": "Update a row3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "8am Daily": {
+      "main": [
+        [
+          {
+            "node": "Get brand info1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Unresolved and Unsuppressed Alerts 1": {
+      "main": [
+        [
+          {
+            "node": "If Resolved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Suppression Passed": {
+      "main": [
+        [
+          {
+            "node": "Suppression Released",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "If Resolved": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If Suppressed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Suppressed": {
+      "main": [
+        [
+          {
+            "node": "If Suppression Passed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Find Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Suppression Released": {
+      "main": [
+        [
+          {
+            "node": "Share Alert1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get brand info": {
+      "main": [
+        [
+          {
+            "node": "Get Sender Scores from Everest",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Sender Scores from Everest1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get brand info1": {
+      "main": [
+        [
+          {
+            "node": "Get Unresolved and Unsuppressed Alerts 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Channel": {
+      "main": [
+        [
+          {
+            "node": "If Channel Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Channel Found": {
+      "main": [
+        [
+          {
+            "node": "Share Alert1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Channel with Supervisor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Channel with Supervisor": {
+      "main": [
+        [
+          {
+            "node": "Share Alert2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "7am Daily": {
+      "main": [
+        [
+          {
+            "node": "Get Unresolved and Unsuppressed Alerts ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6:45am Daily": {
+      "main": [
+        [
+          {
+            "node": "Get brand info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Sender Scores from Everest1": {
+      "main": [
+        [
+          {
+            "node": "If IP rep dropped",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If IP rep dropped": {
+      "main": [
+        [
+          {
+            "node": "Share Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Get yesterday's email delivery ": {
+      "main": [
+        [
+          {
+            "node": "If Delivery Low",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Delivery Low": {
+      "main": [
+        [
+          {
+            "node": "Share Alert3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Get brand info2": {
+      "main": [
+        [
+          {
+            "node": "get BDG Mail2 Delivery Rate 30d",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6:45am Daily1": {
+      "main": [
+        [
+          {
+            "node": "Get brand info2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get BDG Mail1 Delivery Rate 30d1": {
+      "main": [
+        [
+          {
+            "node": "Get yesterday's email delivery 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get yesterday's email delivery 1": {
+      "main": [
+        [
+          {
+            "node": "If Delivery Low1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Delivery Low1": {
+      "main": [
+        [
+          {
+            "node": "Share Alert4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Get brand info3": {
+      "main": [
+        [
+          {
+            "node": "get BDG Mail1 Delivery Rate 30d1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6:45am Daily2": {
+      "main": [
+        [
+          {
+            "node": "Get brand info3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get BDG Mail2 Delivery Rate 30d": {
+      "main": [
+        [
+          {
+            "node": "Get yesterday's email delivery ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get brand info4": {
+      "main": [
+        [
+          {
+            "node": "Get last week's email success rate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert3": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert4": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get last week's email success rate": {
+      "main": [
+        [
+          {
+            "node": "If Success Rate Below 80",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Success Rate Below 80": {
+      "main": [
+        [
+          {
+            "node": "Share Alert5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "If One-off Success Rate Below ": {
+      "main": [
+        [
+          {
+            "node": "Share Alert6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Get brand info5": {
+      "main": [
+        [
+          {
+            "node": "Get yesterday's email success rate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6:45am Daily4": {
+      "main": [
+        [
+          {
+            "node": "Get brand info5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6:45am Mondays": {
+      "main": [
+        [
+          {
+            "node": "Get brand info4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get yesterday's email success rate": {
+      "main": [
+        [
+          {
+            "node": "If One-off Success Rate Below ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-09-02T16:31:46.017Z",
+  "id": "5MZTrVYVCjtjrEGp",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "ARCHIVED Core + BDE Guardians",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "create",
+        "databaseId": 105,
+        "tableId": 538,
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5131,
+              "fieldValue": "={{ $('Get brand info').item.json.Name }}"
+            },
+            {
+              "fieldId": 5141,
+              "fieldValue": "={{ $json.message }}"
+            },
+            {
+              "fieldId": 5146,
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldId": 5147,
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": 5140,
+              "fieldValue": "IP Rep Drop by 6"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        -512
+      ],
+      "id": "8c931edd-6bd9-406a-bad4-2d4a6ff669f7",
+      "name": "Create Alert Record",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "=usp6sgog9igj7ysegp8b65nzue",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "= Sender Score dropped from {{ $json.results.sender_score.trend[89].value }} to {{ $json.results.sender_score.trend[88].value }} on {{ $json.results.sender_score.trend[89].day }}.",
+            "footer": "=MarkOps to investigate in Everest and provide reasons: @{{ $('Get brand info').item.json['Supervisor Mattermost'] }}",
+            "title": "={{ $('Get brand info').item.json.Name }} {{ $if($('Get Sender Scores from Everest').item.json.results.ip == $('Get brand info').item.json['Mail1 IP Address'] , \"Mail1\", \"Mail2\") }} Sender Score Drop",
+            "color": "#FF9100"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        -528
+      ],
+      "id": "656e4259-c83e-43f0-a8d9-9f288261ffb8",
+      "name": "Share Alert",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.everest.validity.com/api/2.0/reputation/senderscore/{{$json[\"Mail1 IP Address\"].trim()}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-API-KEY",
+              "value": "4720e9dc8123ab35103d4f957f04a9b4a2072f6c"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        528,
+        -672
+      ],
+      "id": "ee8745f4-3fdd-4f7b-aed9-07c0d9d9b8d0",
+      "name": "Get Sender Scores from Everest",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 538,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5133,
+                "operator": "not_equal",
+                "value": "True"
+              },
+              {
+                "field": 5135,
+                "operator": "boolean",
+                "value": "=False"
+              }
+            ]
+          },
+          "filterType": "AND"
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -272
+      ],
+      "id": "c8186fd5-6d3e-44b2-bbf0-779c7f008d2c",
+      "name": "Get Unresolved and Unsuppressed Alerts ",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Check the reaction, update alert record. Issue ephemeral message reminding assignee "
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "e9fe2fe0-c938-4de4-86ec-180a8d76e995",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## IP Rep drop by 6%",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -320,
+        -512
+      ],
+      "typeVersion": 1,
+      "id": "0b2f7779-6e77-495b-ae29-b0b850dd5962",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Mailing delivery rate low",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -752,
+        -992
+      ],
+      "typeVersion": 1,
+      "id": "0fe0f06c-9874-4777-9a41-90344b118899",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "resource": "reaction",
+        "operation": "getAll",
+        "postId": "={{ $json['Mattermost Message ID'] }}"
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        432,
+        -272
+      ],
+      "id": "ad866146-60ac-4e31-b7d7-c0176e5bb8ed",
+      "name": "Get many reactions",
+      "credentials": {
+        "mattermostApi": {
+          "id": "k3C5JDbH0J8HEvyW",
+          "name": "Canice account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "36050ad6-66ea-48b5-a70f-61b5c05527a4",
+              "leftValue": "={{ $json.emoji_name }}",
+              "rightValue": "white_check_mark",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "ee2cd6b9-0bc6-4000-83ab-d44ab47a1672",
+              "leftValue": "={{ $('Get Unresolved and Unsuppressed Alerts ').item.json['Resolved Date'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "dateTime",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        -272
+      ],
+      "id": "ee9b0346-2ff3-4b27-9e1e-780226d653b4",
+      "name": "If Newly Resolved"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "databaseId": 105,
+        "tableId": 538,
+        "rowId": "={{ $('Get Unresolved and Unsuppressed Alerts ').item.json.id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5133,
+              "fieldValue": "True"
+            },
+            {
+              "fieldId": 5137,
+              "fieldValue": "={{ new Date($('Get many reactions').item.json.create_at) }}"
+            },
+            {
+              "fieldId": 5143,
+              "fieldValue": "={{ $('Get many reactions').item.json.user_id }}"
+            },
+            {
+              "fieldId": 5135,
+              "fieldValue": "False"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        912,
+        -288
+      ],
+      "id": "65d9eea7-f244-4a5f-8bf5-8b6be61a9761",
+      "name": "Update a row",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "databaseId": 105,
+        "tableId": 538,
+        "rowId": "={{ $('Get Unresolved and Unsuppressed Alerts ').item.json.id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5135,
+              "fieldValue": "True"
+            },
+            {
+              "fieldId": 5135,
+              "fieldValue": "={{ new Date($('Get many reactions').item.json.create_at) }}"
+            },
+            {
+              "fieldId": 5145,
+              "fieldValue": "={{ $('Get many reactions').item.json.user_id }}"
+            },
+            {
+              "fieldId": 5148,
+              "fieldValue": "={{ new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString() }}\n"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        -128
+      ],
+      "id": "f7a0be08-66ad-4048-8cb4-9295fcc92531",
+      "name": "Update a row1",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "databaseId": 105,
+        "tableId": 538,
+        "rowId": "={{ $('Get Unresolved and Unsuppressed Alerts ').item.json.id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5134,
+              "fieldValue": "True"
+            },
+            {
+              "fieldId": 5138,
+              "fieldValue": "={{ new Date($('Get many reactions').item.json.create_at) }}"
+            },
+            {
+              "fieldId": 5144,
+              "fieldValue": "={{ $('Get many reactions').item.json.user_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        16
+      ],
+      "id": "31bfd296-b42d-43d2-b1d2-504346d08e94",
+      "name": "Update a row2",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "36050ad6-66ea-48b5-a70f-61b5c05527a4",
+              "leftValue": "={{ $json.emoji_name }}",
+              "rightValue": "ok",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "46cc392e-54cb-49c5-80de-b855ea6a7cb4",
+              "leftValue": "={{ $('Get Unresolved and Unsuppressed Alerts ').item.json['Suppressed Date'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "dateTime",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        -112
+      ],
+      "id": "e15006fb-1bc8-40ee-82d2-64fc7ba579de",
+      "name": "If Newly Suppressed"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "36050ad6-66ea-48b5-a70f-61b5c05527a4",
+              "leftValue": "={{ $json.emoji_name }}",
+              "rightValue": "exclamation",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "0b4e0bfe-891b-45c7-91a2-b104fa72b74e",
+              "leftValue": "={{ $('Get Unresolved and Unsuppressed Alerts ').item.json['Escalated Date'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "dateTime",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        976,
+        32
+      ],
+      "id": "cd00ff72-30ff-49ff-a722-5353dbad09ba",
+      "name": "If Newly Escalated"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "databaseId": 105,
+        "tableId": 538,
+        "rowId": "={{ $('Get Unresolved and Unsuppressed Alerts ').item.json.id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5132,
+              "fieldValue": "True"
+            },
+            {
+              "fieldId": 5136,
+              "fieldValue": "={{ new Date($('Get many reactions').item.json.create_at) }}"
+            },
+            {
+              "fieldId": 5142,
+              "fieldValue": "={{ $('Get many reactions').item.json.user_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        160
+      ],
+      "id": "e379079b-f420-4709-9b3f-3ddeda2f9fc1",
+      "name": "Update a row3",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "36050ad6-66ea-48b5-a70f-61b5c05527a4",
+              "leftValue": "={{ $json.emoji_name }}",
+              "rightValue": "+1",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "0b4e0bfe-891b-45c7-91a2-b104fa72b74e",
+              "leftValue": "={{ $('Get Unresolved and Unsuppressed Alerts ').item.json['Acknowledged Date'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "dateTime",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        176
+      ],
+      "id": "c3da0a0c-0140-4351-80e7-8db50abb30b2",
+      "name": "If Newly Acknowledged "
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        -272
+      ],
+      "id": "7ebdd8f4-2f7b-4101-901d-2ab4d4ac6f13",
+      "name": "7am Daily"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        352
+      ],
+      "id": "a21410d7-c002-4d55-b788-d950d06ef17c",
+      "name": "8am Daily"
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 538,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5133,
+                "operator": "not_equal",
+                "value": "True"
+              },
+              {
+                "field": 5135,
+                "operator": "boolean",
+                "value": "=False"
+              }
+            ]
+          },
+          "filterType": "AND"
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        576,
+        352
+      ],
+      "id": "52e66298-9abb-44ac-ae9b-91b244fea4bf",
+      "name": "Get Unresolved and Unsuppressed Alerts 1",
+      "executeOnce": true,
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e2f45c96-3e90-43ff-a47e-e24996842666",
+              "leftValue": "={{ $json['Suppress Release Date'] }}",
+              "rightValue": "={{  $now }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "before"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1232,
+        368
+      ],
+      "id": "9726b339-3fde-440b-9d64-e6d542fa6ee3",
+      "name": "If Suppression Passed"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "databaseId": 105,
+        "tableId": 538,
+        "rowId": "={{ $json.id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5135,
+              "fieldValue": "False"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        352
+      ],
+      "id": "9d940fa0-ef30-4669-ac32-d7b89b01ffa2",
+      "name": "Suppression Released",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e2f45c96-3e90-43ff-a47e-e24996842666",
+              "leftValue": "={{ $json['Is Resolved'] }}",
+              "rightValue": "={{  $now }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        352
+      ],
+      "id": "37bb5623-5564-4ead-8688-112e0094a1f3",
+      "name": "If Resolved"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3ebfc861-92df-408c-9628-82679dc35a62",
+              "leftValue": "={{ $json['Is Suppressed'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        976,
+        448
+      ],
+      "id": "35448e5d-2dcb-43ab-9771-47f7ea43ea46",
+      "name": "If Suppressed"
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 537,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5127,
+                "operator": "boolean",
+                "value": "True"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        240,
+        -592
+      ],
+      "id": "ee23668d-0450-44e0-8248-9f47597e41e8",
+      "name": "Get brand info",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 537,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5127,
+                "operator": "boolean",
+                "value": "True"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        336,
+        352
+      ],
+      "id": "c13d5188-f820-49dc-994f-c6a6eafd86be",
+      "name": "Get brand info1",
+      "executeOnce": true,
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 539,
+        "limit": 1,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5153,
+                "value": "={{ $('Get brand info1').all().find(i => i.json[\"Name\"]==$json.Brand).json['Supervisor Mattermost'] }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        528
+      ],
+      "id": "dc5ea1a8-df3d-44e7-ba3d-0ce730047179",
+      "name": "Find Channel",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9d73f788-99de-4e45-a49c-cf0ffbf76fea",
+              "leftValue": "={{ $('Find Channel').all()}}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1456,
+        528
+      ],
+      "id": "a8bf5c2a-10ae-4e3f-8403-eba9323dc31e",
+      "name": "If Channel Found"
+    },
+    {
+      "parameters": {
+        "channelId": "={{ $json['Channel Id'] }}",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "=https://chat-ru.corp-apps.com/api/v4/users/zgcuxod6hjfixye768i8a934se/image?_=0",
+            "text": "={{ $('Get Unresolved and Unsuppressed Alerts 1').item.json['Alert Message'] }}\n\nhttps://chat-ru.corp-apps.com/corporate-team/pl/{{ $('Get Unresolved and Unsuppressed Alerts 1').item.json['Mattermost Message ID'] }}",
+            "footer": "Visit original message to react. ",
+            "title": "={{ $('Get brand info1').all().find(i => i.json[\"Name\"]==$('Get Unresolved and Unsuppressed Alerts 1').item.json.Brand).json.Name}} Alert: {{ $('Get Unresolved and Unsuppressed Alerts 1').item.json['Alert Type'] }}"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        1728,
+        352
+      ],
+      "id": "54e5ca6a-c8df-4ad0-a324-e1e005f77164",
+      "name": "Share Alert1",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://chat-ru.corp-apps.com/api/v4/channels/direct",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mattermostApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\"zgcuxod6hjfixye768i8a934se\",\"{{ $('Get brand info1').all().find(i => i.json[\"Name\"]==$('Get Unresolved and Unsuppressed Alerts 1').item.json.Brand).json['Supervisor Mattermost User']}} \"]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1712,
+        544
+      ],
+      "id": "f0769cba-3690-4910-8224-431ba312ef5a",
+      "name": "Create Channel with Supervisor",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "7Wc83HCUERGRpKPP",
+          "name": "Unnamed credential"
+        },
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "={{ $json['id'] }}",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "=https://chat-ru.corp-apps.com/api/v4/users/zgcuxod6hjfixye768i8a934se/image?_=0",
+            "text": "={{ $('Get Unresolved and Unsuppressed Alerts 1').item.json['Alert Message'] }}\n\nhttps://chat-ru.corp-apps.com/corporate-team/pl/{{ $('Get Unresolved and Unsuppressed Alerts 1').item.json['Mattermost Message ID'] }}",
+            "footer": "Visit original message to react. ",
+            "title": "={{ $('Get brand info1').all().find(i => i.json[\"Name\"]==$('Get Unresolved and Unsuppressed Alerts 1').item.json.Brand).json.Name}} Alert: {{ $('Get Unresolved and Unsuppressed Alerts 1').item.json['Alert Type'] }}"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        1952,
+        544
+      ],
+      "id": "e5d41cc1-bfd0-4fe8-97e6-ffef6d18f7c9",
+      "name": "Share Alert2",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6,
+              "triggerAtMinute": 45
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        -512
+      ],
+      "id": "04f9a58f-c013-4ffd-b267-74dd1f65b904",
+      "name": "6:45am Daily"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.everest.validity.com/api/2.0/reputation/senderscore/{{$json[\"Mail2 IP Address\"].trim()}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-API-KEY",
+              "value": "4720e9dc8123ab35103d4f957f04a9b4a2072f6c"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        528,
+        -496
+      ],
+      "id": "041ac1fb-a65a-4153-916c-d63519a95fc7",
+      "name": "Get Sender Scores from Everest1",
+      "executeOnce": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "69b4ab08-f14b-43ae-aa0d-7b2b4c69c69f",
+              "leftValue": "={{ $json.results.sender_score.trend[89].value }}",
+              "rightValue": 93,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "7ffc3dd9-81b0-4756-8ca1-7a69189dca61",
+              "leftValue": "=",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        -512
+      ],
+      "id": "7c4652d3-4928-4380-8095-61d64c1afe37",
+      "name": "If IP rep dropped"
+    },
+    {
+      "parameters": {
+        "operation": "resultData",
+        "questionId": "29",
+        "format": "json",
+        "requestOptions": {
+          "timeout": 3000000
+        }
+      },
+      "type": "n8n-nodes-base.metabase",
+      "typeVersion": 1,
+      "position": [
+        288,
+        -1072
+      ],
+      "id": "41aff8ca-5030-4355-a68e-25c9c40e2f6d",
+      "name": "Get yesterday's email delivery ",
+      "executeOnce": false,
+      "credentials": {
+        "metabaseApi": {
+          "id": "dwSjIoOcie0zoBsn",
+          "name": "Metabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "={{ $('Get brand info2').first().json['Mattermost Channel'] }}",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "=https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=|Campaign | Delivery Rate|\n|--|--|\n{{ $input.all().map((i)=>{\nreturn  \"|\" + i.json.CAMPAIGN_NAME + \" | \" + i.json.DELIVERY_RATE_PCT + \"|\\n\"\n}).join(\"\")  }}",
+            "footer": "=MarkOps to investigate and respond: @{{ $('Get brand info2').item.json['Supervisor Mattermost'] }}",
+            "title": "=Low delivery rate on these {{ $('Get brand info2').item.json.Name }} one-time campaigns: ",
+            "color": "#ff0000"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -1072
+      ],
+      "id": "30a9a2a1-cd63-4f77-b877-d66ab02d7961",
+      "name": "Share Alert3",
+      "executeOnce": true,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1b403e55-6445-43f9-9495-805650717bfb",
+              "leftValue": "={{ Number($json.DELIVERY_RATE_PCT) }}",
+              "rightValue": "={{ Number($('get BDG Mail2 Delivery Rate 30d').item.json.DELIVERY_RATE_PCT)-30 }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "24805dd5-f0ec-4dbc-817d-0ff3063fe80d",
+              "leftValue": "={{ $json.DELIVERY_RATE_PCT }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        -1072
+      ],
+      "id": "f6e1b543-ecaa-4e21-b8cd-64d432bd6619",
+      "name": "If Delivery Low"
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 537,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5127,
+                "operator": "boolean",
+                "value": "True"
+              },
+              {
+                "field": 5124,
+                "value": "BDE"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        -1072
+      ],
+      "id": "dea5ea12-fb73-49e6-b121-3d97a4f2dc25",
+      "name": "Get brand info2",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6,
+              "triggerAtMinute": 45
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -384,
+        -1072
+      ],
+      "id": "d9f271a0-feb5-4e0f-b988-b130470ca254",
+      "name": "6:45am Daily1"
+    },
+    {
+      "parameters": {
+        "operation": "resultData",
+        "questionId": "31",
+        "format": "json",
+        "requestOptions": {
+          "timeout": 3000000
+        }
+      },
+      "type": "n8n-nodes-base.metabase",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -880
+      ],
+      "id": "40298b33-a7a5-4dd3-b387-f7fb3239e355",
+      "name": "get BDG Mail1 Delivery Rate 30d1",
+      "credentials": {
+        "metabaseApi": {
+          "id": "dwSjIoOcie0zoBsn",
+          "name": "Metabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "resultData",
+        "questionId": "29",
+        "format": "json",
+        "requestOptions": {
+          "timeout": 3000000
+        }
+      },
+      "type": "n8n-nodes-base.metabase",
+      "typeVersion": 1,
+      "position": [
+        288,
+        -880
+      ],
+      "id": "e6859e7f-2673-4d29-b608-0e596b217367",
+      "name": "Get yesterday's email delivery 1",
+      "executeOnce": false,
+      "credentials": {
+        "metabaseApi": {
+          "id": "dwSjIoOcie0zoBsn",
+          "name": "Metabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "={{ $('Get brand info3').first().json['Mattermost Channel'] }}",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "=https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=|Campaign | Delivery Rate|\n|--|--|\n{{ $input.all().map((i)=>{\nreturn  \"|\" + i.json.CAMPAIGN_NAME + \" | \" + i.json.DELIVERY_RATE_PCT + \"|\\n\"\n}).join(\"\")  }}",
+            "footer": "=MarkOps to investigate and respond: @{{ $('Get brand info3').item.json['Supervisor Mattermost'] }}",
+            "title": "=Low delivery rate on these {{ $('Get brand info3').item.json.Name }} recurring campaigns: ",
+            "color": "#ff0000"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -880
+      ],
+      "id": "c1a9bc6c-7ec6-4953-bdfc-60e61dd911fe",
+      "name": "Share Alert4",
+      "executeOnce": true,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1b403e55-6445-43f9-9495-805650717bfb",
+              "leftValue": "={{ Number($json.DELIVERY_RATE_PCT) }}",
+              "rightValue": "={{ Number($('get BDG Mail1 Delivery Rate 30d1').item.json.DELIVERY_RATE_PCT)-30 }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "e3fb96a2-888c-4cda-8076-c99f272c03b0",
+              "leftValue": "={{ $json.DELIVERY_RATE_PCT }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        -880
+      ],
+      "id": "5b2bbbff-f8a3-4a5d-bc7b-7ba25f6af4c1",
+      "name": "If Delivery Low1"
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 537,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5127,
+                "operator": "boolean",
+                "value": "True"
+              },
+              {
+                "field": 5124,
+                "value": "BDE"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        -880
+      ],
+      "id": "b1bad4bb-b02f-4141-ae8a-0e8bbe6b2854",
+      "name": "Get brand info3",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6,
+              "triggerAtMinute": 45
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -384,
+        -880
+      ],
+      "id": "f0d01d6e-33d5-416b-99b0-506c8a722b4e",
+      "name": "6:45am Daily2"
+    },
+    {
+      "parameters": {
+        "operation": "resultData",
+        "questionId": "30",
+        "format": "json",
+        "requestOptions": {
+          "timeout": 3000000
+        }
+      },
+      "type": "n8n-nodes-base.metabase",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -1072
+      ],
+      "id": "b2fd3d42-64cf-4d15-bd9d-b1a3132ed02d",
+      "name": "get BDG Mail2 Delivery Rate 30d",
+      "credentials": {
+        "metabaseApi": {
+          "id": "dwSjIoOcie0zoBsn",
+          "name": "Metabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "={{ $('Get brand info4').item.json['Mattermost Channel'] }}",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "=https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=|Campaign | Success Rate | Date | Error Types |\n|--|--|--|--|\n{{\n$input.all().map((i)=>{\nreturn  \"|\" + i.json.TARGET_MM_CAMPAIGN + \" | \" + i.json.SUCCESS_RATE + \"% (\" + i.json.TARGET_SUCCESS +\"/\" + i.json.INSTANCES +\") |\" + $if(i.json.ONEOFF_CAMPAIGN_LAUNCH_DATE, i.json.ONEOFF_CAMPAIGN_LAUNCH_DATE, \" - \") + \"| \"+\n($if((Number(i.json.ERROR_TARGET_EMPTY)>0 || Number(i.json.ERROR_TARGET_MINIMUM_NOT_MET)>0), \"Empty Target\", \"\") +\n$if(Number(i.json.ERROR_STRONGVIEW_SHUTDOWN)>0, \", Strongmail Down\", \"\") +\n$if(Number(i.json.ERROR_TARGET_DELETED)>0, \", Target Deleted\", \"\") +\n$if(Number(i.json.ERROR_TEMPLATE_NAME)>0, \", Template Not Found\", \"\") +\n$if(Number(i.json.ERROR_TEMPLATE_NOT_APPROVED)>0, \", Template Not Approved\", \"\") || \"- \")\n\n+ \"|\\n\"\n}).join(\"\")  }}",
+            "footer": "=MarkOps to investigate and respond: @{{ $('Get brand info4').item.json['Supervisor Mattermost'] }}",
+            "title": "=Low Campaign Success Rate on these {{ $('Get brand info4').item.json.Name }} campaign executions from over past 7 days: ",
+            "color": "#ff0000"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -1440
+      ],
+      "id": "5bce8bab-57e2-4895-9473-a3e62d70d79e",
+      "name": "Share Alert5",
+      "executeOnce": true,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 537,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5127,
+                "operator": "boolean",
+                "value": "True"
+              },
+              {
+                "field": 5124,
+                "value": "BDE"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -1424
+      ],
+      "id": "686433a1-4243-4ead-b0c0-227be1d19e2d",
+      "name": "Get brand info4",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "databaseId": 105,
+        "tableId": 538,
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5131,
+              "fieldValue": "={{ $('Get brand info2').item.json.Name }}"
+            },
+            {
+              "fieldId": 5141,
+              "fieldValue": "={{ $json.props.attachments[0].text }}"
+            },
+            {
+              "fieldId": 5146,
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldId": 5147,
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": 5140,
+              "fieldValue": "Mailing Deliverability Low"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        -1072
+      ],
+      "id": "0121b397-78c3-4572-98c2-40220e75fe13",
+      "name": "Create Alert Record1",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "databaseId": 105,
+        "tableId": 538,
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5131,
+              "fieldValue": "={{ $('Get brand info3').item.json.Name }}"
+            },
+            {
+              "fieldId": 5141,
+              "fieldValue": "={{ $json.props.attachments[0].text }}"
+            },
+            {
+              "fieldId": 5146,
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldId": 5147,
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": 5140,
+              "fieldValue": "Mailing Deliverability Low"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        -880
+      ],
+      "id": "7c5f5dc4-8693-4137-a2d2-fd0a021a5602",
+      "name": "Create Alert Record2",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "resultData",
+        "questionId": "32",
+        "format": "json",
+        "requestOptions": {
+          "timeout": 3000000
+        }
+      },
+      "type": "n8n-nodes-base.metabase",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -1424
+      ],
+      "id": "3dc27f75-156a-4305-b575-3e1b2b48061b",
+      "name": "Get last week's email success rate",
+      "executeOnce": false,
+      "credentials": {
+        "metabaseApi": {
+          "id": "dwSjIoOcie0zoBsn",
+          "name": "Metabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1b403e55-6445-43f9-9495-805650717bfb",
+              "leftValue": "={{ Number($json.SUCCESS_RATE) }}",
+              "rightValue": "={{Number(80)}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "d7a9a9d5-682d-4e92-a074-0f1d15616c61",
+              "leftValue": "={{ Number($json.ERROR_TARGET_EMPTY) }}",
+              "rightValue": "={{ Number($json.TARGET_FAILURE)*0.8 }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "cb32a4ce-4021-4282-9ea4-dc0eacdd1a10",
+              "leftValue": "={{ $json.MAILING_TYPE }}",
+              "rightValue": "Recurring",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        -1424
+      ],
+      "id": "b7ea768e-4d44-4580-8c62-717e6cae268b",
+      "name": "If Success Rate Below 80"
+    },
+    {
+      "parameters": {
+        "channelId": "={{ $('Get brand info5').item.json['Mattermost Channel'] }}",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "=https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=|Campaign | Success Rate | Date | Error Types\n|--|--|--|\n{{\n$input.all().map((i)=>{\nreturn  \"|\" + i.json.TARGET_MM_CAMPAIGN + \" | \" + i.json.SUCCESS_RATE + \"% (\" + i.json.TARGET_SUCCESS +\"/\" + i.json.INSTANCES +\") |\" + $if(i.json.ONEOFF_CAMPAIGN_LAUNCH_DATE, i.json.ONEOFF_CAMPAIGN_LAUNCH_DATE, \"-\") + \"| \"+\n$if((Number(i.json.ERROR_TARGET_EMPTY)>0 || Number(i.json.ERROR_TARGET_MINIMUM_NOT_MET)>0), \"Empty Target\", \"\") +\n$if(Number(i.json.ERROR_STRONGVIEW_SHUTDOWN)>0, \", Strongmail Down\", \"\") +\n$if(Number(i.json.ERROR_TARGET_DELETED)>0, \", Target Deleted\", \"\") +\n$if(Number(i.json.ERROR_TEMPLATE_NAME)>0, \", Template Not Found\", \"\") +\n$if(Number(i.json.ERROR_TEMPLATE_NOT_APPROVED)>0, \", Template Not Approved\", \"\") \n\n+ \"|\\n\"\n}).join(\"\")  }}",
+            "footer": "=MarkOps to investigate and respond: @{{ $('Get brand info5').item.json['Supervisor Mattermost'] }}",
+            "title": "=Low Campaign Success Rate on these {{ $('Get brand info5').item.json.Name }} one-off campaign executions yesterday: ",
+            "color": "#ff0000"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        464,
+        -1760
+      ],
+      "id": "ff8b17d2-f5aa-44cb-9d62-3fdca32be8a6",
+      "name": "Share Alert6",
+      "executeOnce": true,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1b403e55-6445-43f9-9495-805650717bfb",
+              "leftValue": "={{ Number($json.SUCCESS_RATE) }}",
+              "rightValue": "={{Number(80)}}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "cb32a4ce-4021-4282-9ea4-dc0eacdd1a10",
+              "leftValue": "={{ $json.MAILING_TYPE }}",
+              "rightValue": "One-off",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        192,
+        -1760
+      ],
+      "id": "1dafd0dd-e3e1-41f8-b92a-202a40be4f9f",
+      "name": "If One-off Success Rate Below "
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 537,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5127,
+                "operator": "boolean",
+                "value": "True"
+              },
+              {
+                "field": 5124,
+                "value": "BDE"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -1760
+      ],
+      "id": "b40c02a0-3a5e-4d69-877a-92e31e5e5235",
+      "name": "Get brand info5",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6,
+              "triggerAtMinute": 45
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        -1760
+      ],
+      "id": "9ae16d25-e31e-443a-86bc-b7cf2aa6d74b",
+      "name": "6:45am Daily4"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 6,
+              "triggerAtMinute": 45
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        -1424
+      ],
+      "id": "fe370c8a-6196-4c36-8da5-3243c6129e9b",
+      "name": "6:45am Mondays"
+    },
+    {
+      "parameters": {
+        "operation": "resultData",
+        "questionId": "33",
+        "format": "json",
+        "requestOptions": {
+          "timeout": 3000000
+        }
+      },
+      "type": "n8n-nodes-base.metabase",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -1760
+      ],
+      "id": "5f3f64f8-09e1-4167-a30b-67f85199faa7",
+      "name": "Get yesterday's email success rate",
+      "executeOnce": false,
+      "credentials": {
+        "metabaseApi": {
+          "id": "dwSjIoOcie0zoBsn",
+          "name": "Metabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Last week's campaigns with low success rate",
+        "height": 112
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -752,
+        -1424
+      ],
+      "typeVersion": 1,
+      "id": "72412c45-7b66-457b-a562-a0d3873aea23",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Yesterday's campaigns with low success rate",
+        "height": 112
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -736,
+        -1760
+      ],
+      "typeVersion": 1,
+      "id": "43758b37-30c5-4bd3-9298-fd2d73505423",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Inbox User Alerts",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "31d16080-4cb3-4f0b-98f1-ef6273ce3b14",
+      "name": "Sticky Note6"
+    }
+  ],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Antigua",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-09-02T16:31:46.017Z",
+      "updatedAt": "2025-09-02T16:31:46.017Z",
+      "role": "workflow:owner",
+      "workflowId": "5MZTrVYVCjtjrEGp",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": {
+    "node:7am Daily": {
+      "recurrenceRules": []
+    },
+    "node:8am Daily": {
+      "recurrenceRules": []
+    },
+    "node:6:45am Daily": {
+      "recurrenceRules": []
+    },
+    "node:6:45am Daily1": {
+      "recurrenceRules": []
+    },
+    "node:6:45am Daily2": {
+      "recurrenceRules": []
+    },
+    "node:6:45am Daily4": {
+      "recurrenceRules": []
+    },
+    "node:6:45am Mondays": {
+      "recurrenceRules": []
+    }
+  },
+  "tags": [],
+  "triggerCount": 7,
+  "updatedAt": "2026-08-10T20:38:40.434Z",
+  "versionId": "a0491020-2aba-490e-bddb-fd30c5bcb329"
+}
