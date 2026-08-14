@@ -1,0 +1,623 @@
+{
+  "active": true,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get many rows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Insert or update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert or update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows1": {
+      "main": [
+        [
+          {
+            "node": "Insert or update rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert or update rows in a table1": {
+      "main": [
+        [
+          {
+            "node": "Update a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-01-28T20:40:46.372Z",
+  "id": "Yohti9ByyRvWEZMg",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "BG Telemetry",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ca54c706-cdb1-495d-94bc-4f44c77715e5",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "09d067f8-6059-44ba-b996-4780d8420d8a",
+      "name": "Webhook",
+      "webhookId": "ca54c706-cdb1-495d-94bc-4f44c77715e5"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "databaseId": 105,
+        "tableId": 540,
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5154,
+              "fieldValue": "={{ $json.body.user }}"
+            },
+            {
+              "fieldId": 5155,
+              "fieldValue": "={{ $json.body.ticketNumber }}"
+            },
+            {
+              "fieldId": 5156,
+              "fieldValue": "={{ $json.body.bonusUUID }}"
+            },
+            {
+              "fieldId": 5157,
+              "fieldValue": "={{ $json.body.timestamp }}"
+            },
+            {
+              "fieldId": 5158,
+              "fieldValue": "={{ $json.body.result }}"
+            },
+            {
+              "fieldId": 5159,
+              "fieldValue": "={{ $json.body.validationOutput }}"
+            },
+            {
+              "fieldId": 5161,
+              "fieldValue": "={{ $json.body.resultIfWarningsIgnored }}"
+            },
+            {
+              "fieldId": 5160,
+              "fieldValue": "={{ $json.body.brand }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "32867d35-6e36-4915-8db6-eeb4dfbf759a",
+      "name": "Create a row",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -64,
+        288
+      ],
+      "id": "acbb7cca-25b7-4803-bc0a-1080dfa6c6c4",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 540,
+        "limit": 100,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5162,
+                "operator": "boolean",
+                "value": "False"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        208,
+        208
+      ],
+      "id": "2a16b180-ce28-4eca-bc59-187ac4d49114",
+      "name": "Get many rows",
+      "executeOnce": true,
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "bonus_validation",
+          "mode": "list",
+          "cachedResultName": "bonus_validation"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Result": "={{ $json.Result }}",
+            "Result If Warnings Ignored": "={{ $json['Result If Warnings Ignored'] }}",
+            "Data Processed": "={{ $json['Data Processed'] }}",
+            "id": "={{ $json.id }}",
+            "Ticket Number": "={{ $json['Ticket Number'] }}",
+            "Bonus UUID": "={{ $json['Bonus UUID'] }}",
+            "Timestamp": "={{ $json.Timestamp }}",
+            "User": "={{ $json.User }}",
+            "Brand": "={{ $json.Brand }}",
+            "Validation Output": "={{ { \"data\": JSON.parse($json['Validation Output'])} }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": true,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "User",
+              "displayName": "User",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Brand",
+              "displayName": "Brand",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Result",
+              "displayName": "Result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Result If Warnings Ignored",
+              "displayName": "Result If Warnings Ignored",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Ticket Number",
+              "displayName": "Ticket Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Bonus UUID",
+              "displayName": "Bonus UUID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Validation Output",
+              "displayName": "Validation Output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Data Processed",
+              "displayName": "Data Processed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        416,
+        208
+      ],
+      "id": "66ce519a-9b0e-4725-82ca-2a3e34d1892d",
+      "name": "Insert or update rows in a table",
+      "executeOnce": false,
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "databaseId": 105,
+        "tableId": 540,
+        "rowId": "={{ $json.id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5162,
+              "fieldValue": "true"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        624,
+        208
+      ],
+      "id": "72e37690-cc1a-41b5-ae6c-c6ed1d85cee1",
+      "name": "Update a row",
+      "executeOnce": false,
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "databaseId": 106,
+        "tableId": 540,
+        "limit": 100,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5142,
+                "operator": "boolean",
+                "value": "False"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        192,
+        384
+      ],
+      "id": "65301231-a1bc-4d54-b6e4-884bf97fa8e9",
+      "name": "Get many rows1",
+      "executeOnce": true,
+      "credentials": {
+        "baserowApi": {
+          "id": "DN5QeuaNZDyDUdwO",
+          "name": "CH Baserow"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "databaseId": 106,
+        "tableId": 540,
+        "rowId": "={{ $json.id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5142,
+              "fieldValue": "true"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        624,
+        384
+      ],
+      "id": "156666ca-5329-4c4f-86ee-2d0f6aedc65f",
+      "name": "Update a row1",
+      "executeOnce": false,
+      "credentials": {
+        "baserowApi": {
+          "id": "DN5QeuaNZDyDUdwO",
+          "name": "CH Baserow"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "bonus_validation",
+          "mode": "list",
+          "cachedResultName": "bonus_validation"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Result": "={{ $json.Result }}",
+            "Result If Warnings Ignored": "={{ $json['Result If Warnings Ignored'] }}",
+            "Data Processed": "={{ $json['Data Processed'] }}",
+            "id": "={{ $json.id }}",
+            "Ticket Number": "={{ $json['Ticket Number'] }}",
+            "Bonus UUID": "={{ $json['Bonus UUID'] }}",
+            "Timestamp": "={{ $json.Timestamp }}",
+            "User": "={{ $json.User }}",
+            "Brand": "={{ $json.Brand }}",
+            "Validation Output": "={{ { \"data\": JSON.parse($json['Validation Output'])} }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": true,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "User",
+              "displayName": "User",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Brand",
+              "displayName": "Brand",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Result",
+              "displayName": "Result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Result If Warnings Ignored",
+              "displayName": "Result If Warnings Ignored",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Ticket Number",
+              "displayName": "Ticket Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Bonus UUID",
+              "displayName": "Bonus UUID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Validation Output",
+              "displayName": "Validation Output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Data Processed",
+              "displayName": "Data Processed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        448,
+        384
+      ],
+      "id": "e81f2e82-d4b9-4f52-868f-97c26b02dc97",
+      "name": "Insert or update rows in a table1",
+      "executeOnce": false,
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-01-28T20:40:46.372Z",
+      "updatedAt": "2026-01-28T20:40:46.372Z",
+      "role": "workflow:owner",
+      "workflowId": "Yohti9ByyRvWEZMg",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        18
+      ]
+    }
+  },
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2026-03-07T02:46:29.066Z",
+  "versionId": "56bb3e85-186e-4667-be22-4713034f8f3a"
+}
