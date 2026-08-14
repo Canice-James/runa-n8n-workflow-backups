@@ -1,0 +1,1010 @@
+{
+  "active": false,
+  "connections": {
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Get MAP tickets updated last 2h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Insert or update rows in a table Cron",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Incrementer1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger - Runs every 1h": {
+      "main": [
+        [
+          {
+            "node": "Get total MAP tickets updated last 2h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get total MAP tickets updated last 2h": {
+      "main": [
+        [
+          {
+            "node": "Set1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get MAP tickets updated last 2h": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert or update rows in a table Cron": {
+      "main": [
+        [
+          {
+            "node": "Incrementer1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira Trigger": {
+      "main": [
+        [
+          {
+            "node": "Insert or update rows in a table WebHook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert or update rows in a table WebHook": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-04-20T20:50:37.435Z",
+  "id": "hx5jYtQEdhmGad7t",
+  "isArchived": true,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Jira MAP Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Cron Update",
+        "height": 304,
+        "width": 1942,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -752,
+        272
+      ],
+      "id": "4904c412-19f0-4a11-8afa-18d0f9d75724",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -96,
+        368
+      ],
+      "id": "38ccb62a-8442-4d6a-afcc-c07c8263f9c5",
+      "name": "Wait1",
+      "webhookId": "61dc5e4d-d464-4b54-aea9-f86c22bc5b4e"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cb8e08e8-cd2d-400b-91dd-336edfb3318c",
+              "name": "total_tickets",
+              "value": "={{ $json.total }}",
+              "type": "number"
+            },
+            {
+              "id": "ea9e82f9-8215-4cac-acdc-c0c036366086",
+              "name": "offset",
+              "value": 0,
+              "type": "number"
+            },
+            {
+              "id": "b1505b35-5fab-4c55-b7e8-3c002af40c05",
+              "name": "maxResults",
+              "value": 100,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        368
+      ],
+      "id": "2c6dc1cd-63eb-412b-b8a2-8870a0b050be",
+      "name": "Set1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "issues",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        272,
+        368
+      ],
+      "id": "9b1445e8-9d89-4eb7-890a-f567bc886d3f",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6a054274-460e-4987-b05c-8a3e13f8efd3",
+              "name": "offset",
+              "value": "={{ $('Wait1').item.json.offset  + $('Set1').item.json.maxResults}}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        368
+      ],
+      "id": "a77f5837-3301-4e5c-b9ad-165feb8685e2",
+      "name": "Incrementer1",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "616e922c-c4f0-488c-a3f6-ae5db6b51d19",
+              "leftValue": "={{ $node[\"Set1\"].json.offset }}",
+              "rightValue": "={{ $node[\"Set1\"].json.total_tickets }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        368
+      ],
+      "id": "bda18eb5-0d62-4d8c-9bde-64198eeb854e",
+      "name": "If1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        976,
+        384
+      ],
+      "id": "55da52d9-b5e2-43eb-b418-4587bd1baeab",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -672,
+        368
+      ],
+      "id": "01868f5e-491c-4056-b40e-6fb0cd55250c",
+      "name": "Schedule Trigger - Runs every 1h"
+    },
+    {
+      "parameters": {
+        "url": "https://jiraops.corp-apps.com/rest/api/2/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "jiraSoftwareServerApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "jql",
+              "value": "project = \"Marketing Activity Plan\" AND updated >= -2h"
+            },
+            {
+              "name": "maxResults",
+              "value": "0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -480,
+        368
+      ],
+      "id": "ff91eefd-93f1-4212-bb44-5ccd2bbe2afd",
+      "name": "Get total MAP tickets updated last 2h",
+      "credentials": {
+        "jiraSoftwareServerApi": {
+          "id": "7MgXJNgpxtJeD70Z",
+          "name": "Jira SW Server account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://jiraops.corp-apps.com/rest/api/2/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "jiraSoftwareServerApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "jql",
+              "value": "project = \"Marketing Activity Plan\" AND updated >= -2h ORDER BY issuekey ASC"
+            },
+            {
+              "name": "maxResults",
+              "value": "={{ $node[\"Set1\"].json.maxResults }}"
+            },
+            {
+              "name": "startAt",
+              "value": "={{ $json.offset }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        96,
+        368
+      ],
+      "id": "ba1b3c9f-5d84-4b73-94aa-42c98ad141e3",
+      "name": "Get MAP tickets updated last 2h",
+      "credentials": {
+        "jiraSoftwareServerApi": {
+          "id": "7MgXJNgpxtJeD70Z",
+          "name": "Jira SW Server account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Webhook Update",
+        "height": 304,
+        "width": 1942,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -752,
+        608
+      ],
+      "id": "31aea84c-0bc1-41a1-a85f-a9e0bfe3eb03",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "jiraVersion": "server",
+        "events": [
+          "jira:issue_updated",
+          "jira:issue_created",
+          "jira:issue_deleted"
+        ],
+        "additionalFields": {
+          "filter": "project = \"Marketing Activity Plan\""
+        }
+      },
+      "type": "n8n-nodes-base.jiraTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -704,
+        720
+      ],
+      "id": "946121a4-913d-4289-b3ce-5750d7a49b96",
+      "name": "Jira Trigger",
+      "webhookId": "463179fd-05ce-422b-95aa-21342d39002c",
+      "credentials": {
+        "jiraSoftwareServerApi": {
+          "id": "7MgXJNgpxtJeD70Z",
+          "name": "Jira SW Server account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "map_jira_issues",
+          "mode": "list",
+          "cachedResultName": "map_jira_issues"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "time_spent": "={{ $json.fields.timespent }}",
+            "time_estimate": "={{ $json.fields.timeestimate }}",
+            "issue_key": "={{ $json.key }}",
+            "issue_id": "={{ $json.id }}",
+            "issue_url": "={{ $json.self }}",
+            "raw_data": "={{ $json }}",
+            "summary": "={{ $json.fields.summary }}",
+            "issuetype_id": "={{ $json.fields.issuetype.id }}",
+            "issuetype_name": "={{ $json.fields.issuetype.name }}",
+            "due_date": "={{ $json.fields.duedate }}",
+            "status_id": "={{ $json.fields.status.id }}",
+            "status_name": "={{ $json.fields.status.name }}",
+            "synced_at": "={{ $now }}",
+            "labels": "={{ $json.fields.labels }}",
+            "created_at": "={{ $json.fields.created }}",
+            "updated_at": "={{ $json.fields.updated }}",
+            "resolution_date": "={{ $json.fields.resolutiondate }}",
+            "live_date": "={{ $json.fields.customfield_17519 }}",
+            "qa_due_date": "={{ $json.fields.customfield_11222 }}",
+            "assignee": "={{ $json.fields.assignee.name }}",
+            "brand_name": "={{ $json.fields.customfield_11504[0].value }}",
+            "brand_id": "={{ $json.fields.customfield_11504[0].id }}"
+          },
+          "matchingColumns": [
+            "issue_id"
+          ],
+          "schema": [
+            {
+              "id": "issue_key",
+              "displayName": "issue_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "issue_id",
+              "displayName": "issue_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "status_id",
+              "displayName": "status_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "status_name",
+              "displayName": "status_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "assignee",
+              "displayName": "assignee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "brand_id",
+              "displayName": "brand_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "brand_name",
+              "displayName": "brand_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "labels",
+              "displayName": "labels",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "array",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "issuetype_id",
+              "displayName": "issuetype_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "issuetype_name",
+              "displayName": "issuetype_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "due_date",
+              "displayName": "due_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "resolution_date",
+              "displayName": "resolution_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "live_date",
+              "displayName": "live_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "qa_due_date",
+              "displayName": "qa_due_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "time_spent",
+              "displayName": "time_spent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "time_estimate",
+              "displayName": "time_estimate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "issue_url",
+              "displayName": "issue_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "raw_data",
+              "displayName": "raw_data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "synced_at",
+              "displayName": "synced_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -496,
+        720
+      ],
+      "id": "9d62f10b-29dd-43f2-bfb6-f6dc3769ebbf",
+      "name": "Insert or update rows in a table WebHook",
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "map_jira_issues",
+          "mode": "list",
+          "cachedResultName": "map_jira_issues"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "time_spent": "={{ $json.fields.timespent }}",
+            "time_estimate": "={{ $json.fields.timeestimate }}",
+            "issue_key": "={{ $json.key }}",
+            "issue_id": "={{ $json.id }}",
+            "issue_url": "={{ $json.self }}",
+            "raw_data": "={{ $json }}",
+            "summary": "={{ $json.fields.summary }}",
+            "issuetype_id": "={{ $json.fields.issuetype.id }}",
+            "issuetype_name": "={{ $json.fields.issuetype.name }}",
+            "due_date": "={{ $json.fields.duedate }}",
+            "status_id": "={{ $json.fields.status.id }}",
+            "status_name": "={{ $json.fields.status.name }}",
+            "synced_at": "={{ $now }}",
+            "labels": "={{ $json.fields.labels }}",
+            "created_at": "={{ $json.fields.created }}",
+            "updated_at": "={{ $json.fields.updated }}",
+            "resolution_date": "={{ $json.fields.resolutiondate }}",
+            "live_date": "={{ $json.fields.customfield_17519 }}",
+            "qa_due_date": "={{ $json.fields.customfield_11222 }}",
+            "assignee": "={{ $json.fields.assignee.name }}",
+            "brand_name": "={{ $json.fields.customfield_11504[0].value }}",
+            "brand_id": "={{ $json.fields.customfield_11504[0].id }}"
+          },
+          "matchingColumns": [
+            "issue_id"
+          ],
+          "schema": [
+            {
+              "id": "issue_key",
+              "displayName": "issue_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "issue_id",
+              "displayName": "issue_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "status_id",
+              "displayName": "status_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "status_name",
+              "displayName": "status_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "assignee",
+              "displayName": "assignee",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "brand_id",
+              "displayName": "brand_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "brand_name",
+              "displayName": "brand_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "labels",
+              "displayName": "labels",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "array",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "issuetype_id",
+              "displayName": "issuetype_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "issuetype_name",
+              "displayName": "issuetype_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "due_date",
+              "displayName": "due_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "resolution_date",
+              "displayName": "resolution_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "live_date",
+              "displayName": "live_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "qa_due_date",
+              "displayName": "qa_due_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "time_spent",
+              "displayName": "time_spent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "time_estimate",
+              "displayName": "time_estimate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "issue_url",
+              "displayName": "issue_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "raw_data",
+              "displayName": "raw_data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "synced_at",
+              "displayName": "synced_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        464,
+        368
+      ],
+      "id": "3095e2db-6450-433e-992f-76ffc455eef2",
+      "name": "Insert or update rows in a table Cron",
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        720
+      ],
+      "id": "89f38b78-6c43-4bdc-9e16-26e2eb2191a4",
+      "name": "No Operation, do nothing2",
+      "disabled": true
+    }
+  ],
+  "origin": "n8n",
+  "pinData": {},
+  "repo": {
+    "owner": "Canice-James",
+    "name": "runa-n8n-workflow-backups"
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-04-20T20:50:37.435Z",
+      "updatedAt": "2026-04-20T20:50:37.435Z",
+      "role": "workflow:owner",
+      "workflowId": "hx5jYtQEdhmGad7t",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": {
+    "node:Schedule Trigger - Runs every 1h": {
+      "recurrenceRules": []
+    }
+  },
+  "tags": [
+    {
+      "createdAt": "2026-05-28T16:41:19.349Z",
+      "updatedAt": "2026-05-28T16:41:19.349Z",
+      "id": "LkakKvqKgfr1MWA0",
+      "name": "MAP"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-05-29T14:27:31.398Z",
+  "versionId": "65ecc03d-1560-4848-9aee-63d0e50da3a1"
+}
