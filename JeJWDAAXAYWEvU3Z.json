@@ -1,0 +1,577 @@
+{
+  "active": false,
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an issue1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Create an issue1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an issue": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2025-09-04T19:08:31.908Z",
+  "id": "JeJWDAAXAYWEvU3Z",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Bulk Ticket Creation in Jira",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "RUNACS Upload",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "RUNACS Upload",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".csv,.xlsx"
+            },
+            {
+              "fieldLabel": "emptyFile",
+              "fieldType": "file",
+              "multipleFiles": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bc253a86-fddc-497c-8943-0857d09cd561",
+      "name": "On form submission",
+      "webhookId": "2621ed64-ed47-44ec-8a93-b4231075e9be"
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "=RUNACS_Upload",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "dc2245e4-bd56-43a8-af1d-fcb39113a31d",
+      "name": "Extract from File",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jiraVersion": "server",
+        "project": {
+          "__rl": true,
+          "value": "16410",
+          "mode": "list",
+          "cachedResultName": "RUNA Product Case Submission (Global)"
+        },
+        "issueType": {
+          "__rl": true,
+          "value": "10000",
+          "mode": "list",
+          "cachedResultName": "Epic"
+        },
+        "summary": "={{ $('Extract from File').item.json['Issue name'] }}",
+        "additionalFields": {
+          "description": "={{$('Extract from File').item.json.Description? \"Description: \" + $('Extract from File').item.json.Description : \"\" }}\n\n{{$('Extract from File').item.json['Other impacts']? \"Other impacts: \" + $('Extract from File').item.json['Other impacts'] : \"\" }}\n\n{{$('Extract from File').item.json['Use Case(s) / Examples (hypothetical)']? \"Use Case(s) / Examples (hypothetical): \" + $('Extract from File').item.json['Use Case(s) / Examples (hypothetical)'] : \"\" }}\n\n{{$('Extract from File').item.json.Benefits? \"Benefits: \" + $('Extract from File').item.json.Benefits : \"\" }}",
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "fieldId": {
+                  "__rl": true,
+                  "value": "customfield_18717",
+                  "mode": "id"
+                },
+                "fieldValue": "={{ {\"name\": \"sahunt\"} }}"
+              },
+              {
+                "fieldId": {
+                  "__rl": true,
+                  "value": "customfield_18540",
+                  "mode": "id"
+                },
+                "fieldValue": "={{ {\"id\": \"26444\"} }}"
+              },
+              {
+                "fieldId": {
+                  "__rl": true,
+                  "value": "customfield_11504",
+                  "mode": "id"
+                },
+                "fieldValue": "={{ [{\"id\": \"27514\"}] }}"
+              },
+              {
+                "fieldId": {
+                  "__rl": true,
+                  "value": "customfield_11507",
+                  "mode": "id"
+                },
+                "fieldValue": "={{ [{\"id\": \"27471\"}] }}"
+              },
+              {
+                "fieldId": {
+                  "__rl": true,
+                  "value": "customfield_18541",
+                  "mode": "id"
+                },
+                "fieldValue": "={{ $('Extract from File').item.json.Tool==\"Rewards Manager\" ?  {\"id\": \"26447\"} : \n$('Extract from File').item.json.Tool==\"Marketing Manager\" ?  {\"id\": \"26454\"} : \n$('Extract from File').item.json.Tool==\"Bulk Change Manager\" ?  {\"id\": \"26452\"} : \n$('Extract from File').item.json.Tool==\"Customer Manager\" ?  {\"id\": \"26449\"} : \n{\"id\": \"26464\"} }}"
+              },
+              {
+                "fieldId": {
+                  "__rl": true,
+                  "value": "customfield_11939",
+                  "mode": "id"
+                },
+                "fieldValue": "={{ {\"id\":\"32110\",\"value\":\"# Activity\",\"childrenIds\":[]} }}"
+              },
+              {
+                "fieldId": {
+                  "__rl": true,
+                  "value": "customfield_23001",
+                  "mode": "id"
+                },
+                "fieldValue": "-"
+              },
+              {
+                "fieldId": {
+                  "__rl": true,
+                  "value": "customfield_16115",
+                  "mode": "id"
+                },
+                "fieldValue": "-"
+              },
+              {
+                "fieldId": {
+                  "__rl": true,
+                  "value": "customfield_10004",
+                  "mode": "id"
+                },
+                "fieldValue": "={{ $('Extract from File').item.json['Issue name'] }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        928,
+        64
+      ],
+      "id": "a5c619ce-5404-4def-bf64-85013f1b753c",
+      "name": "Create an issue1",
+      "credentials": {
+        "jiraSoftwareServerApi": {
+          "id": "7MgXJNgpxtJeD70Z",
+          "name": "Jira SW Server account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jiraVersion": "server",
+        "operation": "update",
+        "issueKey": "GMO-84362",
+        "updateFields": {
+          "description": "={{$json.Description? \"Description: \" + $json.Description : \"\" }}\n\n{{$json['Other impacts']? \"Other impacts: \" + $json['Other impacts'] : \"\" }}\n\n{{$json['Use Case(s) / Examples (hypothetical)']? \"Use Case(s) / Examples (hypothetical): \" + $json['Use Case(s) / Examples (hypothetical)'] : \"\" }}\n\n{{$json.Benefits? \"Benefits: \" + $json.Benefits : \"\" }}",
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "fieldId": {
+                  "__rl": true,
+                  "value": "customfield_11906",
+                  "mode": "id"
+                },
+                "fieldValue": "={{ {\"id\": \"15529\"} }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        400
+      ],
+      "id": "35c70fdb-b079-4156-9fb7-f9d4cc79f52c",
+      "name": "Update an issue",
+      "credentials": {
+        "jiraSoftwareServerApi": {
+          "id": "7MgXJNgpxtJeD70Z",
+          "name": "Jira SW Server account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4068b392-3457-428d-88e4-585b61bcc266",
+              "leftValue": "={{ String($json['Product Case #']).toLowerCase() }}",
+              "rightValue": "={{String(\"RUNACS\").toLowerCase()}}",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        688,
+        64
+      ],
+      "id": "5151536d-0140-471b-a854-46f8c613c5be",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jiraVersion": "server",
+        "project": {
+          "__rl": true,
+          "value": "10902",
+          "mode": "list",
+          "cachedResultName": "Global Marketing Operations"
+        },
+        "issueType": {
+          "__rl": true,
+          "value": "10000",
+          "mode": "list",
+          "cachedResultName": "Epic"
+        },
+        "summary": "={{ $json['Issue name'] }}",
+        "additionalFields": {
+          "description": "={{$json.Description? \"Description: \" + $json.Description : \"\" }}\n\n{{$json['Other impacts']? \"Other impacts:\" + $json['Other impacts'] : \"\" }}\n\n{{$json['Use Case(s) / Examples (hypothetical)']? \"Use Case(s) / Examples (hypothetical)\" + $json['Use Case(s) / Examples (hypothetical)'] : \"\" }}\n\n{{$json.Benefits? \"Benefits:\" + $json.Benefits : \"\" }}",
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "fieldId": {
+                  "__rl": true,
+                  "value": "customfield_10004",
+                  "mode": "id"
+                },
+                "fieldValue": "={{ $json['Issue name'] }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        384
+      ],
+      "id": "adece920-56ae-4961-9b80-24b9090bb197",
+      "name": "Create an issue",
+      "credentials": {
+        "jiraSoftwareServerApi": {
+          "id": "7MgXJNgpxtJeD70Z",
+          "name": "Jira SW Server account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://jiraops.corp-apps.com/rest/servicedeskapi/servicedesk/27/attachTemporaryFile",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Atlassian-Token",
+              "value": "no-check"
+            },
+            {
+              "name": "X-ExperimentalApi",
+              "value": "opt-in"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "emptyDataFile"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        592,
+        464
+      ],
+      "id": "19c357fa-e22e-40bf-9374-d3c3956b317b",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "7Wc83HCUERGRpKPP",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "Epic Name",
+        "binaryPropertyName": "emptyDataFile",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        304
+      ],
+      "id": "09dfbb5d-2e33-45eb-bc20-719368b1751d",
+      "name": "Convert to File",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "Result",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1296,
+        32
+      ],
+      "id": "225fe1b1-953e-44f0-ae4d-c05cafe79ee1",
+      "name": "Convert to File1",
+      "executeOnce": false,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e3058b34-cc82-426f-9e16-f9e6cc02552f",
+              "name": "Rank",
+              "value": "={{ $('Extract from File').item.json.Rank }}",
+              "type": "number"
+            },
+            {
+              "id": "eefbc0a5-36ac-4651-b1bf-7b889d34f441",
+              "name": "Epic Name",
+              "value": "={{ $('Extract from File').item.json['Epic Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7a1c5677-9d4d-4184-b1b1-e8d7408b05e2",
+              "name": "RUNACS",
+              "value": "={{ $json.key }}",
+              "type": "string"
+            },
+            {
+              "id": "2bb6926f-8177-43d1-918d-00120d7ab43b",
+              "name": "RUNACSID",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "3859a129-2f66-469e-bdf9-a1dc187a40c5",
+              "name": "Issue name",
+              "value": "={{ $('Extract from File').item.json['Issue name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f97774ce-ba81-40fb-a019-fb83fc14b6d8",
+              "name": "Description",
+              "value": "={{ $('Extract from File').item.json.Description }}",
+              "type": "string"
+            },
+            {
+              "id": "b842d927-d416-4271-9f79-4a816cc92e7a",
+              "name": "Source",
+              "value": "={{ $('Extract from File').item.json.Source }}",
+              "type": "string"
+            },
+            {
+              "id": "52b1ad84-b251-4fce-b786-145b01b11b24",
+              "name": "Other impacts",
+              "value": "={{ $('Extract from File').item.json['Other impacts'] }}",
+              "type": "string"
+            },
+            {
+              "id": "615ad811-7947-40d9-908d-9996b93047c2",
+              "name": "Use Case(s) / Examples (hypothetical)",
+              "value": "={{ $('Extract from File').item.json['Use Case(s) / Examples (hypothetical)'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ab294359-de2f-4865-b793-795e334a0c90",
+              "name": "Status",
+              "value": "={{ $('Extract from File').item.json.Status }}",
+              "type": "string"
+            },
+            {
+              "id": "3049d16d-c782-4ef7-b20f-61e60dccd508",
+              "name": "Benefits",
+              "value": "={{ $('Extract from File').item.json.Benefits }}",
+              "type": "string"
+            },
+            {
+              "id": "3b1b044e-f079-4677-a3e6-6b520f8b272d",
+              "name": "Notes",
+              "value": "={{ $('Extract from File').item.json.Notes }}",
+              "type": "string"
+            },
+            {
+              "id": "5396a8c9-3e71-46d5-9c9c-2749ceec2663",
+              "name": "Owner",
+              "value": "={{ $('Extract from File').item.json.Owner }}",
+              "type": "string"
+            },
+            {
+              "id": "6ba76272-7086-4cb9-95f8-c41cf3a02f85",
+              "name": "Frequency",
+              "value": "={{ $('Extract from File').item.json.Frequency }}",
+              "type": "string"
+            },
+            {
+              "id": "10987667-e555-4e72-8687-8b13b50236ea",
+              "name": "Business Impact",
+              "value": "={{ $('Extract from File').item.json['Business Impact'] }}",
+              "type": "string"
+            },
+            {
+              "id": "76475db7-e02b-4563-a258-977319f14b00",
+              "name": "Tool",
+              "value": "={{ $('Extract from File').item.json.Tool }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1136,
+        80
+      ],
+      "id": "cbaea72c-f11d-477a-be2b-29385b674033",
+      "name": "Edit Fields"
+    }
+  ],
+  "origin": "n8n",
+  "pinData": {},
+  "repo": {
+    "owner": "Canice-James",
+    "name": "runa-n8n-workflow-backups"
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-09-04T19:08:31.908Z",
+      "updatedAt": "2025-09-04T19:08:31.908Z",
+      "role": "workflow:owner",
+      "workflowId": "JeJWDAAXAYWEvU3Z",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-08-13T16:11:49.082Z",
+  "versionId": "38114b7e-6083-4a1a-ab5c-43bf53061aab"
+}
