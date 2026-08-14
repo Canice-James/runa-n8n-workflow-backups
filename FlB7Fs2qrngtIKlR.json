@@ -1,0 +1,259 @@
+{
+  "active": false,
+  "connections": {
+    "Jira Trigger (Polling)": {
+      "main": [
+        [
+          {
+            "node": "Extraction & Mapping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraction & Mapping": {
+      "main": [
+        [
+          {
+            "node": "Delivery - Create Notification Slug",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Playwright Engine": {
+      "main": [
+        [
+          {
+            "node": "Load Short Screenshot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delivery - Create Notification Slug": {
+      "main": [
+        [
+          {
+            "node": "Delivery - Send notification to Test Account",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delivery - Send notification to Test Account": {
+      "main": [
+        [
+          {
+            "node": "Playwright Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Short Screenshot": {
+      "main": [
+        [
+          {
+            "node": "Load Long Screenshot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Long Screenshot": {
+      "main": [
+        [
+          {
+            "node": "Jira - Post Comment Evidence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-06-11T19:52:17.272Z",
+  "id": "FlB7Fs2qrngtIKlR",
+  "isArchived": true,
+  "meta": null,
+  "name": "OSN Notification Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "additionalFields": {}
+      },
+      "id": "0f15fee4-f0b6-4f02-abfc-6e3e96d39c49",
+      "name": "Jira Trigger (Polling)",
+      "type": "n8n-nodes-base.jiraTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1104,
+        48
+      ],
+      "webhookId": "7f2584b3-3bf7-4647-b2c1-7ed74d1a0dea"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f0652541-a898-4619-a0b2-07591c116275",
+      "name": "Extraction & Mapping",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        -880,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "command": "=node /opt/playwright/screenshot.js --slug=\"{{ $('Extraction & Mapping').item.json.slug || $json.slug }}\" --brand=\"{{ $('Extraction & Mapping').item.json.brand }}\""
+      },
+      "id": "2bc55359-8299-4351-9a76-b8bad71b5c9d",
+      "name": "Playwright Engine",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "jiraVersion": "server",
+        "operation": "addComment"
+      },
+      "id": "d036e6b5-cbec-437c-b8ce-24b38bdd5dad",
+      "name": "Jira - Post Comment Evidence",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        448,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "name": "brand",
+              "value": "={{ $json.brand }}"
+            },
+            {
+              "name": "region",
+              "value": "={{ $json.region }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7b4ad1c0-ea1a-448c-9c17-fba0d9b04ca9",
+      "name": "Delivery - Create Notification Slug",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -656,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.delivery-service.internal/v1/notifications/{{ $json.slug }}/send-test",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "target_account",
+              "value": "test-account"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "47cb3d45-befa-4c80-b861-99e648f647c8",
+      "name": "Delivery - Send notification to Test Account",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -448,
+        48
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "8a4c4e8c-bd48-41c1-9f70-5474ef750340",
+      "name": "Load Short Screenshot",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [
+        0,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "dataPropertyName": "dataLong"
+      },
+      "id": "58e3687e-c6d0-4cfe-9949-1f13e0e6f29a",
+      "name": "Load Long Screenshot",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [
+        224,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "clickElement",
+        "browserOptions": {}
+      },
+      "type": "n8n-nodes-playwright.playwright",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        -128
+      ],
+      "id": "9635fb3d-b924-4567-acb8-b6e145093883",
+      "name": "Playwright"
+    }
+  ],
+  "origin": "n8n",
+  "pinData": {},
+  "repo": {
+    "owner": "Canice-James",
+    "name": "runa-n8n-workflow-backups"
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-06-11T19:52:17.272Z",
+      "updatedAt": "2026-06-11T19:52:17.272Z",
+      "role": "workflow:owner",
+      "workflowId": "FlB7Fs2qrngtIKlR",
+      "projectId": "NZagkQVMdCK7PHMO"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-06-15T14:43:39.185Z",
+  "versionId": "18a62937-b353-4c9b-97d9-c5481ddd89e2"
+}
