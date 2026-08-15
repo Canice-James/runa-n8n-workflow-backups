@@ -1,23 +1,27 @@
 {
   "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {},
   "createdAt": "2026-07-30T19:23:19.448Z",
   "id": "IgshhMPA3XzgAQpt",
   "isArchived": false,
   "meta": null,
   "name": "Test slastra",
+  "nodeGroups": [],
   "nodes": [],
   "pinData": {},
   "repo_name": "runa-n8n-workflow-backups",
   "repo_owner": "Canice-James",
   "repo_path": "workflows/",
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "availableInMCP": true
   },
   "shared": [
     {
-      "createdAt": "2026-07-30T19:23:19.448Z",
       "updatedAt": "2026-07-30T19:23:19.448Z",
+      "createdAt": "2026-07-30T19:23:19.448Z",
       "role": "workflow:owner",
       "workflowId": "IgshhMPA3XzgAQpt",
       "projectId": "SkRIbEuclHCvj5yP"
@@ -26,6 +30,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-07-30T19:23:19.448Z",
+  "updatedAt": "2026-08-14T14:59:41.978Z",
   "versionId": "df0686a1-7bdd-4651-8b67-96075d151a14"
 }
