@@ -1,5 +1,7 @@
 {
   "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {
     "Share Alert": {
       "main": [
@@ -529,6 +531,7 @@
     "templateCredsSetupCompleted": true
   },
   "name": "ARCHIVED Core + BDE Guardians",
+  "nodeGroups": [],
   "nodes": [
     {
       "parameters": {
@@ -2422,12 +2425,13 @@
   "settings": {
     "executionOrder": "v1",
     "timezone": "America/Antigua",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
   },
   "shared": [
     {
-      "createdAt": "2025-09-02T16:31:46.017Z",
       "updatedAt": "2025-09-02T16:31:46.017Z",
+      "createdAt": "2025-09-02T16:31:46.017Z",
       "role": "workflow:owner",
       "workflowId": "5MZTrVYVCjtjrEGp",
       "projectId": "SkRIbEuclHCvj5yP"
@@ -2458,6 +2462,6 @@
   },
   "tags": [],
   "triggerCount": 7,
-  "updatedAt": "2026-08-10T20:38:40.434Z",
+  "updatedAt": "2026-08-14T14:59:41.978Z",
   "versionId": "a0491020-2aba-490e-bddb-fd30c5bcb329"
 }
