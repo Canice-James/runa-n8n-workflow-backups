@@ -1,5 +1,7 @@
 {
   "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {
     "When clicking ‘Execute workflow’": {
       "main": [
@@ -18,6 +20,7 @@
   "isArchived": false,
   "meta": null,
   "name": "Test scaicedo",
+  "nodeGroups": [],
   "nodes": [
     {
       "parameters": {},
@@ -50,12 +53,13 @@
   "repo_owner": "Canice-James",
   "repo_path": "workflows/",
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "availableInMCP": true
   },
   "shared": [
     {
-      "createdAt": "2026-06-09T13:45:35.850Z",
       "updatedAt": "2026-06-09T13:45:35.850Z",
+      "createdAt": "2026-06-09T13:45:35.850Z",
       "role": "workflow:owner",
       "workflowId": "d9bObHFMbXdFLDZa",
       "projectId": "SkRIbEuclHCvj5yP"
@@ -64,6 +68,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-06-17T14:22:35.414Z",
+  "updatedAt": "2026-08-14T14:59:41.978Z",
   "versionId": "1a91972f-eb61-4180-b3fb-d397a0bd9177"
 }
