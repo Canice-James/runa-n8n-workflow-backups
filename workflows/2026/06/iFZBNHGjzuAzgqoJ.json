@@ -1,11 +1,14 @@
 {
   "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {},
   "createdAt": "2026-06-11T13:14:37.811Z",
   "id": "iFZBNHGjzuAzgqoJ",
   "isArchived": true,
   "meta": null,
   "name": "Test Alejo acc",
+  "nodeGroups": [],
   "nodes": [],
   "pinData": {},
   "repo_name": "runa-n8n-workflow-backups",
@@ -16,8 +19,8 @@
   },
   "shared": [
     {
-      "createdAt": "2026-06-11T13:14:37.811Z",
       "updatedAt": "2026-06-11T13:14:37.811Z",
+      "createdAt": "2026-06-11T13:14:37.811Z",
       "role": "workflow:owner",
       "workflowId": "iFZBNHGjzuAzgqoJ",
       "projectId": "fN0E0e6iCVFpOUn8"
