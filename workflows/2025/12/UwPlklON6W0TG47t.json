@@ -1,5 +1,7 @@
 {
   "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {
     "Get yesterday's email delivery ": {
       "main": [
@@ -233,6 +235,7 @@
     "templateCredsSetupCompleted": true
   },
   "name": "SLLV Guardians",
+  "nodeGroups": [],
   "nodes": [
     {
       "parameters": {
@@ -1061,12 +1064,13 @@
   "settings": {
     "executionOrder": "v1",
     "timezone": "America/Antigua",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
   },
   "shared": [
     {
-      "createdAt": "2025-12-16T01:58:06.138Z",
       "updatedAt": "2025-12-16T01:58:06.138Z",
+      "createdAt": "2025-12-16T01:58:06.138Z",
       "role": "workflow:owner",
       "workflowId": "UwPlklON6W0TG47t",
       "projectId": "SkRIbEuclHCvj5yP"
@@ -1097,6 +1101,6 @@
   },
   "tags": [],
   "triggerCount": 4,
-  "updatedAt": "2026-08-10T18:53:55.369Z",
+  "updatedAt": "2026-08-14T14:59:41.978Z",
   "versionId": "fbc20582-6166-4183-b44b-f9313515103c"
 }
