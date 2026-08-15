@@ -1,5 +1,7 @@
 {
   "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {
     "Get yesterday's email delivery ": {
       "main": [
@@ -233,6 +235,7 @@
     "templateCredsSetupCompleted": true
   },
   "name": "CFC Guardians",
+  "nodeGroups": [],
   "nodes": [
     {
       "parameters": {
@@ -1061,12 +1064,13 @@
   "settings": {
     "executionOrder": "v1",
     "timezone": "America/Antigua",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
   },
   "shared": [
     {
-      "createdAt": "2025-12-16T03:50:41.208Z",
       "updatedAt": "2025-12-16T03:50:41.208Z",
+      "createdAt": "2025-12-16T03:50:41.208Z",
       "role": "workflow:owner",
       "workflowId": "TPSMdBewSEuxraDA",
       "projectId": "SkRIbEuclHCvj5yP"
@@ -1097,6 +1101,6 @@
   },
   "tags": [],
   "triggerCount": 4,
-  "updatedAt": "2026-08-10T18:53:53.580Z",
+  "updatedAt": "2026-08-14T14:59:41.978Z",
   "versionId": "473d37c0-e27f-49a9-af1a-5b692f9bf2b9"
 }
