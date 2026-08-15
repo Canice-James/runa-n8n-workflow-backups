@@ -1,5 +1,7 @@
 {
   "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {
     "Get yesterday's email delivery ": {
       "main": [
@@ -233,6 +235,7 @@
     "templateCredsSetupCompleted": true
   },
   "name": "IGN Guardians",
+  "nodeGroups": [],
   "nodes": [
     {
       "parameters": {
@@ -1061,12 +1064,13 @@
   "settings": {
     "executionOrder": "v1",
     "timezone": "America/Antigua",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
   },
   "shared": [
     {
-      "createdAt": "2025-12-16T04:02:05.350Z",
       "updatedAt": "2025-12-16T04:02:05.350Z",
+      "createdAt": "2025-12-16T04:02:05.350Z",
       "role": "workflow:owner",
       "workflowId": "9aJaiVr52GAAB9CT",
       "projectId": "SkRIbEuclHCvj5yP"
@@ -1097,6 +1101,6 @@
   },
   "tags": [],
   "triggerCount": 4,
-  "updatedAt": "2025-12-16T04:07:54.348Z",
+  "updatedAt": "2026-08-14T14:59:41.978Z",
   "versionId": "69d5e6f9-fd02-4164-9c59-57514be2a312"
 }
