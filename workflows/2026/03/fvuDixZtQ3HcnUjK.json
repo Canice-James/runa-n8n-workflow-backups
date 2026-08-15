@@ -1,23 +1,27 @@
 {
   "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {},
   "createdAt": "2026-03-05T22:22:11.041Z",
   "id": "fvuDixZtQ3HcnUjK",
   "isArchived": false,
   "meta": null,
   "name": "BG Launch Validation",
+  "nodeGroups": [],
   "nodes": [],
   "pinData": {},
   "repo_name": "runa-n8n-workflow-backups",
   "repo_owner": "Canice-James",
   "repo_path": "workflows/",
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "availableInMCP": true
   },
   "shared": [
     {
-      "createdAt": "2026-03-05T22:22:11.041Z",
       "updatedAt": "2026-03-05T22:22:11.041Z",
+      "createdAt": "2026-03-05T22:22:11.041Z",
       "role": "workflow:owner",
       "workflowId": "fvuDixZtQ3HcnUjK",
       "projectId": "SkRIbEuclHCvj5yP"
@@ -26,6 +30,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-03-05T22:22:11.041Z",
+  "updatedAt": "2026-08-14T14:59:41.978Z",
   "versionId": "a0b41b3b-4889-4922-ba8e-ccc6ad492365"
 }
