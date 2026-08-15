@@ -1,5 +1,126 @@
 {
   "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-08-14T13:28:46.101Z",
+    "createdAt": "2026-08-14T13:28:46.101Z",
+    "versionId": "63f0f63e-7d48-4993-969f-5ddea222fb45",
+    "workflowId": "QhRpjoIrDud7uUQ9",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "RUNACS",
+          "responseMode": "lastNode",
+          "options": {
+            "rawBody": true
+          }
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "7522e509-6b30-4f54-bca7-631049016c29",
+        "name": "Webhook",
+        "webhookId": "d57ffeb9-c82e-4055-b9c7-0322ecdc6dcc"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "193268cd-6ba3-4c84-90e1-13b6e123a369",
+                "name": "newbody",
+                "value": "={{ $json.body.list.reduce((i, a)=> a.bar+i, \"\") }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          208,
+          0
+        ],
+        "id": "450c758c-3cfa-4300-b501-9f62e7481d77",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "jiraVersion": "server",
+          "project": {
+            "__rl": true,
+            "value": "10902",
+            "mode": "list",
+            "cachedResultName": "Global Marketing Operations"
+          },
+          "issueType": {
+            "__rl": true,
+            "value": "3",
+            "mode": "list",
+            "cachedResultName": "Task"
+          },
+          "summary": "=Test summary {{ $json.newbody }}",
+          "additionalFields": {
+            "description": "hello worls",
+            "reporter": {
+              "__rl": true,
+              "value": "canjames",
+              "mode": "list",
+              "cachedResultName": "Canice James"
+            }
+          }
+        },
+        "type": "n8n-nodes-base.jira",
+        "typeVersion": 1,
+        "position": [
+          416,
+          0
+        ],
+        "id": "be8dba41-f78c-4d99-9c52-5977a39e8d56",
+        "name": "Create an issue",
+        "credentials": {
+          "jiraSoftwareServerApi": {
+            "id": "7MgXJNgpxtJeD70Z",
+            "name": "Jira SW Server account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Create an issue",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "activeVersionId": "63f0f63e-7d48-4993-969f-5ddea222fb45",
   "connections": {
     "Webhook": {
       "main": [
@@ -31,6 +152,7 @@
     "templateCredsSetupCompleted": true
   },
   "name": "My workflow 2",
+  "nodeGroups": [],
   "nodes": [
     {
       "parameters": {
@@ -121,12 +243,13 @@
   "repo_owner": "Canice-James",
   "repo_path": "workflows/",
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "availableInMCP": true
   },
   "shared": [
     {
-      "createdAt": "2025-09-04T18:16:06.124Z",
       "updatedAt": "2025-09-04T18:16:06.124Z",
+      "createdAt": "2025-09-04T18:16:06.124Z",
       "role": "workflow:owner",
       "workflowId": "QhRpjoIrDud7uUQ9",
       "projectId": "SkRIbEuclHCvj5yP"
@@ -135,6 +258,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2025-09-04T19:06:28.299Z",
+  "updatedAt": "2026-08-14T14:59:41.978Z",
   "versionId": "63f0f63e-7d48-4993-969f-5ddea222fb45"
 }
