@@ -1,5 +1,7 @@
 {
   "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {
     "Wait1": {
       "main": [
@@ -137,6 +139,7 @@
     "templateCredsSetupCompleted": true
   },
   "name": "Jira MAP Sync",
+  "nodeGroups": [],
   "nodes": [
     {
       "parameters": {
@@ -982,8 +985,8 @@
   },
   "shared": [
     {
-      "createdAt": "2026-04-20T20:50:37.435Z",
       "updatedAt": "2026-04-20T20:50:37.435Z",
+      "createdAt": "2026-04-20T20:50:37.435Z",
       "role": "workflow:owner",
       "workflowId": "hx5jYtQEdhmGad7t",
       "projectId": "SkRIbEuclHCvj5yP"
@@ -996,8 +999,8 @@
   },
   "tags": [
     {
-      "createdAt": "2026-05-28T16:41:19.349Z",
       "updatedAt": "2026-05-28T16:41:19.349Z",
+      "createdAt": "2026-05-28T16:41:19.349Z",
       "id": "LkakKvqKgfr1MWA0",
       "name": "MAP"
     }
