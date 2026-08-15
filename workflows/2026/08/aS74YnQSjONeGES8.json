@@ -1,5 +1,7 @@
 {
   "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {
     "Get Sender Scores from Everest": {
       "main": [
@@ -535,7 +537,7 @@
       "main": [
         [
           {
-            "node": "Create Alert Record",
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -546,7 +548,7 @@
       "main": [
         [
           {
-            "node": "Create Alert Record",
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -557,7 +559,7 @@
       "main": [
         [
           {
-            "node": "Create Alert Record",
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -583,6 +585,13 @@
         [
           {
             "node": "Share Alert Green",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Share Alert Blue",
             "type": "main",
             "index": 0
           }
@@ -614,7 +623,73 @@
         ],
         [
           {
-            "node": "Share Alert Blue",
+            "node": "Share Alert Blue1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert Red1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert Orange1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert Green1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert Blue": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert Blue1": {
+      "main": [
+        [
+          {
+            "node": "If1",
             "type": "main",
             "index": 0
           }
@@ -629,6 +704,7 @@
     "templateCredsSetupCompleted": true
   },
   "name": "Guardians Alerts - Test",
+  "nodeGroups": [],
   "nodes": [
     {
       "parameters": {
@@ -663,8 +739,8 @@
       "type": "n8n-nodes-base.baserow",
       "typeVersion": 1,
       "position": [
-        1616,
-        -544
+        1840,
+        -576
       ],
       "id": "016d8202-e26c-4605-b848-b76a0865fe06",
       "name": "Create Alert Record"
@@ -1323,7 +1399,7 @@
       "credentials": {
         "baserowApi": {
           "id": "MK0sZSY5DZaYOoTr",
-          "name": "Baserow account"
+          "name": "Baserow account - canjames"
         }
       }
     },
@@ -2257,20 +2333,6 @@
     },
     {
       "parameters": {
-        "content": "## DONE",
-        "height": 80
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        1600,
-        -672
-      ],
-      "id": "dcc9460d-ec71-476f-a666-91d094420f87",
-      "name": "Sticky Note3"
-    },
-    {
-      "parameters": {
         "rule": {
           "interval": [
             {
@@ -2284,7 +2346,7 @@
       "typeVersion": 1.2,
       "position": [
         32,
-        -192
+        -64
       ],
       "id": "432757f5-66cc-4eb6-b5fe-b2740ecd0109",
       "name": "6:45am Daily3"
@@ -2320,14 +2382,14 @@
       "typeVersion": 4.2,
       "position": [
         432,
-        -192
+        -64
       ],
       "id": "1eff386d-8c2d-48f1-9c6d-7b46e157942b",
       "name": "HTTP Request",
       "credentials": {
         "metabaseApi": {
           "id": "dwSjIoOcie0zoBsn",
-          "name": "Metabase account"
+          "name": "Metabase account - scaicedo"
         }
       }
     },
@@ -2339,25 +2401,11 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [
         -320,
-        -176
+        -48
       ],
       "typeVersion": 1,
       "id": "7e6aa3a4-ec4e-4df7-8217-3cb8e9f61619",
       "name": "Sticky Note8"
-    },
-    {
-      "parameters": {
-        "content": "## DONE",
-        "height": 80
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        1584,
-        -176
-      ],
-      "id": "fb28c9e9-bff9-42f7-9418-36bc9f1bcfbd",
-      "name": "Sticky Note9"
     },
     {
       "parameters": {
@@ -2380,20 +2428,20 @@
       "typeVersion": 1,
       "position": [
         224,
-        -192
+        -64
       ],
       "id": "7fa0bfbf-ff49-4682-8ad5-11ba8f41720a",
       "name": "Get brand info6",
       "credentials": {
         "baserowApi": {
           "id": "MK0sZSY5DZaYOoTr",
-          "name": "Baserow account"
+          "name": "Baserow account - canjames"
         }
       }
     },
     {
       "parameters": {
-        "channelId": "=x1gqsmndx789fbfea99wy1ifee",
+        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
         "message": "=",
         "attachments": [
           {
@@ -2425,7 +2473,7 @@
     },
     {
       "parameters": {
-        "channelId": "=x1gqsmndx789fbfea99wy1ifee",
+        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
         "message": "=",
         "attachments": [
           {
@@ -2457,7 +2505,7 @@
     },
     {
       "parameters": {
-        "channelId": "=x1gqsmndx789fbfea99wy1ifee",
+        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
         "message": "=",
         "attachments": [
           {
@@ -2577,7 +2625,7 @@
       "typeVersion": 3.2,
       "position": [
         704,
-        -224
+        -96
       ],
       "id": "2ba9f7d5-7308-4b55-920d-fb427272d0e0",
       "name": "Switch1"
@@ -2596,11 +2644,12 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ $json.results.sender_score.trend[89].value }}",
+                    "leftValue": "={{ $json.results.sender_score.trend[89].value <= $json.results.sender_score.trend[88].value - 8 \n&&\n$json.results.sender_score.trend[89].value !== null \n&&\n$json.results.sender_score.trend[88].value !== null \n}}",
                     "rightValue": "={{ $json.results.sender_score.trend[88].value - 8}}",
                     "operator": {
-                      "type": "number",
-                      "operation": "lte"
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
                     },
                     "id": "7d676332-9744-40f8-aa7e-5d72c1658444"
                   }
@@ -2621,7 +2670,7 @@
                 "conditions": [
                   {
                     "id": "1fd5cce0-33c5-4d32-89fa-6128d87334a2",
-                    "leftValue": "={{\n  $json.results.sender_score.trend[89].value > $json.results.sender_score.trend[88].value - 8\n  &&\n  $json.results.sender_score.trend[89].value <= $json.results.sender_score.trend[88].value - 4\n}}",
+                    "leftValue": "={{\n  $json.results.sender_score.trend[89].value > $json.results.sender_score.trend[88].value - 8\n  &&\n  $json.results.sender_score.trend[89].value <= $json.results.sender_score.trend[88].value - 4\n  &&\n$json.results.sender_score.trend[89].value !== null \n  &&\n$json.results.sender_score.trend[88].value !== null \n}}",
                     "rightValue": "=",
                     "operator": {
                       "type": "boolean",
@@ -2634,12 +2683,37 @@
               },
               "renameOutput": true,
               "outputKey": "orange"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "088aecbf-e0b9-4e2a-9f9e-a28c5800a4b2",
+                    "leftValue": "={{ $json.results.sender_score.trend[89].value > $json.results.sender_score.trend[88].value - 4 \n&&\n$json.results.sender_score.trend[89].value !== null \n&&\n$json.results.sender_score.trend[88].value !== null \n}}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "green"
             }
           ]
         },
         "options": {
           "fallbackOutput": "extra",
-          "renameFallbackOutput": "green"
+          "renameFallbackOutput": "blue"
         }
       },
       "type": "n8n-nodes-base.switch",
@@ -2653,7 +2727,7 @@
     },
     {
       "parameters": {
-        "channelId": "=x1gqsmndx789fbfea99wy1ifee",
+        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
         "message": "=",
         "attachments": [
           {
@@ -2670,7 +2744,7 @@
       "typeVersion": 1,
       "position": [
         1024,
-        -272
+        -144
       ],
       "id": "dd7bc03d-bc4d-427a-9cfc-4ab4e8fe1323",
       "name": "Share Alert Red1",
@@ -2685,7 +2759,7 @@
     },
     {
       "parameters": {
-        "channelId": "=x1gqsmndx789fbfea99wy1ifee",
+        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
         "message": "=",
         "attachments": [
           {
@@ -2702,7 +2776,7 @@
       "typeVersion": 1,
       "position": [
         1280,
-        -192
+        -64
       ],
       "id": "d49700a9-af80-41b9-9e9b-25740dc2a167",
       "name": "Share Alert Orange1",
@@ -2717,7 +2791,7 @@
     },
     {
       "parameters": {
-        "channelId": "=x1gqsmndx789fbfea99wy1ifee",
+        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
         "message": "=",
         "attachments": [
           {
@@ -2734,7 +2808,7 @@
       "typeVersion": 1,
       "position": [
         1024,
-        -112
+        16
       ],
       "id": "0de3f8bb-4bfa-443f-bc4e-33aa7d3bbd16",
       "name": "Share Alert Green1",
@@ -2749,7 +2823,107 @@
     },
     {
       "parameters": {
-        "channelId": "=x1gqsmndx789fbfea99wy1ifee",
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "71de3d5e-87b2-4959-93ef-d7b64ab1ebdb",
+              "leftValue": true,
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1568,
+        -576
+      ],
+      "id": "ad56e1ad-ebe4-496a-90c3-7704f1f04364",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "71de3d5e-87b2-4959-93ef-d7b64ab1ebdb",
+              "leftValue": true,
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1648,
+        -64
+      ],
+      "id": "dec04e2d-d7cb-48f7-a15e-30e871845798",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=The database was not populated today.",
+            "footer": "=MarkOps notificate this: @{{ $('Get brand info').item.json['Supervisor Mattermost'] }}",
+            "title": "={{ $('Get brand info').item.json.Name }} {{ \n  $if(\n    $('Get Sender Scores from Everest1').isExecuted,\n    'Mail2',\n    'Mail1'\n  )\n}} Sender Score not Populated",
+            "color": "#001EFF"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        -320
+      ],
+      "id": "70d749c0-56f6-4242-b1ea-5b9188347c13",
+      "name": "Share Alert Blue",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
         "message": "=",
         "attachments": [
           {
@@ -2765,11 +2939,11 @@
       "type": "n8n-nodes-base.mattermost",
       "typeVersion": 1,
       "position": [
-        1248,
-        32
+        1280,
+        96
       ],
       "id": "1d31da18-00d4-4d6a-af2a-ce5125f66df0",
-      "name": "Share Alert Blue",
+      "name": "Share Alert Blue1",
       "executeOnce": false,
       "alwaysOutputData": false,
       "credentials": {
@@ -2787,12 +2961,14 @@
   "settings": {
     "executionOrder": "v1",
     "timezone": "America/Antigua",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true,
+    "binaryMode": "separate"
   },
   "shared": [
     {
-      "createdAt": "2026-08-10T20:29:52.283Z",
       "updatedAt": "2026-08-10T20:29:52.283Z",
+      "createdAt": "2026-08-10T20:29:52.283Z",
       "role": "workflow:owner",
       "workflowId": "aS74YnQSjONeGES8",
       "projectId": "SkRIbEuclHCvj5yP"
@@ -2823,6 +2999,6 @@
   },
   "tags": [],
   "triggerCount": 7,
-  "updatedAt": "2026-08-13T20:41:25.144Z",
-  "versionId": "36ac128c-8fe6-4983-80aa-8e0e18cad137"
+  "updatedAt": "2026-08-14T17:03:45.959Z",
+  "versionId": "5efd9987-87b3-4307-8052-eb3b6dbbed66"
 }
