@@ -1,5 +1,7 @@
 {
   "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
   "connections": {
     "Get yesterday's email delivery ": {
       "main": [
@@ -233,6 +235,7 @@
     "templateCredsSetupCompleted": true
   },
   "name": "BVD Guardians",
+  "nodeGroups": [],
   "nodes": [
     {
       "parameters": {
@@ -1061,12 +1064,13 @@
   "settings": {
     "executionOrder": "v1",
     "timezone": "America/Antigua",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
   },
   "shared": [
     {
-      "createdAt": "2025-12-02T21:55:17.259Z",
       "updatedAt": "2025-12-02T21:55:17.259Z",
+      "createdAt": "2025-12-02T21:55:17.259Z",
       "role": "workflow:owner",
       "workflowId": "dWjLwNU8h9N6lJs7",
       "projectId": "SkRIbEuclHCvj5yP"
@@ -1097,6 +1101,6 @@
   },
   "tags": [],
   "triggerCount": 4,
-  "updatedAt": "2026-08-10T18:53:56.636Z",
+  "updatedAt": "2026-08-14T14:59:41.978Z",
   "versionId": "bec9b50c-ae2f-4a34-9951-a58145e79f98"
 }
