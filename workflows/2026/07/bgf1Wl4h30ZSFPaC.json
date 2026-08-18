@@ -735,6 +735,11 @@
             "node": "Loop Over Items",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "__CUSTOM_API_CALL__ credential",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -1035,7 +1040,7 @@
       "credentials": {
         "n8nApi": {
           "id": "mkIknOTSq3DOp5UH",
-          "name": "n8n account"
+          "name": "N8N - api"
         }
       }
     },
@@ -1080,9 +1085,10 @@
       "parameters": {
         "conditions": {
           "options": {
-            "leftValue": "",
             "caseSensitive": true,
-            "typeValidation": "strict"
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
           },
           "combinator": "and",
           "conditions": [
@@ -1234,7 +1240,7 @@
       "credentials": {
         "githubApi": {
           "id": "kDcTPrBOTVrQTTu2",
-          "name": "GitHub account"
+          "name": "GitHub account external - canjames"
         }
       }
     },
@@ -1268,7 +1274,7 @@
       "credentials": {
         "githubApi": {
           "id": "kDcTPrBOTVrQTTu2",
-          "name": "GitHub account"
+          "name": "GitHub account external - canjames"
         }
       }
     },
@@ -1408,7 +1414,7 @@
       "credentials": {
         "githubApi": {
           "id": "kDcTPrBOTVrQTTu2",
-          "name": "GitHub account"
+          "name": "GitHub account external - canjames"
         }
       },
       "continueOnFail": true
@@ -1448,6 +1454,27 @@
         848
       ],
       "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "resource": "credential",
+        "operation": "__CUSTOM_API_CALL__",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        288
+      ],
+      "id": "3e4d13a8-3221-46ae-9c07-f88f62e83922",
+      "name": "__CUSTOM_API_CALL__ credential",
+      "credentials": {
+        "n8nApi": {
+          "id": "mkIknOTSq3DOp5UH",
+          "name": "N8N - api"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -1456,7 +1483,8 @@
   "repo_path": "workflows/",
   "settings": {
     "executionOrder": "v1",
-    "availableInMCP": true
+    "availableInMCP": true,
+    "binaryMode": "separate"
   },
   "shared": [
     {
@@ -1477,8 +1505,15 @@
       ]
     }
   },
-  "tags": [],
+  "tags": [
+    {
+      "updatedAt": "2026-08-14T13:51:03.329Z",
+      "createdAt": "2026-08-14T13:51:03.329Z",
+      "id": "JWtVIjEu3si5Nrpx",
+      "name": "Automation"
+    }
+  ],
   "triggerCount": 1,
-  "updatedAt": "2026-08-14T14:59:41.978Z",
-  "versionId": "ad506eff-046d-4570-bb77-745c9c18e915"
+  "updatedAt": "2026-08-17T21:25:15.333Z",
+  "versionId": "9a76d9f3-a5a7-45c7-87fb-2822bbd3f1b6"
 }
