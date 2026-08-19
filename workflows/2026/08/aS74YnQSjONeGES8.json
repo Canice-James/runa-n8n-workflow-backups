@@ -180,12 +180,12 @@
       "main": [
         [
           {
-            "node": "Get Sender Scores from Everest",
+            "node": "If2",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Get Sender Scores from Everest1",
+            "node": "If3",
             "type": "main",
             "index": 0
           }
@@ -695,6 +695,28 @@
           }
         ]
       ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Get Sender Scores from Everest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Get Sender Scores from Everest1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2026-08-10T20:29:52.283Z",
@@ -827,8 +849,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -320,
-        -560
+        -480,
+        -576
       ],
       "typeVersion": 1,
       "id": "10d51d2d-929f-42a4-b5a4-df3cb78d63ed",
@@ -1391,7 +1413,7 @@
       "type": "n8n-nodes-base.baserow",
       "typeVersion": 1,
       "position": [
-        208,
+        -48,
         -576
       ],
       "id": "012e0f0a-0c01-4c0e-8988-69012c2ea8ab",
@@ -1573,7 +1595,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        16,
+        -224,
         -576
       ],
       "id": "32a4cfec-cccd-43b6-abf3-2b7b3a66f4ea",
@@ -2522,7 +2544,7 @@
       "typeVersion": 1,
       "position": [
         1136,
-        -432
+        -448
       ],
       "id": "e7d5fa08-fe72-4f2e-88da-9643bcd12f63",
       "name": "Share Alert Green",
@@ -2896,8 +2918,8 @@
         "attachments": [
           {
             "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-            "text": "=The database was not populated today.",
-            "footer": "=MarkOps notificate this: @{{ $('Get brand info').item.json['Supervisor Mattermost'] }}",
+            "text": "=The sender score was not populated today.",
+            "footer": "=@{{ $('Get brand info').item.json['Supervisor Mattermost'] }} notifies @slastra of the new IP",
             "title": "={{ $('Get brand info').item.json.Name }} {{ \n  $if(\n    $('Get Sender Scores from Everest1').isExecuted,\n    'Mail2',\n    'Mail1'\n  )\n}} Sender Score not Populated",
             "color": "#001EFF"
           }
@@ -2952,6 +2974,74 @@
           "name": "CRM Bot"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "71de3d5e-87b2-4959-93ef-d7b64ab1ebdb",
+              "leftValue": "={{ $json['Mail1 IP Address'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        256,
+        -656
+      ],
+      "id": "65cc89b9-6fc0-40ed-a5b1-53151647efa0",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "71de3d5e-87b2-4959-93ef-d7b64ab1ebdb",
+              "leftValue": "={{ $json['Mail2 IP Address'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        256,
+        -480
+      ],
+      "id": "5e7efc21-5d73-4570-80a3-78932c43b56a",
+      "name": "If3"
     }
   ],
   "pinData": {},
@@ -2999,6 +3089,6 @@
   },
   "tags": [],
   "triggerCount": 7,
-  "updatedAt": "2026-08-14T17:03:45.959Z",
-  "versionId": "5efd9987-87b3-4307-8052-eb3b6dbbed66"
+  "updatedAt": "2026-08-18T20:53:19.106Z",
+  "versionId": "ab408c68-d2ff-4ba1-89f0-cb412c931846"
 }
