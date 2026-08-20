@@ -1,0 +1,272 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-08-19T22:26:49.650Z",
+    "createdAt": "2026-08-19T22:26:31.899Z",
+    "versionId": "eff3b06a-08f5-4a3e-8f98-e0a8784cce1f",
+    "workflowId": "kSW3D4KClwkj7vno",
+    "nodes": [
+      {
+        "parameters": {
+          "resource": "user",
+          "operation": "getAll",
+          "additionalFields": {
+            "sort": "=username"
+          }
+        },
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          16,
+          -48
+        ],
+        "id": "9a498e2f-da45-444d-8b99-b07ae9cb6afa",
+        "name": "Share Alert6",
+        "executeOnce": true,
+        "alwaysOutputData": false,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://chat-ru.corp-apps.com/api/v4/users/username/{{ $json.body.username }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "mattermostApi",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": []
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          512,
+          -48
+        ],
+        "id": "a9c63ba2-4b7c-4167-bc01-6295a2dc2fe2",
+        "name": "HTTP Request",
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "c26ebf1d-aae8-4f39-86b9-b1437a171703",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          320,
+          -48
+        ],
+        "id": "2fe63fb6-346a-4f39-82cc-1866a48d414d",
+        "name": "Webhook",
+        "webhookId": "c26ebf1d-aae8-4f39-86b9-b1437a171703"
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={\n  \"id\": \"{{ $json.id }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          688,
+          -48
+        ],
+        "id": "d135cfbf-4a63-4342-ae9f-3b71475f5da5",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Share Alert6": {
+        "main": [
+          []
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Canice James",
+    "name": "Version eff3b06a",
+    "description": "",
+    "autosaved": true
+  },
+  "activeVersionId": "eff3b06a-08f5-4a3e-8f98-e0a8784cce1f",
+  "connections": {
+    "Share Alert6": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-08-19T20:59:27.207Z",
+  "id": "kSW3D4KClwkj7vno",
+  "isArchived": false,
+  "meta": null,
+  "name": "MarDesk",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "getAll",
+        "additionalFields": {
+          "sort": "=username"
+        }
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        944,
+        -16
+      ],
+      "id": "9a498e2f-da45-444d-8b99-b07ae9cb6afa",
+      "name": "Share Alert6",
+      "executeOnce": true,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://chat-ru.corp-apps.com/api/v4/users/username/{{ $json.body.username }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mattermostApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        512,
+        -48
+      ],
+      "id": "a9c63ba2-4b7c-4167-bc01-6295a2dc2fe2",
+      "name": "HTTP Request",
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "c26ebf1d-aae8-4f39-86b9-b1437a171703",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        -48
+      ],
+      "id": "2fe63fb6-346a-4f39-82cc-1866a48d414d",
+      "name": "Webhook",
+      "webhookId": "c26ebf1d-aae8-4f39-86b9-b1437a171703"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"id\": \"{{ $json.id }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        688,
+        -48
+      ],
+      "id": "d135cfbf-4a63-4342-ae9f-3b71475f5da5",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-08-19T20:59:27.207Z",
+      "createdAt": "2026-08-19T20:59:27.207Z",
+      "role": "workflow:owner",
+      "workflowId": "kSW3D4KClwkj7vno",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-08-19T22:28:12.631Z",
+  "versionId": "e3f35ae6-ea44-4374-8576-7e2bd4c44cec"
+}
