@@ -3,6 +3,17 @@
   "activeVersion": null,
   "activeVersionId": null,
   "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Jira > Post Error Comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "On form submission": {
       "main": [
         [
@@ -128,6 +139,17 @@
       "main": [
         [
           {
+            "node": "Prepare Loop Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Loop Context": {
+      "main": [
+        [
+          {
             "node": "Wait 5s",
             "type": "main",
             "index": 0
@@ -166,6 +188,17 @@
             "index": 0
           }
         ],
+        [
+          {
+            "node": "Validate Retry Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Retry Limit": {
+      "main": [
         [
           {
             "node": "Wait 5s",
@@ -224,11 +257,6 @@
         [
           {
             "node": "Screenshot > Short File",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Screenshot > Long Copy",
             "type": "main",
             "index": 0
           }
@@ -306,7 +334,7 @@
   "id": "zpLdlBdOpViUTGWg",
   "isArchived": false,
   "meta": null,
-  "name": "OSN Notification Automation (Refactored v1.5)",
+  "name": "OSN Notification Automation (Refactored)",
   "nodeGroups": [],
   "nodes": [
     {
@@ -326,12 +354,12 @@
       "type": "n8n-nodes-base.formTrigger",
       "typeVersion": 2.6,
       "position": [
-        -13936,
-        -96
+        -36128,
+        -2064
       ],
-      "id": "0de59bad-2068-487a-a736-9a13ba08804e",
+      "id": "5387506c-5f3f-4cff-9274-ae16a5c76b84",
       "name": "On form submission",
-      "webhookId": "a97cf9a6-b9fe-410d-b68b-2d4821fc7653"
+      "webhookId": "0fe84cf5-4aa2-4404-bfb6-ea14d37840c1"
     },
     {
       "parameters": {
@@ -340,13 +368,13 @@
         "issueKey": "={{ $json['MAP Ticket'] }}",
         "additionalFields": {}
       },
-      "id": "6f954a22-f65e-4a89-979e-0fa3cc1b6d7d",
+      "id": "f493be57-8b45-4cc9-b713-9b6c5027cbf0",
       "name": "Jira > Get Issue",
       "type": "n8n-nodes-base.jira",
       "typeVersion": 1,
       "position": [
-        -13712,
-        -96
+        -35904,
+        -2064
       ],
       "credentials": {
         "jiraSoftwareServerApi": {
@@ -366,13 +394,13 @@
         "jsonBody": "={\n  \"issueKey\": \"{{ $('Jira > Get Issue').item.json.key }}\"\n}",
         "options": {}
       },
-      "id": "43dc07c4-ed16-4342-bbfb-3afac499e1f1",
+      "id": "5135dca0-b7ca-460d-a042-1ece3010dbeb",
       "name": "Naming Conventions API",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -13488,
-        -96
+        -35680,
+        -2064
       ],
       "credentials": {
         "httpBearerAuth": {
@@ -391,24 +419,23 @@
             "fields": [
               {
                 "field": 5176,
-                "value": "={{ { 'CAFE CASINO': 'CFC', 'BVD': 'BVD', 'BVX': 'BVX', 'IGN': 'IGN', 'JOE FORTUNE': 'JFN', 'OZOON': 'BDG', 'RBL': 'RBL', 'SLOTS': 'SLLV' }[$('Jira > Get Issue').item.json.fields.customfield_11504[0].value] || $('Jira > Get Issue').item.json.fields.customfield_11504[0].value }}"
+                "value": "={{ (() => { const rawInput = $('Jira > Get Issue').item.json.fields?.customfield_11504?.[0]?.value || ''; const cleanInput = rawInput.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9]/g, ''); const brandAliasMap = { 'bvd': 'BVD', 'bovada': 'BVD', 'bvx': 'BVX', 'playbvx': 'BVX', 'cafecasino': 'CFC', 'cafe': 'CFC', 'cfc': 'CFC', 'ign': 'IGN', 'ignition': 'IGN', 'ignitioncasino': 'IGN', 'joefortune': 'JFN', 'joe': 'JFN', 'jfn': 'JFN', 'ozoon': 'OZN', 'ozn': 'OZN', 'bodog': 'OZN', 'rbl': 'RBL', 'rebel': 'RBL', 'luckyrebel': 'RBL', 'slots': 'SLLV', 'slotslv': 'SLLV', 'sllv': 'SLLV' }; return brandAliasMap[cleanInput] || rawInput.trim().toUpperCase(); })() }}"
               },
               {
                 "field": 5177,
                 "value": "={{ $('Jira > Get Issue').item.json.fields.customfield_11507[0].value }}"
               }
             ]
-          },
-          "filterType": "AND"
+          }
         }
       },
       "type": "n8n-nodes-base.baserow",
       "typeVersion": 1.1,
       "position": [
-        -13264,
-        -96
+        -35456,
+        -2064
       ],
-      "id": "404586ec-45b4-481f-847b-a7d5c4853dbf",
+      "id": "e13424a2-683d-449d-83c8-6c0db55ccbd6",
       "name": "Get Baserow Config",
       "credentials": {
         "baserowApi": {
@@ -425,13 +452,13 @@
         "genericAuthType": "httpCustomAuth",
         "options": {}
       },
-      "id": "b802509e-e670-4869-971b-37bb0889bb97",
+      "id": "15acc25c-3b36-41fb-bc9b-72b0ed603d2d",
       "name": "CMS & MM Login",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -13040,
-        -96
+        -35232,
+        -2064
       ],
       "credentials": {
         "httpCustomAuth": {
@@ -443,15 +470,15 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const jiraBrand = $('Jira > Get Issue').item.json.fields?.customfield_11504?.[0]?.value;\nconst jiraRegion = $('Jira > Get Issue').item.json.fields?.customfield_11507?.[0]?.value;\n\nconst mappingTable = {\n  \"BVD\": { region: \"UFM\", regionId: \"3619feea-27fe-4ce5-b3fd-c67ad37fd601\", brandName: \"Bovada\", brandCode: \"BVD\", bucket: \"Default\", territory: \"DEFAULT\", domain: \"bovada.lv\" },\n  \"BVX\": { region: \"UFM\", regionId: \"f18c0794-2606-4e78-ab97-c20d8480330b\", brandName: \"BVX\", brandCode: \"BVX\", bucket: \"Default\", territory: \"DEFAULT\", domain: \"playbvx.lv\" },\n  \"CAFE CASINO\": { region: \"UFM\", regionId: \"7b25844b-cafa-41b4-a1bf-b05da0b9aeb6\", brandName: \"CafeCasino\", brandCode: \"CFC\", bucket: \"Default\", territory: \"DEFAULT\", domain: \"cafecasino.lv\" },\n  \"IGN\": {\n    \"UFM\": { regionId: \"3451d0c2-b1af-11e8-96f8-529269fb1459\", brandName: \"IgnitionCasino\", brandCode: \"IGN\", bucket: \"Default\", territory: \"DEFAULT\", domain: \"ignitioncasino.eu\" },\n    \"AUS\": { regionId: \"c6472782-b026-11e8-96f8-529269fb1459\", brandName: \"IgnitionCasino\", brandCode: \"IGN\", bucket: \"Default\", territory: \"DEFAULT\", domain: \"ignitioncasino.ooo\" },\n    \"LATAM\": { regionId: \"ca15924b-653e-4f90-84cc-fab313852a8e\", brandName: \"Bodog\", brandCode: \"BDG\", bucket: \"Latam\", territory: \"LATAM\", domain: \"ignitionpoker.com\" }\n  },\n  \"JOE FORTUNE\": { region: \"AUS\", regionId: \"5ad12f9e-94dc-11e8-9eb6-529269fb1459\", brandName: \"JoeFortune\", brandCode: \"JFN\", bucket: \"Default\", territory: \"DEFAULT\", domain: \"joefortune.win\" },\n  \"OZOON\": { region: \"CAN\", regionId: \"879370bf-0480-458b-a3ad-11e7138eac30\", brandName: \"Bodog\", brandCode: \"BDG\", bucket: \"Canada\", territory: \"CANADA\", domain: \"ozoon.eu\" },\n  \"RBL\": { region: \"UFM\", regionId: \"070f3d79-d2a9-4747-9fe7-a2fa74a39272\", brandName: \"Lucky Rebel\", brandCode: \"RBL\", bucket: \"Default\", territory: \"DEFAULT\", domain: \"luckyrebel.la\" },\n  \"SLOTS\": {\n    \"UFM\": { regionId: \"660dae1a-b7cd-11e7-abc4-cec278b6b50a\", brandName: \"Slots LV\", brandCode: \"SLLV\", bucket: \"Default\", territory: \"DEFAULT\", domain: \"slots.lv\" },\n    \"CAN\": { regionId: \"660dab9a-b7cd-11e7-abc4-cec278b6b50a\", brandName: \"Slots LV\", brandCode: \"SLLV\", bucket: \"Default\", territory: \"DEFAULT\", domain: \"slots.lv\" }\n  }\n};\n\nlet resolved = jiraBrand ? mappingTable[jiraBrand] : null;\nif (resolved && !resolved.brandCode) {\n  resolved = jiraRegion ? resolved[jiraRegion] : null;\n}\n\nif (!resolved) {\n  throw new Error(`No mapping found for Jira Brand: ${jiraBrand}, Region: ${jiraRegion}`);\n}\n\nconst baserowData = $('Get Baserow Config').item.json;\nconst playerId = baserowData.PLAYER_ID || baserowData.field_5178;\nconst audienceCode = baserowData.AUDIENCE_CODE || baserowData.field_5179;\n\nif (!playerId || !audienceCode) {\n  throw new Error(`Missing PLAYER_ID or AUDIENCE_CODE in Baserow for ${jiraBrand} - ${jiraRegion}`);\n}\n\nconst cleanDomain = resolved.domain;\n\nreturn {\n  sessionId: $('CMS & MM Login').item.json.sessionId,\n  name: $('Naming Conventions API').item.json.name,\n  slug: $('Naming Conventions API').item.json.slug,\n  \n  brandCode: resolved.brandCode,\n  brandName: resolved.brandName,\n  region: jiraRegion || resolved.region,\n  regionId: resolved.regionId,\n  bucket: resolved.bucket,\n  territory: resolved.territory,\n  \n  playerId: playerId,\n  audienceCode: audienceCode,\n  \n  domain: cleanDomain,\n  loginUrl: `https://services.${cleanDomain}/services/login-service/v1/login`,\n  previewUrl: `https://preview.${cleanDomain}/account/messages`,\n  cookieDomain: `.${cleanDomain}`\n};"
+        "jsCode": "const jiraIssue = $('Jira > Get Issue').item.json;\nconst rawBrand = jiraIssue.fields?.customfield_11504?.[0]?.value || '';\nconst rawRegion = jiraIssue.fields?.customfield_11507?.[0]?.value || '';\n\nconst baserowData = $('Get Baserow Config').item.json;\n\nif (!baserowData || Object.keys(baserowData).length === 0) {\n  throw new Error(`No configuration found in Baserow for Brand: \"${rawBrand}\" and Region: \"${rawRegion}\". Please check Baserow records.`);\n}\n\nfunction extractVal(val) {\n  if (Array.isArray(val)) return val[0]?.value || val[0]?.id || val[0] || '';\n  if (val && typeof val === 'object') return val.value || val.id || val.name || '';\n  return String(val || '').trim();\n}\n\nconst brandCode = baserowData.Brand || baserowData.field_5176;\nconst brandName = baserowData.Brand_Name || rawBrand;\nconst region = (baserowData.Region || rawRegion || 'UFM').trim().toUpperCase();\nconst regionId = baserowData.Region_ID;\nconst domain = baserowData.Domain;\n\nconst playerId = extractVal(baserowData['PLAYER_ID 2'] || baserowData.PLAYER_ID || baserowData.field_5178);\nconst audienceCode = extractVal(baserowData.AUDIENCE_CODE || baserowData.field_5179);\n\nconst missing = [];\nif (!brandCode) missing.push('Brand');\nif (!regionId) missing.push('Region_ID');\nif (!domain) missing.push('Domain');\nif (!playerId) missing.push('PLAYER_ID');\nif (!audienceCode) missing.push('AUDIENCE_CODE');\n\nif (missing.length > 0) {\n  throw new Error(`Missing required fields in Baserow config for (${rawBrand} / ${region}): ${missing.join(', ')}`);\n}\n\nlet bucket = \"Default\";\nlet territory = \"DEFAULT\";\n\nif (region === \"LATAM\") {\n  bucket = \"Latam\";\n  territory = \"LATAM\";\n} else if (region === \"CAN\") {\n  bucket = \"Canada\";\n  territory = \"CANADA\";\n}\n\nconst cleanDomain = domain.trim();\nconst baseName = $('Naming Conventions API').item.json.name;\nconst baseSlug = $('Naming Conventions API').item.json.slug;\nconst runSuffix = Date.now().toString().slice(-4);\n\nreturn {\n  sessionId: $('CMS & MM Login').item.json.sessionId,\n  name: `${baseName} ${runSuffix}`,\n  slug: `${baseSlug}-${runSuffix}`,\n  \n  brandCode: brandCode,\n  brandName: brandName,\n  region: region,\n  regionId: regionId,\n  bucket: bucket,\n  territory: territory,\n  \n  playerId: playerId,\n  audienceCode: audienceCode,\n  \n  domain: cleanDomain,\n  loginUrl: `https://services.${cleanDomain}/services/login-service/v1/login`,\n  previewUrl: `https://preview.${cleanDomain}/account/messages`,\n  cookieDomain: `.${cleanDomain}`\n};"
       },
-      "id": "01146f7a-7306-4142-8116-82aa2ce5c1f7",
+      "id": "17e7f38b-d61e-4bc2-ab66-9fb61aef4135",
       "name": "OSN Dynamic Fields Mapping",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -12816,
-        -96
+        -35008,
+        -2064
       ]
     },
     {
@@ -463,13 +490,13 @@
         "download": true,
         "binaryProperty": "notification_image"
       },
-      "id": "0284966f-c0d3-4dea-9da1-7f3b280fa0ac",
+      "id": "eaf494a2-d317-4414-ab99-3f5f0455214c",
       "name": "Jira > Download Image",
       "type": "n8n-nodes-base.jira",
       "typeVersion": 1,
       "position": [
-        -12592,
-        -96
+        -34784,
+        -2064
       ],
       "credentials": {
         "jiraSoftwareServerApi": {
@@ -497,13 +524,13 @@
         },
         "options": {}
       },
-      "id": "a4fc0407-f408-459e-9adb-8de7ac13823d",
+      "id": "d5391ed6-706f-442e-8b5d-fe4b4a3d6a43",
       "name": "CMS > Upload Image",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -12368,
-        -96
+        -34560,
+        -2064
       ]
     },
     {
@@ -518,13 +545,13 @@
         "jsonBody": "= {\n  \"status\": \"published\",\n  \"contentType\": \"notification\",\n  \"publishAll\": false,\n  \"languages\": [\"en\"],\n  \"name\": \"{{ $('OSN Dynamic Fields Mapping').item.json.name }}\",\n  \"fields\": {\n    \"nonLocalised\": {\n      \"internal_name\": \"{{ $('OSN Dynamic Fields Mapping').item.json.name }}\",\n      \"slugname\": \"{{ $('OSN Dynamic Fields Mapping').item.json.slug }}\",\n      \"tags\": \"\"\n    },\n    \"localised\": {\n      \"en\": [\n        {\n          \"subject\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_26526 }}\",\n          \"notification_body\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_14907 }}\",\n          \"notification_url\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_12423 }}\",\n          \"notification_url_label\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_26527 }}\",\n          \"message_url\": \"/\",\n          \"message_url_label\": \"DEPOSIT NOW\",\n          \"notification_image\": {\n            \"url\": \"{{ '/cms' + ($('CMS > Upload Image').item.json[0]?.fileLocation || $('CMS > Upload Image').item.json.fileLocation) + ($('CMS > Upload Image').item.json[0]?.fileName || $('CMS > Upload Image').item.json.fileName) }}\",\n            \"alt\": \"Notification Image\"\n          },\n          \"message_body\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_26522 }}\",\n          \"version\": \"control\"\n        }\n      ]\n    },\n    \"review\": {}\n  },\n  \"actionType\": \"Publish\"\n}",
         "options": {}
       },
-      "id": "d1130c64-9ad8-43fd-ae51-47f9c83724eb",
+      "id": "bbe26fab-c954-46d2-ad72-4c0adbc918ee",
       "name": "CMS > Create Notification",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -12144,
-        -96
+        -34336,
+        -2064
       ]
     },
     {
@@ -534,26 +561,27 @@
         "genericAuthType": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
         "options": {}
       },
-      "id": "64bf36b7-f351-4c3f-b47a-4a04cf79f5da",
+      "id": "0094bc68-cd62-407c-8e07-a27d8aed5888",
       "name": "CMS > Get ContentId By Slug",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -11696,
-        -96
+        -33888,
+        -2064
       ]
     },
     {
       "parameters": {
-        "jsCode": "const brand = $('OSN Dynamic Fields Mapping').item.json.brandCode;\nconst region = $('OSN Dynamic Fields Mapping').item.json.region || \"UFM\";\nconst playerId = $('OSN Dynamic Fields Mapping').item.json.playerId;\nconst audienceCode = $('OSN Dynamic Fields Mapping').item.json.audienceCode;\nconst csvContent = `AUDIENCE_CODE,PLAYER_ID\\n${audienceCode},${playerId}`;\n\nreturn {\n  helpers: {\n    binary: {\n      createFromText: true\n    }\n  },\n  json: {\n    fileName: `${brand}-${region}.csv`\n  },\n  binary: {\n    audience_csv: {\n      data: btoa(csvContent),\n      mimeType: 'text/csv',\n      fileName: `${brand}-${region}.csv`\n    }\n  }\n};"
+        "mode": "runOnceForEachItem",
+        "jsCode": "const brand = String($('OSN Dynamic Fields Mapping').item.json.brandCode || '').trim();\nconst region = String($('OSN Dynamic Fields Mapping').item.json.region || 'UFM').trim();\nconst playerId = String($('OSN Dynamic Fields Mapping').item.json.playerId || '').trim();\nconst audienceCode = String($('OSN Dynamic Fields Mapping').item.json.audienceCode || '').trim();\n\nif (!playerId || !audienceCode || playerId === '[object Object]' || audienceCode === '[object Object]') {\n  throw new Error(`Invalid data to generate CSV. PlayerID: \"${playerId}\", AudienceCode: \"${audienceCode}\"`);\n}\n\n// Added strict CRLF \\r\\n and trailing newline required by some Java parsers\nconst csvString = `AUDIENCE_CODE,PLAYER_ID\\r\\n${audienceCode},${playerId}\\r\\n`;\n\nconst binaryData = await this.helpers.prepareBinaryData(\n  Buffer.from(csvString, 'utf-8'),\n  `${brand}-${region}.csv`,\n  'text/csv'\n);\n\nreturn {\n  json: {\n    fileName: `${brand}-${region}.csv`,\n    audienceCode,\n    playerId\n  },\n  binary: {\n    audience_csv: binaryData\n  }\n};"
       },
-      "id": "bc58d24b-094c-4f2b-bf22-3ff2e893edb3",
+      "id": "528d9c75-3e17-401a-b19e-b5a4483f97d4",
       "name": "MM > Generate Audience CSV",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -11472,
-        -96
+        -33664,
+        -2064
       ]
     },
     {
@@ -562,7 +590,7 @@
         "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v3/brands/{{ $('OSN Dynamic Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Dynamic Fields Mapping').item.json.territory }}/audience/upload",
         "sendHeaders": true,
         "specifyHeaders": "json",
-        "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
+        "jsonHeaders": "={\n  \"Authorization\": \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n}",
         "sendBody": true,
         "contentType": "multipart-form-data",
         "bodyParameters": {
@@ -576,13 +604,27 @@
         },
         "options": {}
       },
-      "id": "ab74aca2-d637-40e1-abc3-63e7d185a981",
+      "id": "6acfb305-4605-4189-8cfd-277be1d27376",
       "name": "MM > Upload Audience",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -11248,
-        -96
+        -33440,
+        -2064
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const uploadRes = $('MM > Upload Audience').item.json;\nconst jobId = uploadRes.jobId || uploadRes.id;\n\nif (!jobId) {\n  throw new Error('Valid jobId was not received when uploading audience to MM.');\n}\n\nreturn {\n  json: {\n    jobId: jobId,\n    retryCount: 0\n  }\n};"
+      },
+      "id": "34930776-219d-45ab-9e06-543d24945794",
+      "name": "Prepare Loop Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -33280,
+        -2064
       ]
     },
     {
@@ -590,19 +632,19 @@
         "amount": 5,
         "unit": "seconds"
       },
-      "id": "8920f082-1ebc-426e-a8dc-4f9d78638b96",
+      "id": "d9d74230-885d-4073-9560-3cdf71ee357b",
       "name": "Wait 5s",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1,
       "position": [
-        -11024,
-        -96
+        -33104,
+        -2064
       ],
       "webhookId": "701809de-bf23-4e25-9b98-c4d0a9780cb9"
     },
     {
       "parameters": {
-        "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v3/brands/{{ $('OSN Dynamic Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Dynamic Fields Mapping').item.json.territory }}/audience/upload/{{ $('MM > Upload Audience').item.json.jobId }}",
+        "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v3/brands/{{ $('OSN Dynamic Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Dynamic Fields Mapping').item.json.territory }}/audience/upload/{{ $('Prepare Loop Context').item.json.jobId }}",
         "sendHeaders": true,
         "specifyHeaders": "=json",
         "headerParameters": {
@@ -613,13 +655,13 @@
         "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
         "options": {}
       },
-      "id": "ea91d843-4fd4-4dcb-8cba-0e4b020847ea",
+      "id": "5a1b74b4-dcef-4a3f-a3f3-387093670f5a",
       "name": "MM > Check Status",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -10800,
-        -160
+        -32896,
+        -2064
       ]
     },
     {
@@ -627,19 +669,33 @@
         "conditions": {
           "string": [
             {
-              "value1": "={{ $json.status }}",
+              "value1": "={{ String($json.status || '').toUpperCase() }}",
               "value2": "SUCCESS"
             }
           ]
         }
       },
-      "id": "842566b1-5c1a-44e9-a799-72f69c93a406",
+      "id": "35363bc5-c112-41d1-8dd5-cf824626f072",
       "name": "Is SUCCESS?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        -10576,
-        -96
+        -32704,
+        -2064
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const status = String($json.status || '').toUpperCase();\nconst context = $('Prepare Loop Context').item.json;\ncontext.retryCount = (context.retryCount || 0) + 1;\n\nconst MAX_RETRIES = 12;\n\nif (status === 'FAILED' || status === 'ERROR') {\n  throw new Error(`Audience upload failed in MM with status: \"${status}\"`);\n}\n\nif (context.retryCount > MAX_RETRIES) {\n  throw new Error(`Timeout in MM: Audience status remained \"${status || 'UNKNOWN'}\" after ${MAX_RETRIES * 5} seconds.`);\n}\n\nreturn { json: context };"
+      },
+      "id": "9cb8def4-fe1e-44f8-adaf-02e4e58eb8c6",
+      "name": "Validate Retry Limit",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32704,
+        -1888
       ]
     },
     {
@@ -654,13 +710,13 @@
         "jsonBody": "= {\n  \"brandCode\": \"{{ $('OSN Dynamic Fields Mapping').item.json.brandCode }}\",\n  \"territory\": \"{{ $('OSN Dynamic Fields Mapping').item.json.territory }}\",\n  \"name\": \"INTERNALONLY {{ $('OSN Dynamic Fields Mapping').item.json.name }}\",\n  \"campaignStatus\": \"FINAL\",\n  \"campaignType\": \"REGULAR\",\n  \"jobStatus\": \"PENDING\",\n  \"divide\":{\n    \"type\": null,\n    \"splitNumbers\": null,\n    \"splitCriteria\": [],\n    \"filter\": null,\n    \"sampling\": 0\n  },\n  \"exclusions\":{\n    \"items\": [],\n    \"excludeOperator\": \"OR\"\n  },\n  \"segments\": [\n    {\n      \"name\": \"{{ $('MM > Check Status').item.json.audienceName }}\",\n      \"splitCriteria\":null,\n      \"activities\": [\n        {\n          \"type\": \"NOTIFICATION\",\n          \"notificationContentId\": \"{{ $('OSN Dynamic Fields Mapping').item.json.slug }}\",\n          \"expirationAmount\": \"30\",\n          \"expirationUnit\": \"DAYS\"\n        }\n      ]\n    }\n  ],\n  \"regionIds\": [\"{{ $('OSN Dynamic Fields Mapping').item.json.regionId }}\"],\n  \"audience\": \"{{ $('MM > Check Status').item.json.audienceId }}\",\n  \"audienceName\": \"{{ $('MM > Check Status').item.json.audienceName }}\",\n  \"uploadedAudience\": true,\n  \"scheduleConfiguration\": {\n    \"type\": \"ONE_TIME_NOW\"\n  },\n  \"createdBy\":\"{{ $('CMS & MM Login').item.json.userName }}\",\n  \"wizardSteps\":[\n    \"ADD_REGION\",\n    \"ADD_AUDIENCE\",\n    \"DIVIDE\",\n    \"ACTIVITIES\",\n    \"SCHEDULE\",\n    \"NAME_AND_SAVE\"\n  ]\n}",
         "options": {}
       },
-      "id": "f7c45d56-2d69-43de-a9db-ec9ea7109605",
+      "id": "d825dbb6-e6b2-40e1-884c-223b8abd03dc",
       "name": "MM > Create Campaign",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -10352,
-        -96
+        -32496,
+        -2064
       ]
     },
     {
@@ -671,13 +727,13 @@
         "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
         "options": {}
       },
-      "id": "5c99df6f-aa99-404e-bf51-ac4768ce7749",
+      "id": "0b535a75-a220-4261-8deb-a7873b1e893a",
       "name": "MM > Search Campaign",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -10128,
-        -96
+        -32304,
+        -2064
       ]
     },
     {
@@ -689,13 +745,13 @@
         "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
         "options": {}
       },
-      "id": "2be21da1-0d4f-46e1-91ad-a0baccb4ee34",
+      "id": "7556c122-a4c3-4895-ad8d-39f98eb3a2c2",
       "name": "MM > Activate Campaign",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -9904,
-        -96
+        -32096,
+        -2064
       ]
     },
     {
@@ -706,13 +762,13 @@
         "genericAuthType": "httpCustomAuth",
         "options": {}
       },
-      "id": "95e793d6-2fb3-421f-aeb0-395beca9a34d",
+      "id": "23feb3bb-b900-4a1e-9216-1ddd560d7d11",
       "name": "Casino > Login",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -9680,
-        -96
+        -31872,
+        -2064
       ],
       "credentials": {
         "httpCustomAuth": {
@@ -730,10 +786,10 @@
       "type": "n8n-nodes-browserless-api.browserless",
       "typeVersion": 1,
       "position": [
-        -9440,
-        -96
+        -31632,
+        -2064
       ],
-      "id": "2d8df2c8-40f9-4e1c-9d88-cc962e436e20",
+      "id": "8dce7aa8-5d27-406e-ab9f-4f28ac855427",
       "name": "Screenshot > Short Copy",
       "credentials": {
         "browserlessApi": {
@@ -751,10 +807,10 @@
       "type": "n8n-nodes-browserless-api.browserless",
       "typeVersion": 1,
       "position": [
-        -9232,
-        0
+        -31424,
+        -1968
       ],
-      "id": "5ba8e367-a68d-4d33-a78d-530e7264dfd9",
+      "id": "f66a842c-a15d-4181-961d-8e33da4641b7",
       "name": "Screenshot > Long Copy",
       "credentials": {
         "browserlessApi": {
@@ -768,13 +824,13 @@
         "mode": "runOnceForEachItem",
         "jsCode": "const screenshot = $json.data?.screenshot;\nif (!screenshot) {\n  throw new Error('Browserless response does not contain data.screenshot');\n}\n\nconst data = await this.helpers.prepareBinaryData(\n  Buffer.from(screenshot, 'base64'),\n  'notification-short.png',\n  'image/png'\n);\n\nreturn {\n  json: {\n    ...$json,\n    screenshotFileName: 'notification-short.png',\n  },\n  binary: {\n    data,\n  },\n};"
       },
-      "id": "f54a6bf4-95ea-493b-984e-844258237d58",
+      "id": "7814304c-8177-4a72-9262-5b9f7871f10f",
       "name": "Screenshot > Short File",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -9120,
-        -160
+        -31312,
+        -2128
       ]
     },
     {
@@ -782,13 +838,13 @@
         "mode": "runOnceForEachItem",
         "jsCode": "const screenshot = $json.data?.screenshot;\nif (!screenshot) {\n  throw new Error('Browserless response does not contain data.screenshot');\n}\n\nconst data = await this.helpers.prepareBinaryData(\n  Buffer.from(screenshot, 'base64'),\n  'notification-long.png',\n  'image/png'\n);\n\nreturn {\n  json: {\n    ...$json,\n    screenshotFileName: 'notification-long.png',\n  },\n  binary: {\n    data,\n  },\n};"
       },
-      "id": "68abba7a-830f-4345-84ff-7d74a53d1aed",
+      "id": "e06f49b1-417c-4e18-9979-4f374a2534ab",
       "name": "Screenshot > Long File",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -9008,
-        0
+        -31200,
+        -1968
       ]
     },
     {
@@ -797,13 +853,13 @@
         "resource": "issueAttachment",
         "issueKey": "={{ $('Jira > Get Issue').item.json.key }}"
       },
-      "id": "4522acfb-d958-422d-a908-734d242641dd",
+      "id": "2075f852-8379-42a7-9400-0f0ff5c7cccb",
       "name": "Jira > Attach Short",
       "type": "n8n-nodes-base.jira",
       "typeVersion": 1,
       "position": [
-        -8784,
-        -192
+        -30976,
+        -2160
       ],
       "credentials": {
         "jiraSoftwareServerApi": {
@@ -818,13 +874,13 @@
         "resource": "issueAttachment",
         "issueKey": "={{ $('Jira > Get Issue').item.json.key }}"
       },
-      "id": "0f0cddbe-c867-4460-83c7-e0c282df8db7",
+      "id": "a5a2157a-afd4-4645-8d98-f1874294531c",
       "name": "Jira > Attach Long",
       "type": "n8n-nodes-base.jira",
       "typeVersion": 1,
       "position": [
-        -8784,
-        0
+        -30976,
+        -1968
       ],
       "credentials": {
         "jiraSoftwareServerApi": {
@@ -839,13 +895,13 @@
         "combineBy": "combineByPosition",
         "options": {}
       },
-      "id": "992f1208-c439-4d02-825b-2a7fe762a863",
+      "id": "dfae92fa-ea9e-4506-b1b8-fa3c9a9a0d7d",
       "name": "Wait for Both Attachments",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -8560,
-        -96
+        -30752,
+        -2064
       ]
     },
     {
@@ -856,13 +912,47 @@
         "comment": "=Hi team [~{{ $('Jira > Get Issue').item.json.fields.assignee.name }}], notification ready.\n\n*Slug:* {{ $('Naming Conventions API').item.json.slug }}\n*CMS Edit Link:* https://contentmanager.intra-apps.com/content/edit/notification/{{ $('OSN Dynamic Fields Mapping').item.json.brandCode }}/{{ $('OSN Dynamic Fields Mapping').item.json.bucket.toLowerCase() }}/{{ $('CMS > Get ContentId By Slug').item.json.items[0].contentId }}\n\n*Short Copy:*\n!{{ $('Screenshot > Short File').item.json.screenshotFileName }}|thumbnail! \n\n*Long Copy:*\n!{{ $('Screenshot > Long File').item.json.screenshotFileName }}|thumbnail! \n\n----\n\nCheers!",
         "options": {}
       },
-      "id": "f9e6b9a4-a318-4eda-b163-c8ec235b9eec",
+      "id": "c8254085-0427-4dd1-85a4-d54e0a648c25",
       "name": "Jira > Post Evidence Comment",
       "type": "n8n-nodes-base.jira",
       "typeVersion": 1,
       "position": [
-        -8336,
-        -96
+        -30528,
+        -2064
+      ],
+      "credentials": {
+        "jiraSoftwareServerApi": {
+          "id": "7MgXJNgpxtJeD70Z",
+          "name": "Jira SW Server account - canjames"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "72592c2c-295c-41ad-a699-507b46b035c3",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -36128,
+        -1808
+      ]
+    },
+    {
+      "parameters": {
+        "jiraVersion": "server",
+        "resource": "issueComment",
+        "issueKey": "={{ $('On form submission').item.json['MAP Ticket'] || $('Jira > Get Issue').item.json.key }}",
+        "comment": "=❌ *Automation Failed*\n\nAn error occurred during workflow execution.\n\n*Failed Node:* {{ $json.execution.lastNodeExecuted }}\n*Error Details:* {{ $json.execution.error.message }}\n\nPlease review workflow logs and Baserow/Jira configuration.",
+        "options": {}
+      },
+      "id": "b1d6b550-aced-4a13-bdd7-74c56db5f564",
+      "name": "Jira > Post Error Comment",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        -35904,
+        -1808
       ],
       "credentials": {
         "jiraSoftwareServerApi": {
@@ -893,6 +983,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-08-18T17:14:09.300Z",
-  "versionId": "7891405b-a294-45e2-9026-6d9225be1a6b"
+  "updatedAt": "2026-08-19T15:40:52.130Z",
+  "versionId": "e514ce83-4d9b-40da-928e-c111cb08b93d"
 }
