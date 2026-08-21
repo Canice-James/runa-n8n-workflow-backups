@@ -1,7 +1,1684 @@
 {
-  "active": false,
-  "activeVersion": null,
-  "activeVersionId": null,
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-08-20T20:13:16.923Z",
+    "createdAt": "2026-08-20T20:13:16.923Z",
+    "versionId": "90668828-9007-4623-b923-6b1fba5e8c86",
+    "workflowId": "b6ei24nspuEbTSzT",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "automated-wikis",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "22299cd4-a4b8-4634-a10f-b9d47c13882b",
+        "name": "Receive Submission",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          576
+        ],
+        "webhookId": "045f6ab2-4487-42e3-89d8-b159ea5ce5fd"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "confluenceBaseUrl",
+                "name": "confluenceBaseUrl",
+                "value": "https://wiki.corp-apps.com",
+                "type": "string"
+              },
+              {
+                "id": "defaultSpaceKey",
+                "name": "defaultSpaceKey",
+                "value": "MYDA",
+                "type": "string"
+              },
+              {
+                "id": "defaultTemplate",
+                "name": "defaultTemplate",
+                "value": "general",
+                "type": "string"
+              },
+              {
+                "id": "mattermostChannelId",
+                "name": "mattermostChannelId",
+                "value": "fj4khgjccfnb5g9s3cbq9fj3ar",
+                "type": "string"
+              },
+              {
+                "id": "senderEmail",
+                "name": "senderEmail",
+                "value": "wikis@example.com",
+                "type": "string"
+              },
+              {
+                "id": "parentPageId",
+                "name": "parentPageId",
+                "value": "711093304",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "id": "e3b09dec-2c38-4410-9b3a-3b76c34629a1",
+        "name": "Config",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          224,
+          576
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "title",
+                "name": "title",
+                "value": "={{ $json.body?.title ?? $json.title }}",
+                "type": "string"
+              },
+              {
+                "id": "spaceKey",
+                "name": "spaceKey",
+                "value": "={{ $json.body?.spaceKey ?? $json.spaceKey ?? $json.defaultSpaceKey }}",
+                "type": "string"
+              },
+              {
+                "id": "template",
+                "name": "template",
+                "value": "={{ $json.body?.template ?? $json.template ?? $json.defaultTemplate }}",
+                "type": "string"
+              },
+              {
+                "id": "mode",
+                "name": "mode",
+                "value": "={{ $json.body?.mode ?? $json.mode ?? \"create\" }}",
+                "type": "string"
+              },
+              {
+                "id": "pageUrl",
+                "name": "pageUrl",
+                "value": "={{ $json.body?.pageUrl ?? $json.pageUrl ?? \"\" }}",
+                "type": "string"
+              },
+              {
+                "id": "instructions",
+                "name": "instructions",
+                "value": "={{ $json.body?.instructions ?? $json.instructions ?? \"\" }}",
+                "type": "string"
+              },
+              {
+                "id": "sources",
+                "name": "sources",
+                "value": "={{ $json.body?.sources ?? $json.sources ?? [] }}",
+                "type": "array"
+              },
+              {
+                "id": "notify",
+                "name": "notify",
+                "value": "={{ $json.body?.notify ?? $json.notify ?? {} }}",
+                "type": "object"
+              },
+              {
+                "id": "confluenceBaseUrl",
+                "name": "confluenceBaseUrl",
+                "value": "={{ $json.confluenceBaseUrl }}",
+                "type": "string"
+              },
+              {
+                "id": "mattermostChannelId",
+                "name": "mattermostChannelId",
+                "value": "={{ $json.body?.notify?.mattermost?.channelId ?? $json.mattermostChannelId }}",
+                "type": "string"
+              },
+              {
+                "id": "senderEmail",
+                "name": "senderEmail",
+                "value": "={{ $json.senderEmail }}",
+                "type": "string"
+              },
+              {
+                "id": "parentPageId",
+                "name": "parentPageId",
+                "value": "={{ $json.body?.parentPageId ?? $json.parentPageId ?? \"\" }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "efb940e7-426f-437c-9113-0f5e88ae2115",
+        "name": "Normalize Input",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          448,
+          576
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.title && $json.sources && $json.sources.length > 0 && ($json.mode !== 'update' || $json.pageUrl) ? 'ok' : '' }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "isNotEmpty"
+                },
+                "rightValue": ""
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "cf8738e7-218d-4afc-9def-94281bd78c2e",
+        "name": "Input OK?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          672,
+          576
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const input = items[0].json;\nconst sources = Array.isArray(input.sources) ? input.sources : [];\nreturn sources.map((source, index) => ({\n  json: { index, source, title: input.title, spaceKey: input.spaceKey, template: input.template, mode: input.mode, pageUrl: input.pageUrl, instructions: input.instructions, confluenceBaseUrl: input.confluenceBaseUrl, notify: input.notify, mattermostChannelId: input.mattermostChannelId, senderEmail: input.senderEmail, parentPageId: input.parentPageId },\n}));\n"
+        },
+        "id": "9b84594b-eb67-46ed-99d8-8d75b50f1b21",
+        "name": "Split Sources",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          896,
+          480
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.source.type }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "markdown"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.source.type }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "markdownFile"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.source.type }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "apiJson"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.source.type }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "githubRelease"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.source.type }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "pdf"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra",
+            "renameFallbackOutput": "unknown"
+          }
+        },
+        "id": "195698b5-08db-41aa-9d35-82fc2bc96292",
+        "name": "Route by Source Type",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          1120,
+          416
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "text",
+                "name": "text",
+                "value": "={{ \"--- Source: markdown ---\\n\" + $json.source.content }}",
+                "type": "string"
+              },
+              {
+                "id": "index",
+                "name": "index",
+                "value": "={{ $json.index }}",
+                "type": "number"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "id": "027122c8-e1a5-4bff-b25d-5e44820c8f8e",
+        "name": "Use Markdown",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          1792,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "numberInputs": 6
+        },
+        "id": "72db9dff-6b11-4443-a562-c24061b25725",
+        "name": "Merge Sources",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          2016,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.source.url }}",
+          "options": {
+            "response": {}
+          }
+        },
+        "id": "06973f22-a544-4b1b-a15e-868fa7c05909",
+        "name": "Fetch Markdown File",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1568,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "text",
+                "name": "text",
+                "value": "={{ \"--- Source: markdown file (\" + $json.source.url + \") ---\\n\" + $json.data }}",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "id": "858cd6de-31a5-4297-a139-217b8429fcd7",
+        "name": "Format Markdown File",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          1792,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.source.url }}",
+          "options": {
+            "response": {}
+          }
+        },
+        "id": "10f23149-60ce-4fdc-9e64-ff8bb2db78fe",
+        "name": "Fetch API JSON",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1568,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "text",
+                "name": "text",
+                "value": "={{ \"--- Source: API JSON (\" + $json.source.url + \") ---\\n\" + JSON.stringify($json, null, 2) }}",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "id": "4c9f4f56-9889-4dc2-aab8-3a01d0ce5c2e",
+        "name": "Format API JSON",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          1792,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ \"https://api.github.com/repos/\" + $json.source.repo + \"/releases/tags/\" + $json.source.tag }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "options": {
+            "response": {}
+          }
+        },
+        "id": "d075dd05-933b-4aae-9fe7-9d8883e1837b",
+        "name": "Fetch GitHub Release",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1568,
+          576
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "text",
+                "name": "text",
+                "value": "={{ \"--- Source: GitHub release \" + $json.source.repo + \"@\" + $json.source.tag + \" ---\\n\" + JSON.stringify($json, null, 2) }}",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "id": "9d0b2b67-0b19-488a-9d86-b459bb280a72",
+        "name": "Format GitHub Release",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          1792,
+          576
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.source.url }}",
+          "options": {
+            "response": {}
+          }
+        },
+        "id": "3ed92bf3-a15b-46c4-9581-9871dce0c471",
+        "name": "Fetch PDF",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1344,
+          768
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "pdf",
+          "options": {}
+        },
+        "id": "33b8231b-fb34-4322-8447-30fddd50557f",
+        "name": "Extract PDF Text",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1.1,
+        "position": [
+          1568,
+          768
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "text",
+                "name": "text",
+                "value": "={{ \"--- Source: PDF (\" + $json.source.url + \") ---\\n\" + ($json.text || \"\") }}",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "id": "5d04e541-3549-4ab9-be56-0bbae3a7ec76",
+        "name": "Format PDF",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          1792,
+          768
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "text",
+                "name": "text",
+                "value": "={{ \"--- Source: unsupported type \" + $json.source.type + \" ---\" }}",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "id": "17911fe1-73cf-4613-8fe5-866c1bcaefa6",
+        "name": "Format Unknown",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          1792,
+          960
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ { error: \"Missing required fields: title, sources. For update mode, pageUrl is required.\" } }}",
+          "options": {
+            "responseCode": 400
+          }
+        },
+        "id": "0c502e0a-5665-4a23-8cb4-e9e3f719360a",
+        "name": "Respond Validation Error",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          896,
+          672
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const sorted = items.map(i => i.json).sort((a, b) => a.index - b.index);\nconst input = sorted[0];\nconst sourceText = sorted.map(i => i.text).join('\\n\\n');\nreturn [{ json: { title: input.title, spaceKey: input.spaceKey, template: input.template, mode: input.mode, pageUrl: input.pageUrl, instructions: input.instructions, confluenceBaseUrl: input.confluenceBaseUrl, notify: input.notify, mattermostChannelId: input.mattermostChannelId, senderEmail: input.senderEmail, parentPageId: input.parentPageId, sourceText } }];\n"
+        },
+        "id": "8c4a18ae-9e89-4a37-9d01-29b8cb694b51",
+        "name": "Aggregate Sources",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2240,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.mode }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                },
+                "rightValue": "update"
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "0dde23eb-8ad1-4fe4-88f2-cf885d2baf4d",
+        "name": "Update Mode?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          2464,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const url = $json.pageUrl || '';\nconst match = url.match(/\\/pages\\/(\\d+)\\/?/);\nreturn [{ json: { ...$json, pageId: match ? match[1] : '' } }];\n"
+        },
+        "id": "57d0dfe1-beda-4752-b8bf-936288e012e8",
+        "name": "Extract Page ID",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2688,
+          288
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.confluenceBaseUrl + \"/rest/api/content/\" + $json.pageId + \"?expand=body.storage,version\" }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "options": {
+            "response": {}
+          }
+        },
+        "id": "0b3eec34-5805-45c5-8ad0-1286ea3249ed",
+        "name": "Fetch Existing Page",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          2912,
+          288
+        ],
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "6xJI6LxU2AOZcFTv",
+            "name": "Confluence PAT - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "title",
+                "name": "title",
+                "value": "={{ $(\"Aggregate Sources\").item.json.title }}",
+                "type": "string"
+              },
+              {
+                "id": "spaceKey",
+                "name": "spaceKey",
+                "value": "={{ $(\"Aggregate Sources\").item.json.spaceKey }}",
+                "type": "string"
+              },
+              {
+                "id": "template",
+                "name": "template",
+                "value": "={{ $(\"Aggregate Sources\").item.json.template }}",
+                "type": "string"
+              },
+              {
+                "id": "mode",
+                "name": "mode",
+                "value": "={{ $(\"Aggregate Sources\").item.json.mode }}",
+                "type": "string"
+              },
+              {
+                "id": "pageUrl",
+                "name": "pageUrl",
+                "value": "={{ $(\"Aggregate Sources\").item.json.pageUrl }}",
+                "type": "string"
+              },
+              {
+                "id": "pageId",
+                "name": "pageId",
+                "value": "={{ $json.pageId }}",
+                "type": "string"
+              },
+              {
+                "id": "instructions",
+                "name": "instructions",
+                "value": "={{ $(\"Aggregate Sources\").item.json.instructions }}",
+                "type": "string"
+              },
+              {
+                "id": "sourceText",
+                "name": "sourceText",
+                "value": "={{ $(\"Aggregate Sources\").item.json.sourceText }}",
+                "type": "string"
+              },
+              {
+                "id": "existingBody",
+                "name": "existingBody",
+                "value": "={{ $json.body?.storage?.value || \"\" }}",
+                "type": "string"
+              },
+              {
+                "id": "existingVersion",
+                "name": "existingVersion",
+                "value": "={{ $json.version?.number || 1 }}",
+                "type": "number"
+              },
+              {
+                "id": "confluenceBaseUrl",
+                "name": "confluenceBaseUrl",
+                "value": "={{ $(\"Aggregate Sources\").item.json.confluenceBaseUrl }}",
+                "type": "string"
+              },
+              {
+                "id": "notify",
+                "name": "notify",
+                "value": "={{ $(\"Aggregate Sources\").item.json.notify }}",
+                "type": "object"
+              },
+              {
+                "id": "mattermostChannelId",
+                "name": "mattermostChannelId",
+                "value": "={{ $(\"Aggregate Sources\").item.json.mattermostChannelId }}",
+                "type": "string"
+              },
+              {
+                "id": "senderEmail",
+                "name": "senderEmail",
+                "value": "={{ $(\"Aggregate Sources\").item.json.senderEmail }}",
+                "type": "string"
+              },
+              {
+                "id": "parentPageId",
+                "name": "parentPageId",
+                "value": "={{ $(\"Aggregate Sources\").item.json.parentPageId }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "71be59fe-2081-473e-b1b0-ba2955c13808",
+        "name": "Prepare Update Input",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          3136,
+          288
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "d140ace5-0874-4293-87a9-533f4e2db882",
+        "name": "Merge Create/Update",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          3360,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "title",
+                "name": "title",
+                "value": "={{ $(\"Aggregate Sources\").item.json.title }}",
+                "type": "string"
+              },
+              {
+                "id": "spaceKey",
+                "name": "spaceKey",
+                "value": "={{ $(\"Aggregate Sources\").item.json.spaceKey }}",
+                "type": "string"
+              },
+              {
+                "id": "template",
+                "name": "template",
+                "value": "={{ $(\"Aggregate Sources\").item.json.template }}",
+                "type": "string"
+              },
+              {
+                "id": "mode",
+                "name": "mode",
+                "value": "={{ $(\"Aggregate Sources\").item.json.mode }}",
+                "type": "string"
+              },
+              {
+                "id": "pageUrl",
+                "name": "pageUrl",
+                "value": "={{ $(\"Aggregate Sources\").item.json.pageUrl }}",
+                "type": "string"
+              },
+              {
+                "id": "pageId",
+                "name": "pageId",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "instructions",
+                "name": "instructions",
+                "value": "={{ $(\"Aggregate Sources\").item.json.instructions }}",
+                "type": "string"
+              },
+              {
+                "id": "sourceText",
+                "name": "sourceText",
+                "value": "={{ $(\"Aggregate Sources\").item.json.sourceText }}",
+                "type": "string"
+              },
+              {
+                "id": "existingBody",
+                "name": "existingBody",
+                "value": "",
+                "type": "string"
+              },
+              {
+                "id": "existingVersion",
+                "name": "existingVersion",
+                "value": 1,
+                "type": "number"
+              },
+              {
+                "id": "confluenceBaseUrl",
+                "name": "confluenceBaseUrl",
+                "value": "={{ $(\"Aggregate Sources\").item.json.confluenceBaseUrl }}",
+                "type": "string"
+              },
+              {
+                "id": "notify",
+                "name": "notify",
+                "value": "={{ $(\"Aggregate Sources\").item.json.notify }}",
+                "type": "object"
+              },
+              {
+                "id": "mattermostChannelId",
+                "name": "mattermostChannelId",
+                "value": "={{ $(\"Aggregate Sources\").item.json.mattermostChannelId }}",
+                "type": "string"
+              },
+              {
+                "id": "senderEmail",
+                "name": "senderEmail",
+                "value": "={{ $(\"Aggregate Sources\").item.json.senderEmail }}",
+                "type": "string"
+              },
+              {
+                "id": "parentPageId",
+                "name": "parentPageId",
+                "value": "={{ $(\"Aggregate Sources\").item.json.parentPageId }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "1a39d950-ec4c-4c69-b238-23d855d33320",
+        "name": "Prepare Create Input",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          3136,
+          480
+        ]
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ \"You are a technical writer creating a Confluence page.\\n\\nMode: \" + $json.mode + \"\\nTemplate instruction: \" + ($json.template === \"release-notes\" ? \"Write a Confluence release notes page. Start with a short executive summary, then list the most important changes, any risks or breaking changes, and action items. Use Confluence storage-format HTML.\" : $json.template === \"wiki\" ? \"Write a Confluence wiki page that organizes knowledge clearly with sections and headings. Use Confluence storage-format HTML.\" : $json.template === \"doc\" ? \"Write a Confluence documentation page that is structured, readable, and easy to scan. Use Confluence storage-format HTML.\" : \"Write a general Confluence page that presents the available information clearly. Use Confluence storage-format HTML.\") + \"\\nAdditional instructions: \" + ($json.instructions || \"none\") + \"\\n\\n\" + ($json.existingBody ? \"\\n\\nExisting page body (update this, do not rewrite from scratch):\\n\" + $json.existingBody : \"\") + \"\\n\\nSource data:\\n\" + $json.sourceText + \"\\n\\nGenerate a complete Confluence storage-format HTML body. Output only the HTML.\" }}",
+          "options": {
+            "systemMessage": "You write clean HTML for a Confluence page body. Use only standard HTML tags such as h1, h2, h3, p, ul, ol, li, table, thead, tbody, tr, th, td, code, pre, strong, em, a, br, hr. Do NOT use Confluence-specific XML, ac:structured-macro, ac:macro, ac:parameter, or any ac: namespace tags. Do not wrap the output in markdown code fences. Output only the HTML body content."
+          }
+        },
+        "id": "cf249be3-00cc-4e01-a08d-9fcc1a36f015",
+        "name": "Generate Page",
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          3584,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "claude-haiku-4-5-20251001",
+            "mode": "list",
+            "cachedResultName": "Claude Haiku 4.5"
+          },
+          "options": {
+            "maxTokensToSample": 4096
+          }
+        },
+        "id": "384db10c-ba9f-4200-87e9-a7978099ecd9",
+        "name": "Anthropic Model",
+        "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+        "typeVersion": 1.5,
+        "position": [
+          3664,
+          608
+        ],
+        "credentials": {
+          "anthropicApi": {
+            "id": "XcPg10EzwylCvhxE",
+            "name": "Anthropic account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "title",
+                "name": "title",
+                "value": "={{ $(\"Merge Create/Update\").item.json.title }}",
+                "type": "string"
+              },
+              {
+                "id": "spaceKey",
+                "name": "spaceKey",
+                "value": "={{ $(\"Merge Create/Update\").item.json.spaceKey }}",
+                "type": "string"
+              },
+              {
+                "id": "template",
+                "name": "template",
+                "value": "={{ $(\"Merge Create/Update\").item.json.template }}",
+                "type": "string"
+              },
+              {
+                "id": "mode",
+                "name": "mode",
+                "value": "={{ $(\"Merge Create/Update\").item.json.mode }}",
+                "type": "string"
+              },
+              {
+                "id": "pageId",
+                "name": "pageId",
+                "value": "={{ $(\"Merge Create/Update\").item.json.pageId }}",
+                "type": "string"
+              },
+              {
+                "id": "pageUrl",
+                "name": "pageUrl",
+                "value": "={{ $(\"Merge Create/Update\").item.json.pageUrl }}",
+                "type": "string"
+              },
+              {
+                "id": "body",
+                "name": "body",
+                "value": "={{ typeof $json.output === 'string' ? $json.output.replace(/^```html\\s*/i, '').replace(/\\s*```$/i, '').replace(/<ac:[^>]+>/gi, '').replace(/<\\/ac:\\w+>/gi, '').trim() : $json.output }}",
+                "type": "string"
+              },
+              {
+                "id": "existingVersion",
+                "name": "existingVersion",
+                "value": "={{ $(\"Merge Create/Update\").item.json.existingVersion }}",
+                "type": "number"
+              },
+              {
+                "id": "confluenceBaseUrl",
+                "name": "confluenceBaseUrl",
+                "value": "={{ $(\"Merge Create/Update\").item.json.confluenceBaseUrl }}",
+                "type": "string"
+              },
+              {
+                "id": "notify",
+                "name": "notify",
+                "value": "={{ $(\"Merge Create/Update\").item.json.notify }}",
+                "type": "object"
+              },
+              {
+                "id": "mattermostChannelId",
+                "name": "mattermostChannelId",
+                "value": "={{ $(\"Merge Create/Update\").item.json.mattermostChannelId }}",
+                "type": "string"
+              },
+              {
+                "id": "senderEmail",
+                "name": "senderEmail",
+                "value": "={{ $(\"Merge Create/Update\").item.json.senderEmail }}",
+                "type": "string"
+              },
+              {
+                "id": "parentPageId",
+                "name": "parentPageId",
+                "value": "={{ $(\"Merge Create/Update\").item.json.parentPageId }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "d7e0ec50-5d5b-4975-894c-5a10beec86cf",
+        "name": "Finalize Body",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          3936,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.mode }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                },
+                "rightValue": "update"
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "e16696ed-0c9b-48fc-961c-3aa601416933",
+        "name": "Create or Update?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          4160,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "method": "PUT",
+          "url": "={{ $json.confluenceBaseUrl + \"/rest/api/content/\" + $json.pageId }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ { type: \"page\", id: $json.pageId, title: $json.title, body: { storage: { value: $json.body, representation: \"storage\" } }, version: { number: $json.existingVersion + 1 } } }}",
+          "options": {
+            "response": {}
+          }
+        },
+        "id": "9ad45b35-b0b9-485d-8353-b84ab0657b4c",
+        "name": "Update Confluence Page",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          4384,
+          288
+        ],
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "6xJI6LxU2AOZcFTv",
+            "name": "Confluence PAT - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "pageId",
+                "name": "pageId",
+                "value": "={{ $json.id }}",
+                "type": "string"
+              },
+              {
+                "id": "pageUrl",
+                "name": "pageUrl",
+                "value": "={{ $json.status === \"draft\" && $json._links?.edit ? $(\"Finalize Body\").item.json.confluenceBaseUrl + $json._links.edit : ($json._links?.webui ? $(\"Finalize Body\").item.json.confluenceBaseUrl + $json._links.webui : \"\") }}",
+                "type": "string"
+              },
+              {
+                "id": "title",
+                "name": "title",
+                "value": "={{ $(\"Finalize Body\").item.json.title }}",
+                "type": "string"
+              },
+              {
+                "id": "spaceKey",
+                "name": "spaceKey",
+                "value": "={{ $(\"Finalize Body\").item.json.spaceKey }}",
+                "type": "string"
+              },
+              {
+                "id": "mattermostChannelId",
+                "name": "mattermostChannelId",
+                "value": "={{ $(\"Finalize Body\").item.json.mattermostChannelId }}",
+                "type": "string"
+              },
+              {
+                "id": "senderEmail",
+                "name": "senderEmail",
+                "value": "={{ $(\"Finalize Body\").item.json.senderEmail }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "8985acfc-f795-4127-a858-20f95373fd65",
+        "name": "Prepare Result",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          4608,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $json.confluenceBaseUrl + \"/rest/api/content\" }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ { type: \"page\", title: $json.title, status: \"draft\", body: { storage: { value: $json.body, representation: \"storage\" } }, space: { key: $json.spaceKey }, ancestors: $json.parentPageId ? [{ id: $json.parentPageId }] : undefined } }}",
+          "options": {
+            "response": {}
+          }
+        },
+        "id": "8852ae59-a99a-4395-a942-f88d005eb9ef",
+        "name": "Create Confluence Draft",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          4384,
+          480
+        ],
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "6xJI6LxU2AOZcFTv",
+            "name": "Confluence PAT - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "channelId": "={{ $json.mattermostChannelId }}",
+          "message": "={{ \"Wiki saved as draft: \" + $json.title + \"\\n\" + $json.pageUrl }}",
+          "attachments": [],
+          "otherOptions": {},
+          "resource": "message",
+          "operation": "post"
+        },
+        "id": "14f9984d-b66f-447f-8cad-a7e33f25c885",
+        "name": "Notify Mattermost",
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          5056,
+          384
+        ],
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fromEmail": "={{ $json.senderEmail }}",
+          "toEmail": "={{ $(\"Finalize Body\").item.json.notify.email?.join(\", \") }}",
+          "subject": "={{ \"Wiki draft saved: \" + $json.title }}",
+          "emailFormat": "text",
+          "text": "={{ \"The wiki draft \"\" + $json.title + \"\" was saved.\\n\\nLink: \" + $json.pageUrl }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "71ae0ea4-f806-4838-809c-cdeee8433769",
+        "name": "Send Email Alert",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          5280,
+          384
+        ],
+        "webhookId": "dbbb3519-bef3-4487-bc31-5500717ac7cf",
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ { status: \"draft_saved\", title: $json.title, spaceKey: $json.spaceKey, pageId: $json.pageId, pageUrl: $json.pageUrl } }}",
+          "options": {}
+        },
+        "id": "2bd968af-ddc2-4376-9905-055979c46030",
+        "name": "Respond Success",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          5504,
+          384
+        ]
+      }
+    ],
+    "connections": {
+      "Receive Submission": {
+        "main": [
+          [
+            {
+              "node": "Config",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Config": {
+        "main": [
+          [
+            {
+              "node": "Normalize Input",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalize Input": {
+        "main": [
+          [
+            {
+              "node": "Input OK?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Sources": {
+        "main": [
+          [
+            {
+              "node": "Route by Source Type",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route by Source Type": {
+        "main": [
+          [
+            {
+              "node": "Use Markdown",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Fetch Markdown File",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Fetch API JSON",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Fetch GitHub Release",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Fetch PDF",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Format Unknown",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Use Markdown": {
+        "main": [
+          [
+            {
+              "node": "Merge Sources",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge Sources": {
+        "main": [
+          [
+            {
+              "node": "Aggregate Sources",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Markdown File": {
+        "main": [
+          [
+            {
+              "node": "Format Markdown File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format Markdown File": {
+        "main": [
+          [
+            {
+              "node": "Merge Sources",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Fetch API JSON": {
+        "main": [
+          [
+            {
+              "node": "Format API JSON",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format API JSON": {
+        "main": [
+          [
+            {
+              "node": "Merge Sources",
+              "type": "main",
+              "index": 2
+            }
+          ]
+        ]
+      },
+      "Fetch GitHub Release": {
+        "main": [
+          [
+            {
+              "node": "Format GitHub Release",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format GitHub Release": {
+        "main": [
+          [
+            {
+              "node": "Merge Sources",
+              "type": "main",
+              "index": 3
+            }
+          ]
+        ]
+      },
+      "Fetch PDF": {
+        "main": [
+          [
+            {
+              "node": "Extract PDF Text",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract PDF Text": {
+        "main": [
+          [
+            {
+              "node": "Format PDF",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format PDF": {
+        "main": [
+          [
+            {
+              "node": "Merge Sources",
+              "type": "main",
+              "index": 4
+            }
+          ]
+        ]
+      },
+      "Format Unknown": {
+        "main": [
+          [
+            {
+              "node": "Merge Sources",
+              "type": "main",
+              "index": 5
+            }
+          ]
+        ]
+      },
+      "Aggregate Sources": {
+        "main": [
+          [
+            {
+              "node": "Update Mode?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Mode?": {
+        "main": [
+          [
+            {
+              "node": "Extract Page ID",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Prepare Create Input",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Page ID": {
+        "main": [
+          [
+            {
+              "node": "Fetch Existing Page",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Existing Page": {
+        "main": [
+          [
+            {
+              "node": "Prepare Update Input",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare Update Input": {
+        "main": [
+          [
+            {
+              "node": "Merge Create/Update",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge Create/Update": {
+        "main": [
+          [
+            {
+              "node": "Generate Page",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare Create Input": {
+        "main": [
+          [
+            {
+              "node": "Merge Create/Update",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Generate Page": {
+        "main": [
+          [
+            {
+              "node": "Finalize Body",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Anthropic Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Generate Page",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Finalize Body": {
+        "main": [
+          [
+            {
+              "node": "Create or Update?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create or Update?": {
+        "main": [
+          [
+            {
+              "node": "Update Confluence Page",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Create Confluence Draft",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Confluence Page": {
+        "main": [
+          [
+            {
+              "node": "Prepare Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create Confluence Draft": {
+        "main": [
+          [
+            {
+              "node": "Prepare Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Notify Mattermost": {
+        "main": [
+          [
+            {
+              "node": "Send Email Alert",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Input OK?": {
+        "main": [
+          [
+            {
+              "node": "Respond Validation Error",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Split Sources",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare Result": {
+        "main": [
+          [
+            {
+              "node": "Notify Mattermost",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Respond Success",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Canice James (via MCP)",
+    "name": "Updated Generate Page, Finalize Body",
+    "description": "Updated nodes: Generate Page, Finalize Body",
+    "autosaved": false
+  },
+  "activeVersionId": "90668828-9007-4623-b923-6b1fba5e8c86",
   "connections": {
     "Receive Submission": {
       "main": [
@@ -30,24 +1707,6 @@
         [
           {
             "node": "Input OK?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Input OK?": {
-      "main": [
-        [
-          {
-            "node": "Split Sources",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Respond Validation Error",
             "type": "main",
             "index": 0
           }
@@ -389,33 +2048,6 @@
         ]
       ]
     },
-    "Prepare Result": {
-      "main": [
-        [
-          {
-            "node": "Publish Result Merge",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Publish Result Merge",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Publish Result Merge": {
-      "main": [
-        [
-          {
-            "node": "Notify Mattermost",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Create Confluence Draft": {
       "main": [
         [
@@ -438,9 +2070,32 @@
         ]
       ]
     },
-    "Send Email Alert": {
+    "Input OK?": {
       "main": [
         [
+          {
+            "node": "Respond Validation Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Split Sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Result": {
+      "main": [
+        [
+          {
+            "node": "Notify Mattermost",
+            "type": "main",
+            "index": 0
+          },
           {
             "node": "Respond Success",
             "type": "main",
@@ -455,7 +2110,8 @@
   "isArchived": false,
   "meta": {
     "aiBuilderAssisted": true,
-    "builderVariant": "mcp"
+    "builderVariant": "mcp",
+    "templateCredsSetupCompleted": true
   },
   "name": "Automated Wikis",
   "nodeGroups": [],
@@ -479,14 +2135,12 @@
     },
     {
       "parameters": {
-        "mode": "manual",
-        "includeOtherFields": true,
         "assignments": {
           "assignments": [
             {
               "id": "confluenceBaseUrl",
               "name": "confluenceBaseUrl",
-              "value": "https://wiki.corp-apps.com/",
+              "value": "https://wiki.corp-apps.com",
               "type": "string"
             },
             {
@@ -516,11 +2170,13 @@
             {
               "id": "parentPageId",
               "name": "parentPageId",
-              "value": "576483265",
+              "value": "711093304",
               "type": "string"
             }
           ]
-        }
+        },
+        "includeOtherFields": true,
+        "options": {}
       },
       "id": "e3b09dec-2c38-4410-9b3a-3b76c34629a1",
       "name": "Config",
@@ -533,8 +2189,6 @@
     },
     {
       "parameters": {
-        "mode": "manual",
-        "includeOtherFields": false,
         "assignments": {
           "assignments": [
             {
@@ -610,7 +2264,8 @@
               "type": "string"
             }
           ]
-        }
+        },
+        "options": {}
       },
       "id": "efb940e7-426f-437c-9113-0f5e88ae2115",
       "name": "Normalize Input",
@@ -627,28 +2282,12 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "strict",
+            "typeValidation": "loose",
             "version": 1
           },
           "conditions": [
             {
-              "leftValue": "={{ $json.title }}",
-              "operator": {
-                "type": "string",
-                "operation": "isNotEmpty"
-              },
-              "rightValue": ""
-            },
-            {
-              "leftValue": "={{ $json.sources.length }}",
-              "operator": {
-                "type": "number",
-                "operation": "gt"
-              },
-              "rightValue": 0
-            },
-            {
-              "leftValue": "={{ ($json.mode === \"update\" && !$json.pageUrl) ? \"\" : \"ok\" }}",
+              "leftValue": "={{ $json.title && $json.sources && $json.sources.length > 0 && ($json.mode !== 'update' || $json.pageUrl) ? 'ok' : '' }}",
               "operator": {
                 "type": "string",
                 "operation": "isNotEmpty"
@@ -671,7 +2310,6 @@
     },
     {
       "parameters": {
-        "mode": "runOnceForAllItems",
         "jsCode": "const input = items[0].json;\nconst sources = Array.isArray(input.sources) ? input.sources : [];\nreturn sources.map((source, index) => ({\n  json: { index, source, title: input.title, spaceKey: input.spaceKey, template: input.template, mode: input.mode, pageUrl: input.pageUrl, instructions: input.instructions, confluenceBaseUrl: input.confluenceBaseUrl, notify: input.notify, mattermostChannelId: input.mattermostChannelId, senderEmail: input.senderEmail, parentPageId: input.parentPageId },\n}));\n"
       },
       "id": "9b84594b-eb67-46ed-99d8-8d75b50f1b21",
@@ -826,6 +2464,7 @@
             }
           ]
         },
+        "includeOtherFields": true,
         "options": {}
       },
       "id": "027122c8-e1a5-4bff-b25d-5e44820c8f8e",
@@ -1069,7 +2708,6 @@
     },
     {
       "parameters": {
-        "mode": "runOnceForAllItems",
         "jsCode": "const sorted = items.map(i => i.json).sort((a, b) => a.index - b.index);\nconst input = sorted[0];\nconst sourceText = sorted.map(i => i.text).join('\\n\\n');\nreturn [{ json: { title: input.title, spaceKey: input.spaceKey, template: input.template, mode: input.mode, pageUrl: input.pageUrl, instructions: input.instructions, confluenceBaseUrl: input.confluenceBaseUrl, notify: input.notify, mattermostChannelId: input.mattermostChannelId, senderEmail: input.senderEmail, parentPageId: input.parentPageId, sourceText } }];\n"
       },
       "id": "8c4a18ae-9e89-4a37-9d01-29b8cb694b51",
@@ -1153,8 +2791,6 @@
     },
     {
       "parameters": {
-        "mode": "manual",
-        "includeOtherFields": false,
         "assignments": {
           "assignments": [
             {
@@ -1248,7 +2884,8 @@
               "type": "string"
             }
           ]
-        }
+        },
+        "options": {}
       },
       "id": "71be59fe-2081-473e-b1b0-ba2955c13808",
       "name": "Prepare Update Input",
@@ -1272,8 +2909,6 @@
     },
     {
       "parameters": {
-        "mode": "manual",
-        "includeOtherFields": false,
         "assignments": {
           "assignments": [
             {
@@ -1367,7 +3002,8 @@
               "type": "string"
             }
           ]
-        }
+        },
+        "options": {}
       },
       "id": "1a39d950-ec4c-4c69-b238-23d855d33320",
       "name": "Prepare Create Input",
@@ -1383,7 +3019,7 @@
         "promptType": "define",
         "text": "={{ \"You are a technical writer creating a Confluence page.\\n\\nMode: \" + $json.mode + \"\\nTemplate instruction: \" + ($json.template === \"release-notes\" ? \"Write a Confluence release notes page. Start with a short executive summary, then list the most important changes, any risks or breaking changes, and action items. Use Confluence storage-format HTML.\" : $json.template === \"wiki\" ? \"Write a Confluence wiki page that organizes knowledge clearly with sections and headings. Use Confluence storage-format HTML.\" : $json.template === \"doc\" ? \"Write a Confluence documentation page that is structured, readable, and easy to scan. Use Confluence storage-format HTML.\" : \"Write a general Confluence page that presents the available information clearly. Use Confluence storage-format HTML.\") + \"\\nAdditional instructions: \" + ($json.instructions || \"none\") + \"\\n\\n\" + ($json.existingBody ? \"\\n\\nExisting page body (update this, do not rewrite from scratch):\\n\" + $json.existingBody : \"\") + \"\\n\\nSource data:\\n\" + $json.sourceText + \"\\n\\nGenerate a complete Confluence storage-format HTML body. Output only the HTML.\" }}",
         "options": {
-          "systemMessage": "You write clean Confluence storage-format HTML. Do not include markdown. Output only valid HTML suitable for the Confluence body.storage field."
+          "systemMessage": "You write clean HTML for a Confluence page body. Use only standard HTML tags such as h1, h2, h3, p, ul, ol, li, table, thead, tbody, tr, th, td, code, pre, strong, em, a, br, hr. Do NOT use Confluence-specific XML, ac:structured-macro, ac:macro, ac:parameter, or any ac: namespace tags. Do not wrap the output in markdown code fences. Output only the HTML body content."
         }
       },
       "id": "cf249be3-00cc-4e01-a08d-9fcc1a36f015",
@@ -1399,8 +3035,9 @@
       "parameters": {
         "model": {
           "__rl": true,
+          "value": "claude-haiku-4-5-20251001",
           "mode": "list",
-          "value": "claude-sonnet-4-6"
+          "cachedResultName": "Claude Haiku 4.5"
         },
         "options": {
           "maxTokensToSample": 4096
@@ -1413,12 +3050,16 @@
       "position": [
         3664,
         608
-      ]
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "XcPg10EzwylCvhxE",
+          "name": "Anthropic account - scaicedo"
+        }
+      }
     },
     {
       "parameters": {
-        "mode": "manual",
-        "includeOtherFields": false,
         "assignments": {
           "assignments": [
             {
@@ -1460,7 +3101,7 @@
             {
               "id": "body",
               "name": "body",
-              "value": "={{ $json.output }}",
+              "value": "={{ typeof $json.output === 'string' ? $json.output.replace(/^```html\\s*/i, '').replace(/\\s*```$/i, '').replace(/<ac:[^>]+>/gi, '').replace(/<\\/ac:\\w+>/gi, '').trim() : $json.output }}",
               "type": "string"
             },
             {
@@ -1500,7 +3141,8 @@
               "type": "string"
             }
           ]
-        }
+        },
+        "options": {}
       },
       "id": "d7e0ec50-5d5b-4975-894c-5a10beec86cf",
       "name": "Finalize Body",
@@ -1584,7 +3226,7 @@
             {
               "id": "pageUrl",
               "name": "pageUrl",
-              "value": "={{ $json._links?.webui ? $(\"Finalize Body\").item.json.confluenceBaseUrl + $json._links.webui : \"\" }}",
+              "value": "={{ $json.status === \"draft\" && $json._links?.edit ? $(\"Finalize Body\").item.json.confluenceBaseUrl + $json._links.edit : ($json._links?.webui ? $(\"Finalize Body\").item.json.confluenceBaseUrl + $json._links.webui : \"\") }}",
               "type": "string"
             },
             {
@@ -1625,30 +3267,16 @@
       ]
     },
     {
-      "parameters": {},
-      "id": "a185507d-cde3-4499-b441-baca3f619133",
-      "name": "Publish Result Merge",
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [
-        4832,
-        384
-      ]
-    },
-    {
       "parameters": {
         "method": "POST",
         "url": "={{ $json.confluenceBaseUrl + \"/rest/api/content\" }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
         "sendBody": true,
-        "contentType": "json",
         "specifyBody": "json",
         "jsonBody": "={{ { type: \"page\", title: $json.title, status: \"draft\", body: { storage: { value: $json.body, representation: \"storage\" } }, space: { key: $json.spaceKey }, ancestors: $json.parentPageId ? [{ id: $json.parentPageId }] : undefined } }}",
         "options": {
-          "response": {
-            "responseFormat": "json"
-          }
+          "response": {}
         }
       },
       "id": "8852ae59-a99a-4395-a942-f88d005eb9ef",
@@ -1678,7 +3306,7 @@
       "type": "n8n-nodes-base.mattermost",
       "typeVersion": 1,
       "position": [
-        5056,
+        4832,
         384
       ],
       "credentials": {
@@ -1704,7 +3332,7 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        5280,
+        5056,
         384
       ],
       "webhookId": "dbbb3519-bef3-4487-bc31-5500717ac7cf",
@@ -1721,7 +3349,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        5504,
+        5280,
         384
       ]
     }
@@ -1746,7 +3374,7 @@
   ],
   "staticData": null,
   "tags": [],
-  "triggerCount": 0,
-  "updatedAt": "2026-08-19T20:53:21.180Z",
-  "versionId": "689ddbf5-d54a-4d28-96a2-287ff0c9c420"
+  "triggerCount": 1,
+  "updatedAt": "2026-08-20T20:25:27.003Z",
+  "versionId": "32eeda95-1d37-426e-b92f-2d4508e9430d"
 }
