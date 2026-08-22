@@ -2585,7 +2585,13 @@
       "position": [
         1568,
         576
-      ]
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "eqoJ4C4FBGVFgO7t",
+          "name": "Naming Conventions - api"
+        }
+      }
     },
     {
       "parameters": {
@@ -3035,9 +3041,9 @@
       "parameters": {
         "model": {
           "__rl": true,
-          "value": "claude-haiku-4-5-20251001",
+          "value": "claude-sonnet-4-6",
           "mode": "list",
-          "cachedResultName": "Claude Haiku 4.5"
+          "cachedResultName": "Claude Sonnet 4.6"
         },
         "options": {
           "maxTokensToSample": 4096
@@ -3375,6 +3381,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-08-20T20:25:27.003Z",
-  "versionId": "32eeda95-1d37-426e-b92f-2d4508e9430d"
+  "updatedAt": "2026-08-21T22:18:04.435Z",
+  "versionId": "2d8585af-0080-4e79-b0f2-393b4aa13ffb"
 }
