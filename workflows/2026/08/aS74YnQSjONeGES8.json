@@ -697,13 +697,7 @@
     },
     "6:45am Weekly": {
       "main": [
-        [
-          {
-            "node": "Get brand info6",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Get Sender Scores from Everest2": {
@@ -893,13 +887,7 @@
     },
     "6:45am Weekly1": {
       "main": [
-        [
-          {
-            "node": "Get brand info8",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "If8": {
@@ -4470,6 +4458,6 @@
   },
   "tags": [],
   "triggerCount": 7,
-  "updatedAt": "2026-08-20T21:30:54.020Z",
-  "versionId": "15a8e82e-b7c5-4a24-bc69-83facf3b532c"
+  "updatedAt": "2026-08-21T14:58:49.598Z",
+  "versionId": "ee616986-81ef-4afc-86b5-e233a96bf520"
 }
