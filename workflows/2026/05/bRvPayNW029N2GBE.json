@@ -1,22 +1,22 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-08-14T13:28:46.101Z",
-    "createdAt": "2026-08-14T13:28:46.101Z",
-    "versionId": "8eaa7e74-ff77-422b-a87d-2fb4e365d991",
+    "updatedAt": "2026-08-21T17:24:41.699Z",
+    "createdAt": "2026-08-21T17:07:50.476Z",
+    "versionId": "85509673-e54c-4b7f-b10c-d1a2af5970d0",
     "workflowId": "bRvPayNW029N2GBE",
     "nodes": [
       {
         "parameters": {
           "content": "## Seed DB",
-          "height": 400,
-          "width": 2934
+          "height": 672,
+          "width": 2294
         },
         "type": "n8n-nodes-base.stickyNote",
         "typeVersion": 1,
         "position": [
           -1216,
-          32
+          -624
         ],
         "id": "4e708765-d9c5-4d0e-b2ee-8838f931d7a6",
         "name": "Sticky Note"
@@ -26,8 +26,8 @@
         "type": "n8n-nodes-base.wait",
         "typeVersion": 1.1,
         "position": [
-          -496,
-          176
+          -464,
+          -352
         ],
         "id": "bb403e8e-6773-4add-a8b5-247c272cf1aa",
         "name": "Wait",
@@ -62,8 +62,8 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          -720,
-          176
+          -688,
+          -352
         ],
         "id": "f3e874fe-1c1a-45c4-97d0-a4ddc40feaae",
         "name": "Set"
@@ -76,8 +76,8 @@
         "type": "n8n-nodes-base.splitOut",
         "typeVersion": 1,
         "position": [
-          -48,
-          96
+          -16,
+          -432
         ],
         "id": "3bd38b5c-dc14-45df-91bb-93f20365f17b",
         "name": "Split Out"
@@ -87,10 +87,22 @@
           "assignments": {
             "assignments": [
               {
-                "id": "6a054274-460e-4987-b05c-8a3e13f8efd3",
+                "id": "map-seed-offset",
                 "name": "offset",
-                "value": "={{ $('Wait').item.json.offset  + $('Set').item.json.maxResults}}",
+                "value": "={{ $('Wait').item.json.offset + $('Set').item.json.maxResults }}",
                 "type": "number"
+              },
+              {
+                "id": "map-seed-total",
+                "name": "total_tickets",
+                "value": "={{ $('Set').item.json.total_tickets }}",
+                "type": "number"
+              },
+              {
+                "id": "map-seed-mode",
+                "name": "sync_type",
+                "value": "Seed",
+                "type": "string"
               }
             ]
           },
@@ -99,8 +111,8 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          1072,
-          96
+          656,
+          -528
         ],
         "id": "8a492b6e-e946-45ef-87d3-3a6a4fc89bee",
         "name": "Incrementer",
@@ -118,7 +130,7 @@
             "conditions": [
               {
                 "id": "616e922c-c4f0-488c-a3f6-ae5db6b51d19",
-                "leftValue": "={{ $node[\"Set\"].json.offset }}",
+                "leftValue": "={{ $json.offset }}",
                 "rightValue": "={{ $node[\"Set\"].json.total_tickets }}",
                 "operator": {
                   "type": "number",
@@ -133,30 +145,19 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.2,
         "position": [
-          1296,
-          176
+          880,
+          -528
         ],
         "id": "427fa227-63c0-4f08-8501-5cdeb6ff52c3",
         "name": "If"
       },
       {
         "parameters": {},
-        "type": "n8n-nodes-base.noOp",
-        "typeVersion": 1,
-        "position": [
-          1520,
-          176
-        ],
-        "id": "73d79712-ee23-4277-8746-de7811f857a5",
-        "name": "No Operation, do nothing"
-      },
-      {
-        "parameters": {},
         "type": "n8n-nodes-base.manualTrigger",
         "typeVersion": 1,
         "position": [
-          -1168,
-          176
+          -1136,
+          -352
         ],
         "id": "f34ef63b-8aec-45bb-9d3f-8ae3f3751c4d",
         "name": "Execute"
@@ -184,15 +185,15 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          -944,
-          176
+          -912,
+          -352
         ],
         "id": "8d0b386e-044e-42e7-ac98-5d1835b9ba07",
         "name": "Get total MAP tickets",
         "credentials": {
           "jiraSoftwareServerApi": {
             "id": "7MgXJNgpxtJeD70Z",
-            "name": "Jira SW Server account"
+            "name": "Jira SW Server account - canjames"
           }
         }
       },
@@ -219,6 +220,10 @@
               {
                 "name": "fields",
                 "value": "*all"
+              },
+              {
+                "name": "expand",
+                "value": "changelog"
               }
             ]
           },
@@ -227,30 +232,30 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          -272,
-          96
+          -240,
+          -432
         ],
         "id": "2337abb1-3125-41ff-b3f9-f7f8b921a958",
         "name": "Get MAP Tickets",
         "credentials": {
           "jiraSoftwareServerApi": {
             "id": "7MgXJNgpxtJeD70Z",
-            "name": "Jira SW Server account"
+            "name": "Jira SW Server account - canjames"
           }
         }
       },
       {
         "parameters": {
           "content": "## Cron Update",
-          "height": 432,
-          "width": 2934,
+          "height": 640,
+          "width": 2294,
           "color": 4
         },
         "type": "n8n-nodes-base.stickyNote",
         "typeVersion": 1,
         "position": [
           -1216,
-          480
+          96
         ],
         "id": "b5bf77a5-c7ba-4bf9-b4bf-1d3193d203d2",
         "name": "Sticky Note1"
@@ -268,8 +273,8 @@
         "type": "n8n-nodes-base.scheduleTrigger",
         "typeVersion": 1.2,
         "position": [
-          -1152,
-          640
+          -1136,
+          336
         ],
         "id": "ea677266-e455-4591-bfe1-2cc55b200af9",
         "name": "Schedule Trigger - Runs every 1h"
@@ -297,15 +302,15 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          -944,
-          640
+          -912,
+          336
         ],
         "id": "62324e99-477b-4093-a6b7-5cf513e4e000",
         "name": "Get total MAP tickets updated last 2h",
         "credentials": {
           "jiraSoftwareServerApi": {
             "id": "7MgXJNgpxtJeD70Z",
-            "name": "Jira SW Server account"
+            "name": "Jira SW Server account - canjames"
           }
         }
       },
@@ -313,14 +318,14 @@
         "parameters": {
           "content": "## Webhook Update",
           "height": 400,
-          "width": 2918,
+          "width": 2294,
           "color": 5
         },
         "type": "n8n-nodes-base.stickyNote",
         "typeVersion": 1,
         "position": [
-          -1200,
-          960
+          -1216,
+          784
         ],
         "id": "125348ed-668a-441a-bf09-b2ee6535dae4",
         "name": "Sticky Note2"
@@ -340,8 +345,8 @@
         "type": "n8n-nodes-base.jiraTrigger",
         "typeVersion": 1.1,
         "position": [
-          -1152,
-          1104
+          -1168,
+          944
         ],
         "id": "90cbe68e-1cce-4ea7-b831-95531625232c",
         "name": "Jira Trigger",
@@ -349,7 +354,7 @@
         "credentials": {
           "jiraSoftwareServerApi": {
             "id": "7MgXJNgpxtJeD70Z",
-            "name": "Jira SW Server account"
+            "name": "Jira SW Server account - canjames"
           }
         },
         "disabled": true
@@ -610,15 +615,15 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.6,
         "position": [
-          -944,
-          1104
+          -960,
+          944
         ],
         "id": "b109d46b-ee2b-4cdc-a17e-0a0d916d59a0",
         "name": "Insert or update rows in a table WebHook",
         "credentials": {
           "postgres": {
             "id": "1eZL0LK34Dt3rgRN",
-            "name": "Postgres account"
+            "name": "Postgres account - admin"
           }
         },
         "disabled": true
@@ -628,8 +633,8 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          -736,
-          1104
+          -752,
+          944
         ],
         "id": "43a48281-b97c-4023-b4ad-35b87c425795",
         "name": "No Operation, do nothing2",
@@ -645,15 +650,15 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          400,
-          96
+          432,
+          -432
         ],
         "id": "4c96d81e-1a07-42f7-9aee-edb8fdf72da5",
         "name": "Get Ticket Worklog",
         "credentials": {
           "jiraSoftwareServerApi": {
             "id": "7MgXJNgpxtJeD70Z",
-            "name": "Jira SW Server account"
+            "name": "Jira SW Server account - canjames"
           }
         }
       },
@@ -665,8 +670,8 @@
         "type": "n8n-nodes-base.splitOut",
         "typeVersion": 1,
         "position": [
-          624,
-          96
+          656,
+          -336
         ],
         "id": "649e4b88-f240-4d38-b410-0c6c2b6427d7",
         "name": "Split Out2"
@@ -1201,15 +1206,15 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.6,
         "position": [
-          176,
-          96
+          208,
+          -432
         ],
         "id": "7e2bf1d2-7b39-4e90-8c6d-72e887a3d358",
         "name": "UPSERT map_jira_issues",
         "credentials": {
           "postgres": {
             "id": "1eZL0LK34Dt3rgRN",
-            "name": "Postgres account"
+            "name": "Postgres account - admin"
           }
         }
       },
@@ -1351,15 +1356,15 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.6,
         "position": [
-          848,
-          96
+          880,
+          -336
         ],
         "id": "2febe566-cf00-432e-8e5c-7450e24a8932",
         "name": "UPSERT map_jira_worklogs",
         "credentials": {
           "postgres": {
             "id": "1eZL0LK34Dt3rgRN",
-            "name": "Postgres account"
+            "name": "Postgres account - admin"
           }
         }
       },
@@ -1368,8 +1373,8 @@
         "type": "n8n-nodes-base.wait",
         "typeVersion": 1.1,
         "position": [
-          -496,
-          640
+          -464,
+          336
         ],
         "id": "ff7b3cbc-48fa-4ba0-b14a-b01d275b8349",
         "name": "Wait1",
@@ -1404,8 +1409,8 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          -720,
-          640
+          -688,
+          336
         ],
         "id": "2f6e4a06-09f3-4f72-a323-d2ee39a71d5b",
         "name": "Set1"
@@ -1418,8 +1423,8 @@
         "type": "n8n-nodes-base.splitOut",
         "typeVersion": 1,
         "position": [
-          -48,
-          560
+          -16,
+          256
         ],
         "id": "99a75cf4-e2f4-438e-ba59-43de5487935d",
         "name": "Split Out1"
@@ -1429,10 +1434,22 @@
           "assignments": {
             "assignments": [
               {
-                "id": "6a054274-460e-4987-b05c-8a3e13f8efd3",
+                "id": "map-hourly-offset",
                 "name": "offset",
-                "value": "={{ $('Wait1').item.json.offset  + $('Set1').item.json.maxResults}}",
+                "value": "={{ $('Wait1').item.json.offset + $('Set1').item.json.maxResults }}",
                 "type": "number"
+              },
+              {
+                "id": "map-hourly-total",
+                "name": "total_tickets",
+                "value": "={{ $('Set1').item.json.total_tickets }}",
+                "type": "number"
+              },
+              {
+                "id": "map-hourly-mode",
+                "name": "sync_type",
+                "value": "Hourly",
+                "type": "string"
               }
             ]
           },
@@ -1441,8 +1458,8 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          1072,
-          560
+          656,
+          160
         ],
         "id": "7552d320-aee8-45d0-855e-ab75c96b9088",
         "name": "Incrementer1",
@@ -1460,7 +1477,7 @@
             "conditions": [
               {
                 "id": "616e922c-c4f0-488c-a3f6-ae5db6b51d19",
-                "leftValue": "={{ $node[\"Set1\"].json.offset }}",
+                "leftValue": "={{ $json.offset }}",
                 "rightValue": "={{ $node[\"Set1\"].json.total_tickets }}",
                 "operator": {
                   "type": "number",
@@ -1475,22 +1492,11 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.2,
         "position": [
-          1296,
-          640
+          880,
+          160
         ],
         "id": "c0256374-4ac9-4e54-a096-ae46e12c4e0c",
         "name": "If1"
-      },
-      {
-        "parameters": {},
-        "type": "n8n-nodes-base.noOp",
-        "typeVersion": 1,
-        "position": [
-          1520,
-          640
-        ],
-        "id": "e1a1a66a-3c76-4d19-9967-faee413030ee",
-        "name": "No Operation, do nothing1"
       },
       {
         "parameters": {
@@ -1515,6 +1521,10 @@
               {
                 "name": "fields",
                 "value": "*all"
+              },
+              {
+                "name": "expand",
+                "value": "changelog"
               }
             ]
           },
@@ -1523,15 +1533,15 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          -272,
-          560
+          -240,
+          256
         ],
         "id": "b84346fd-9207-44db-b8fb-e0f8da5748f1",
         "name": "Get MAP Tickets1",
         "credentials": {
           "jiraSoftwareServerApi": {
             "id": "7MgXJNgpxtJeD70Z",
-            "name": "Jira SW Server account"
+            "name": "Jira SW Server account - canjames"
           }
         }
       },
@@ -1545,15 +1555,15 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          400,
-          560
+          432,
+          256
         ],
         "id": "114304b5-6122-40b5-ab1d-bda1b2eb42c1",
         "name": "Get Ticket Worklog1",
         "credentials": {
           "jiraSoftwareServerApi": {
             "id": "7MgXJNgpxtJeD70Z",
-            "name": "Jira SW Server account"
+            "name": "Jira SW Server account - canjames"
           }
         }
       },
@@ -1565,8 +1575,8 @@
         "type": "n8n-nodes-base.splitOut",
         "typeVersion": 1,
         "position": [
-          624,
-          560
+          656,
+          352
         ],
         "id": "e7621487-a35f-40e9-abfb-a4e8ccf9159a",
         "name": "Split Out3"
@@ -2101,15 +2111,15 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.6,
         "position": [
-          176,
-          560
+          208,
+          256
         ],
         "id": "4281c345-29f7-4dde-a72b-881996825735",
         "name": "UPSERT map_jira_issues1",
         "credentials": {
           "postgres": {
             "id": "1eZL0LK34Dt3rgRN",
-            "name": "Postgres account"
+            "name": "Postgres account - admin"
           }
         }
       },
@@ -2251,15 +2261,392 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.6,
         "position": [
-          848,
-          560
+          880,
+          352
         ],
         "id": "779e7410-5027-49bf-85c8-9184d374c5d2",
         "name": "UPSERT map_jira_worklogs1",
         "credentials": {
           "postgres": {
             "id": "1eZL0LK34Dt3rgRN",
-            "name": "Postgres account"
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const output = [];\nfor (const input of $input.all()) {\n  const issue = $('Split Out').item.json;\n  for (const history of issue.changelog?.histories ?? []) {\n    (history.items ?? []).forEach((item, itemIndex) => {\n      output.push({ json: {\n        changelog_id: String(history.id), item_index: itemIndex,\n        issue_key: issue.key, issue_id: String(issue.id),\n        author_key: history.author?.key ?? history.author?.name ?? null,\n        author_name: history.author?.displayName ?? null,\n        created_at: history.created ?? null, field: item.field ?? null,\n        fieldtype: item.fieldtype ?? null, from_value: item.from ?? null,\n        from_string: item.fromString ?? null, to_value: item.to ?? null,\n        to_string: item.toString ?? null\n      }});\n    });\n  }\n}\nreturn output;"
+        },
+        "id": "1222b2dd-f6e5-4f7d-88a1-cad993c7d452",
+        "name": "Flatten MAP changelog items - Seed",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          656,
+          -144
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "upsert",
+          "schema": {
+            "__rl": true,
+            "value": "public",
+            "mode": "list",
+            "cachedResultName": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "map_jira_changelogs",
+            "mode": "list",
+            "cachedResultName": "map_jira_changelogs"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "changelog_id": "={{ $json.changelog_id }}",
+              "item_index": "={{ $json.item_index }}",
+              "issue_key": "={{ $json.issue_key }}",
+              "issue_id": "={{ $json.issue_id }}",
+              "author_key": "={{ $json.author_key }}",
+              "author_name": "={{ $json.author_name }}",
+              "created_at": "={{ $json.created_at }}",
+              "field": "={{ $json.field }}",
+              "fieldtype": "={{ $json.fieldtype }}",
+              "from_value": "={{ $json.from_value }}",
+              "from_string": "={{ $json.from_string }}",
+              "to_value": "={{ $json.to_value }}",
+              "to_string": "={{ $json.to_string }}"
+            },
+            "matchingColumns": [
+              "changelog_id",
+              "item_index"
+            ],
+            "schema": [
+              {
+                "id": "changelog_id",
+                "displayName": "changelog_id",
+                "required": true,
+                "defaultMatch": true,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "item_index",
+                "displayName": "item_index",
+                "required": true,
+                "defaultMatch": true,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "issue_key",
+                "displayName": "issue_key",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "issue_id",
+                "displayName": "issue_id",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "author_key",
+                "displayName": "author_key",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "author_name",
+                "displayName": "author_name",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "field",
+                "displayName": "field",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "fieldtype",
+                "displayName": "fieldtype",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "from_value",
+                "displayName": "from_value",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "from_string",
+                "displayName": "from_string",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "to_value",
+                "displayName": "to_value",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "to_string",
+                "displayName": "to_string",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "f4a7cd9a-4725-487a-8631-a5eac430a391",
+        "name": "UPSERT map_jira_changelogs - Seed",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          880,
+          -144
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "1eZL0LK34Dt3rgRN",
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const output = [];\nfor (const input of $input.all()) {\n  const issue = $('Split Out1').item.json;\n  for (const history of issue.changelog?.histories ?? []) {\n    (history.items ?? []).forEach((item, itemIndex) => {\n      output.push({ json: {\n        changelog_id: String(history.id), item_index: itemIndex,\n        issue_key: issue.key, issue_id: String(issue.id),\n        author_key: history.author?.key ?? history.author?.name ?? null,\n        author_name: history.author?.displayName ?? null,\n        created_at: history.created ?? null, field: item.field ?? null,\n        fieldtype: item.fieldtype ?? null, from_value: item.from ?? null,\n        from_string: item.fromString ?? null, to_value: item.to ?? null,\n        to_string: item.toString ?? null\n      }});\n    });\n  }\n}\nreturn output;"
+        },
+        "id": "aad556e6-0c8b-43fe-b8ee-df02ecec0603",
+        "name": "Flatten MAP changelog items - Hourly",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          656,
+          544
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "upsert",
+          "schema": {
+            "__rl": true,
+            "value": "public",
+            "mode": "list",
+            "cachedResultName": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "map_jira_changelogs",
+            "mode": "list",
+            "cachedResultName": "map_jira_changelogs"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "changelog_id": "={{ $json.changelog_id }}",
+              "item_index": "={{ $json.item_index }}",
+              "issue_key": "={{ $json.issue_key }}",
+              "issue_id": "={{ $json.issue_id }}",
+              "author_key": "={{ $json.author_key }}",
+              "author_name": "={{ $json.author_name }}",
+              "created_at": "={{ $json.created_at }}",
+              "field": "={{ $json.field }}",
+              "fieldtype": "={{ $json.fieldtype }}",
+              "from_value": "={{ $json.from_value }}",
+              "from_string": "={{ $json.from_string }}",
+              "to_value": "={{ $json.to_value }}",
+              "to_string": "={{ $json.to_string }}"
+            },
+            "matchingColumns": [
+              "changelog_id",
+              "item_index"
+            ],
+            "schema": [
+              {
+                "id": "changelog_id",
+                "displayName": "changelog_id",
+                "required": true,
+                "defaultMatch": true,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "item_index",
+                "displayName": "item_index",
+                "required": true,
+                "defaultMatch": true,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "issue_key",
+                "displayName": "issue_key",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "issue_id",
+                "displayName": "issue_id",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "author_key",
+                "displayName": "author_key",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "author_name",
+                "displayName": "author_name",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "field",
+                "displayName": "field",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "fieldtype",
+                "displayName": "fieldtype",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "from_value",
+                "displayName": "from_value",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "from_string",
+                "displayName": "from_string",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "to_value",
+                "displayName": "to_value",
+                "required": false,
+                "displayMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "to_string",
+                "displayName": "to_string",
+                "required": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "b1833650-a22c-4495-a105-9319d401b4d7",
+        "name": "UPSERT map_jira_changelogs - Hourly",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          880,
+          544
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "1eZL0LK34Dt3rgRN",
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "channelId": "71s7kcpk3pfrbgtf1oxyn9tr6o",
+          "message": "=MAP Jira sync completed.\nMode: {{$json.sync_type}}\nTickets reported by Jira: {{$json.total_tickets}}\nNext pagination offset: {{$json.offset}}\nExecution: {{$execution.id}}\nCompleted: {{$now}}",
+          "attachments": [],
+          "otherOptions": {}
+        },
+        "id": "19485e2b-cda5-4b44-a34d-8509f7ab9c95",
+        "name": "Notify MAP sync completion",
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          1296,
+          0
+        ],
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
           }
         }
       }
@@ -2320,7 +2707,7 @@
           ],
           [
             {
-              "node": "No Operation, do nothing",
+              "node": "Notify MAP sync completion",
               "type": "main",
               "index": 0
             }
@@ -2411,6 +2798,16 @@
               "node": "Split Out2",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "Incrementer",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Flatten MAP changelog items - Seed",
+              "type": "main",
+              "index": 0
             }
           ]
         ]
@@ -2431,17 +2828,6 @@
           [
             {
               "node": "Get Ticket Worklog",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "UPSERT map_jira_worklogs": {
-        "main": [
-          [
-            {
-              "node": "Incrementer",
               "type": "main",
               "index": 0
             }
@@ -2503,7 +2889,7 @@
           ],
           [
             {
-              "node": "No Operation, do nothing1",
+              "node": "Notify MAP sync completion",
               "type": "main",
               "index": 0
             }
@@ -2526,6 +2912,16 @@
           [
             {
               "node": "Split Out3",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Incrementer1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Flatten MAP changelog items - Hourly",
               "type": "main",
               "index": 0
             }
@@ -2554,11 +2950,22 @@
           ]
         ]
       },
-      "UPSERT map_jira_worklogs1": {
+      "Flatten MAP changelog items - Seed": {
         "main": [
           [
             {
-              "node": "Incrementer1",
+              "node": "UPSERT map_jira_changelogs - Seed",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Flatten MAP changelog items - Hourly": {
+        "main": [
+          [
+            {
+              "node": "UPSERT map_jira_changelogs - Hourly",
               "type": "main",
               "index": 0
             }
@@ -2567,12 +2974,12 @@
       }
     },
     "nodeGroups": [],
-    "authors": "system migration",
-    "name": null,
-    "description": null,
-    "autosaved": false
+    "authors": "Canice James",
+    "name": "Version 85509673",
+    "description": "",
+    "autosaved": true
   },
-  "activeVersionId": "8eaa7e74-ff77-422b-a87d-2fb4e365d991",
+  "activeVersionId": "85509673-e54c-4b7f-b10c-d1a2af5970d0",
   "connections": {
     "Wait": {
       "main": [
@@ -2629,7 +3036,7 @@
         ],
         [
           {
-            "node": "No Operation, do nothing",
+            "node": "Notify MAP sync completion",
             "type": "main",
             "index": 0
           }
@@ -2720,6 +3127,16 @@
             "node": "Split Out2",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Incrementer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Flatten MAP changelog items - Seed",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -2740,17 +3157,6 @@
         [
           {
             "node": "Get Ticket Worklog",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "UPSERT map_jira_worklogs": {
-      "main": [
-        [
-          {
-            "node": "Incrementer",
             "type": "main",
             "index": 0
           }
@@ -2812,7 +3218,7 @@
         ],
         [
           {
-            "node": "No Operation, do nothing1",
+            "node": "Notify MAP sync completion",
             "type": "main",
             "index": 0
           }
@@ -2835,6 +3241,16 @@
         [
           {
             "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Incrementer1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Flatten MAP changelog items - Hourly",
             "type": "main",
             "index": 0
           }
@@ -2863,11 +3279,22 @@
         ]
       ]
     },
-    "UPSERT map_jira_worklogs1": {
+    "Flatten MAP changelog items - Seed": {
       "main": [
         [
           {
-            "node": "Incrementer1",
+            "node": "UPSERT map_jira_changelogs - Seed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flatten MAP changelog items - Hourly": {
+      "main": [
+        [
+          {
+            "node": "UPSERT map_jira_changelogs - Hourly",
             "type": "main",
             "index": 0
           }
@@ -2879,7 +3306,9 @@
   "id": "bRvPayNW029N2GBE",
   "isArchived": false,
   "meta": {
-    "templateCredsSetupCompleted": true
+    "templateCredsSetupCompleted": true,
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
   },
   "name": "Jira MAP",
   "nodeGroups": [],
@@ -2887,14 +3316,14 @@
     {
       "parameters": {
         "content": "## Seed DB",
-        "height": 400,
-        "width": 2934
+        "height": 672,
+        "width": 2294
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -1216,
-        32
+        -624
       ],
       "id": "4e708765-d9c5-4d0e-b2ee-8838f931d7a6",
       "name": "Sticky Note"
@@ -2904,8 +3333,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        -496,
-        176
+        -464,
+        -352
       ],
       "id": "bb403e8e-6773-4add-a8b5-247c272cf1aa",
       "name": "Wait",
@@ -2940,8 +3369,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -720,
-        176
+        -688,
+        -352
       ],
       "id": "f3e874fe-1c1a-45c4-97d0-a4ddc40feaae",
       "name": "Set"
@@ -2954,8 +3383,8 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        -48,
-        96
+        -16,
+        -432
       ],
       "id": "3bd38b5c-dc14-45df-91bb-93f20365f17b",
       "name": "Split Out"
@@ -2965,10 +3394,22 @@
         "assignments": {
           "assignments": [
             {
-              "id": "6a054274-460e-4987-b05c-8a3e13f8efd3",
+              "id": "map-seed-offset",
               "name": "offset",
-              "value": "={{ $('Wait').item.json.offset  + $('Set').item.json.maxResults}}",
+              "value": "={{ $('Wait').item.json.offset + $('Set').item.json.maxResults }}",
               "type": "number"
+            },
+            {
+              "id": "map-seed-total",
+              "name": "total_tickets",
+              "value": "={{ $('Set').item.json.total_tickets }}",
+              "type": "number"
+            },
+            {
+              "id": "map-seed-mode",
+              "name": "sync_type",
+              "value": "Seed",
+              "type": "string"
             }
           ]
         },
@@ -2977,8 +3418,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1072,
-        96
+        656,
+        -528
       ],
       "id": "8a492b6e-e946-45ef-87d3-3a6a4fc89bee",
       "name": "Incrementer",
@@ -2996,7 +3437,7 @@
           "conditions": [
             {
               "id": "616e922c-c4f0-488c-a3f6-ae5db6b51d19",
-              "leftValue": "={{ $node[\"Set\"].json.offset }}",
+              "leftValue": "={{ $json.offset }}",
               "rightValue": "={{ $node[\"Set\"].json.total_tickets }}",
               "operator": {
                 "type": "number",
@@ -3011,30 +3452,19 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1296,
-        176
+        880,
+        -528
       ],
       "id": "427fa227-63c0-4f08-8501-5cdeb6ff52c3",
       "name": "If"
     },
     {
       "parameters": {},
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        1520,
-        176
-      ],
-      "id": "73d79712-ee23-4277-8746-de7811f857a5",
-      "name": "No Operation, do nothing"
-    },
-    {
-      "parameters": {},
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -1168,
-        176
+        -1136,
+        -352
       ],
       "id": "f34ef63b-8aec-45bb-9d3f-8ae3f3751c4d",
       "name": "Execute"
@@ -3062,8 +3492,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -944,
-        176
+        -912,
+        -352
       ],
       "id": "8d0b386e-044e-42e7-ac98-5d1835b9ba07",
       "name": "Get total MAP tickets",
@@ -3097,6 +3527,10 @@
             {
               "name": "fields",
               "value": "*all"
+            },
+            {
+              "name": "expand",
+              "value": "changelog"
             }
           ]
         },
@@ -3105,8 +3539,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -272,
-        96
+        -240,
+        -432
       ],
       "id": "2337abb1-3125-41ff-b3f9-f7f8b921a958",
       "name": "Get MAP Tickets",
@@ -3120,15 +3554,15 @@
     {
       "parameters": {
         "content": "## Cron Update",
-        "height": 432,
-        "width": 2934,
+        "height": 640,
+        "width": 2294,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
         -1216,
-        480
+        96
       ],
       "id": "b5bf77a5-c7ba-4bf9-b4bf-1d3193d203d2",
       "name": "Sticky Note1"
@@ -3146,8 +3580,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -1152,
-        640
+        -1136,
+        336
       ],
       "id": "ea677266-e455-4591-bfe1-2cc55b200af9",
       "name": "Schedule Trigger - Runs every 1h"
@@ -3175,8 +3609,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -944,
-        640
+        -912,
+        336
       ],
       "id": "62324e99-477b-4093-a6b7-5cf513e4e000",
       "name": "Get total MAP tickets updated last 2h",
@@ -3191,14 +3625,14 @@
       "parameters": {
         "content": "## Webhook Update",
         "height": 400,
-        "width": 2918,
+        "width": 2294,
         "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -1200,
-        960
+        -1216,
+        784
       ],
       "id": "125348ed-668a-441a-bf09-b2ee6535dae4",
       "name": "Sticky Note2"
@@ -3218,8 +3652,8 @@
       "type": "n8n-nodes-base.jiraTrigger",
       "typeVersion": 1.1,
       "position": [
-        -1152,
-        1104
+        -1168,
+        944
       ],
       "id": "90cbe68e-1cce-4ea7-b831-95531625232c",
       "name": "Jira Trigger",
@@ -3488,8 +3922,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -944,
-        1104
+        -960,
+        944
       ],
       "id": "b109d46b-ee2b-4cdc-a17e-0a0d916d59a0",
       "name": "Insert or update rows in a table WebHook",
@@ -3506,8 +3940,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        -736,
-        1104
+        -752,
+        944
       ],
       "id": "43a48281-b97c-4023-b4ad-35b87c425795",
       "name": "No Operation, do nothing2",
@@ -3523,8 +3957,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        400,
-        96
+        432,
+        -432
       ],
       "id": "4c96d81e-1a07-42f7-9aee-edb8fdf72da5",
       "name": "Get Ticket Worklog",
@@ -3543,8 +3977,8 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        624,
-        96
+        656,
+        -336
       ],
       "id": "649e4b88-f240-4d38-b410-0c6c2b6427d7",
       "name": "Split Out2"
@@ -4079,8 +4513,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        176,
-        96
+        208,
+        -432
       ],
       "id": "7e2bf1d2-7b39-4e90-8c6d-72e887a3d358",
       "name": "UPSERT map_jira_issues",
@@ -4229,8 +4663,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        848,
-        96
+        880,
+        -336
       ],
       "id": "2febe566-cf00-432e-8e5c-7450e24a8932",
       "name": "UPSERT map_jira_worklogs",
@@ -4246,8 +4680,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        -496,
-        640
+        -464,
+        336
       ],
       "id": "ff7b3cbc-48fa-4ba0-b14a-b01d275b8349",
       "name": "Wait1",
@@ -4282,8 +4716,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -720,
-        640
+        -688,
+        336
       ],
       "id": "2f6e4a06-09f3-4f72-a323-d2ee39a71d5b",
       "name": "Set1"
@@ -4296,8 +4730,8 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        -48,
-        560
+        -16,
+        256
       ],
       "id": "99a75cf4-e2f4-438e-ba59-43de5487935d",
       "name": "Split Out1"
@@ -4307,10 +4741,22 @@
         "assignments": {
           "assignments": [
             {
-              "id": "6a054274-460e-4987-b05c-8a3e13f8efd3",
+              "id": "map-hourly-offset",
               "name": "offset",
-              "value": "={{ $('Wait1').item.json.offset  + $('Set1').item.json.maxResults}}",
+              "value": "={{ $('Wait1').item.json.offset + $('Set1').item.json.maxResults }}",
               "type": "number"
+            },
+            {
+              "id": "map-hourly-total",
+              "name": "total_tickets",
+              "value": "={{ $('Set1').item.json.total_tickets }}",
+              "type": "number"
+            },
+            {
+              "id": "map-hourly-mode",
+              "name": "sync_type",
+              "value": "Hourly",
+              "type": "string"
             }
           ]
         },
@@ -4319,8 +4765,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1072,
-        560
+        656,
+        160
       ],
       "id": "7552d320-aee8-45d0-855e-ab75c96b9088",
       "name": "Incrementer1",
@@ -4338,7 +4784,7 @@
           "conditions": [
             {
               "id": "616e922c-c4f0-488c-a3f6-ae5db6b51d19",
-              "leftValue": "={{ $node[\"Set1\"].json.offset }}",
+              "leftValue": "={{ $json.offset }}",
               "rightValue": "={{ $node[\"Set1\"].json.total_tickets }}",
               "operator": {
                 "type": "number",
@@ -4353,22 +4799,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1296,
-        640
+        880,
+        160
       ],
       "id": "c0256374-4ac9-4e54-a096-ae46e12c4e0c",
       "name": "If1"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        1520,
-        640
-      ],
-      "id": "e1a1a66a-3c76-4d19-9967-faee413030ee",
-      "name": "No Operation, do nothing1"
     },
     {
       "parameters": {
@@ -4393,6 +4828,10 @@
             {
               "name": "fields",
               "value": "*all"
+            },
+            {
+              "name": "expand",
+              "value": "changelog"
             }
           ]
         },
@@ -4401,8 +4840,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -272,
-        560
+        -240,
+        256
       ],
       "id": "b84346fd-9207-44db-b8fb-e0f8da5748f1",
       "name": "Get MAP Tickets1",
@@ -4423,8 +4862,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        400,
-        560
+        432,
+        256
       ],
       "id": "114304b5-6122-40b5-ab1d-bda1b2eb42c1",
       "name": "Get Ticket Worklog1",
@@ -4443,8 +4882,8 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        624,
-        560
+        656,
+        352
       ],
       "id": "e7621487-a35f-40e9-abfb-a4e8ccf9159a",
       "name": "Split Out3"
@@ -4979,8 +5418,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        176,
-        560
+        208,
+        256
       ],
       "id": "4281c345-29f7-4dde-a72b-881996825735",
       "name": "UPSERT map_jira_issues1",
@@ -5129,8 +5568,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        848,
-        560
+        880,
+        352
       ],
       "id": "779e7410-5027-49bf-85c8-9184d374c5d2",
       "name": "UPSERT map_jira_worklogs1",
@@ -5138,6 +5577,383 @@
         "postgres": {
           "id": "1eZL0LK34Dt3rgRN",
           "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\nfor (const input of $input.all()) {\n  const issue = $('Split Out').item.json;\n  for (const history of issue.changelog?.histories ?? []) {\n    (history.items ?? []).forEach((item, itemIndex) => {\n      output.push({ json: {\n        changelog_id: String(history.id), item_index: itemIndex,\n        issue_key: issue.key, issue_id: String(issue.id),\n        author_key: history.author?.key ?? history.author?.name ?? null,\n        author_name: history.author?.displayName ?? null,\n        created_at: history.created ?? null, field: item.field ?? null,\n        fieldtype: item.fieldtype ?? null, from_value: item.from ?? null,\n        from_string: item.fromString ?? null, to_value: item.to ?? null,\n        to_string: item.toString ?? null\n      }});\n    });\n  }\n}\nreturn output;"
+      },
+      "id": "1222b2dd-f6e5-4f7d-88a1-cad993c7d452",
+      "name": "Flatten MAP changelog items - Seed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "map_jira_changelogs",
+          "mode": "list",
+          "cachedResultName": "map_jira_changelogs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "changelog_id": "={{ $json.changelog_id }}",
+            "item_index": "={{ $json.item_index }}",
+            "issue_key": "={{ $json.issue_key }}",
+            "issue_id": "={{ $json.issue_id }}",
+            "author_key": "={{ $json.author_key }}",
+            "author_name": "={{ $json.author_name }}",
+            "created_at": "={{ $json.created_at }}",
+            "field": "={{ $json.field }}",
+            "fieldtype": "={{ $json.fieldtype }}",
+            "from_value": "={{ $json.from_value }}",
+            "from_string": "={{ $json.from_string }}",
+            "to_value": "={{ $json.to_value }}",
+            "to_string": "={{ $json.to_string }}"
+          },
+          "matchingColumns": [
+            "changelog_id",
+            "item_index"
+          ],
+          "schema": [
+            {
+              "id": "changelog_id",
+              "displayName": "changelog_id",
+              "required": true,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "item_index",
+              "displayName": "item_index",
+              "required": true,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_key",
+              "displayName": "issue_key",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "issue_id",
+              "displayName": "issue_id",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "author_key",
+              "displayName": "author_key",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "author_name",
+              "displayName": "author_name",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "field",
+              "displayName": "field",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "fieldtype",
+              "displayName": "fieldtype",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "from_value",
+              "displayName": "from_value",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "from_string",
+              "displayName": "from_string",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "to_value",
+              "displayName": "to_value",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "to_string",
+              "displayName": "to_string",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "f4a7cd9a-4725-487a-8631-a5eac430a391",
+      "name": "UPSERT map_jira_changelogs - Seed",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        880,
+        -144
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\nfor (const input of $input.all()) {\n  const issue = $('Split Out1').item.json;\n  for (const history of issue.changelog?.histories ?? []) {\n    (history.items ?? []).forEach((item, itemIndex) => {\n      output.push({ json: {\n        changelog_id: String(history.id), item_index: itemIndex,\n        issue_key: issue.key, issue_id: String(issue.id),\n        author_key: history.author?.key ?? history.author?.name ?? null,\n        author_name: history.author?.displayName ?? null,\n        created_at: history.created ?? null, field: item.field ?? null,\n        fieldtype: item.fieldtype ?? null, from_value: item.from ?? null,\n        from_string: item.fromString ?? null, to_value: item.to ?? null,\n        to_string: item.toString ?? null\n      }});\n    });\n  }\n}\nreturn output;"
+      },
+      "id": "aad556e6-0c8b-43fe-b8ee-df02ecec0603",
+      "name": "Flatten MAP changelog items - Hourly",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        656,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "map_jira_changelogs",
+          "mode": "list",
+          "cachedResultName": "map_jira_changelogs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "changelog_id": "={{ $json.changelog_id }}",
+            "item_index": "={{ $json.item_index }}",
+            "issue_key": "={{ $json.issue_key }}",
+            "issue_id": "={{ $json.issue_id }}",
+            "author_key": "={{ $json.author_key }}",
+            "author_name": "={{ $json.author_name }}",
+            "created_at": "={{ $json.created_at }}",
+            "field": "={{ $json.field }}",
+            "fieldtype": "={{ $json.fieldtype }}",
+            "from_value": "={{ $json.from_value }}",
+            "from_string": "={{ $json.from_string }}",
+            "to_value": "={{ $json.to_value }}",
+            "to_string": "={{ $json.to_string }}"
+          },
+          "matchingColumns": [
+            "changelog_id",
+            "item_index"
+          ],
+          "schema": [
+            {
+              "id": "changelog_id",
+              "displayName": "changelog_id",
+              "required": true,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "item_index",
+              "displayName": "item_index",
+              "required": true,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_key",
+              "displayName": "issue_key",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "issue_id",
+              "displayName": "issue_id",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "author_key",
+              "displayName": "author_key",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "author_name",
+              "displayName": "author_name",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "field",
+              "displayName": "field",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "fieldtype",
+              "displayName": "fieldtype",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "from_value",
+              "displayName": "from_value",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "from_string",
+              "displayName": "from_string",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "to_value",
+              "displayName": "to_value",
+              "required": false,
+              "displayMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "to_string",
+              "displayName": "to_string",
+              "required": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "b1833650-a22c-4495-a105-9319d401b4d7",
+      "name": "UPSERT map_jira_changelogs - Hourly",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        880,
+        544
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "71s7kcpk3pfrbgtf1oxyn9tr6o",
+        "message": "=MAP Jira sync completed.\nMode: {{$json.sync_type}}\nTickets reported by Jira: {{$json.total_tickets}}\nNext pagination offset: {{$json.offset}}\nExecution: {{$execution.id}}\nCompleted: {{$now}}",
+        "attachments": [],
+        "otherOptions": {}
+      },
+      "id": "19485e2b-cda5-4b44-a34d-8509f7ab9c95",
+      "name": "Notify MAP sync completion",
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        0
+      ],
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
         }
       }
     }
@@ -5186,6 +6002,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2026-08-14T14:59:41.978Z",
-  "versionId": "4dc446d6-ca4c-4bc1-9212-acea0d526d19"
+  "updatedAt": "2026-08-21T17:07:50.473Z",
+  "versionId": "85509673-e54c-4b7f-b10c-d1a2af5970d0"
 }
