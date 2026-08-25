@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-08-20T20:13:16.923Z",
-    "createdAt": "2026-08-20T20:13:16.923Z",
-    "versionId": "90668828-9007-4623-b923-6b1fba5e8c86",
+    "updatedAt": "2026-08-24T17:08:20.273Z",
+    "createdAt": "2026-08-24T17:08:20.273Z",
+    "versionId": "8c276460-3cd7-4eee-af81-926f366b783b",
     "workflowId": "b6ei24nspuEbTSzT",
     "nodes": [
       {
@@ -11,7 +11,10 @@
           "httpMethod": "POST",
           "path": "automated-wikis",
           "responseMode": "responseNode",
-          "options": {}
+          "options": {
+            "binaryData": true,
+            "binaryPropertyName": "data"
+          }
         },
         "id": "22299cd4-a4b8-4634-a10f-b9d47c13882b",
         "name": "Receive Submission",
@@ -155,7 +158,8 @@
               }
             ]
           },
-          "options": {}
+          "options": {},
+          "includeOtherFields": true
         },
         "id": "efb940e7-426f-437c-9113-0f5e88ae2115",
         "name": "Normalize Input",
@@ -200,7 +204,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const input = items[0].json;\nconst sources = Array.isArray(input.sources) ? input.sources : [];\nreturn sources.map((source, index) => ({\n  json: { index, source, title: input.title, spaceKey: input.spaceKey, template: input.template, mode: input.mode, pageUrl: input.pageUrl, instructions: input.instructions, confluenceBaseUrl: input.confluenceBaseUrl, notify: input.notify, mattermostChannelId: input.mattermostChannelId, senderEmail: input.senderEmail, parentPageId: input.parentPageId },\n}));\n"
+          "jsCode": "const item = items[0];\nconst input = item.json;\nconst sources = Array.isArray(input.sources) ? input.sources : [];\nreturn sources.map((source, index) => ({\n  json: { index, source, title: input.title, spaceKey: input.spaceKey, template: input.template, mode: input.mode, pageUrl: input.pageUrl, instructions: input.instructions, confluenceBaseUrl: input.confluenceBaseUrl, notify: input.notify, mattermostChannelId: input.mattermostChannelId, senderEmail: input.senderEmail, parentPageId: input.parentPageId },\n  binary: item.binary,\n}));"
         },
         "id": "9b84594b-eb67-46ed-99d8-8d75b50f1b21",
         "name": "Split Sources",
@@ -319,6 +323,48 @@
                   ],
                   "combinator": "and"
                 }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.source.type }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "markdownUpload"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.source.type }}",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "rightValue": "pdfUpload"
+                    }
+                  ],
+                  "combinator": "and"
+                }
               }
             ]
           },
@@ -368,7 +414,7 @@
       },
       {
         "parameters": {
-          "numberInputs": 6
+          "numberInputs": 8
         },
         "id": "72db9dff-6b11-4443-a562-c24061b25725",
         "name": "Merge Sources",
@@ -402,7 +448,7 @@
               {
                 "id": "text",
                 "name": "text",
-                "value": "={{ \"--- Source: markdown file (\" + $json.source.url + \") ---\\n\" + $json.data }}",
+                "value": "={{ \"--- Source: markdown file (\" + ($json.source?.url || $json.source?.fileName || $(\"Route by Source Type\").item.json.source?.url || $(\"Route by Source Type\").item.json.source?.fileName || \"uploaded markdown\") + \") ---\\n\" + ($json.data || \"\") }}",
                 "type": "string"
               }
             ]
@@ -475,7 +521,13 @@
         "position": [
           1568,
           576
-        ]
+        ],
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "eqoJ4C4FBGVFgO7t",
+            "name": "Naming Conventions - api"
+          }
+        }
       },
       {
         "parameters": {
@@ -538,7 +590,7 @@
               {
                 "id": "text",
                 "name": "text",
-                "value": "={{ \"--- Source: PDF (\" + $json.source.url + \") ---\\n\" + ($json.text || \"\") }}",
+                "value": "={{ \"--- Source: PDF (\" + ($json.source?.url || $json.source?.fileName || $(\"Route by Source Type\").item.json.source?.url || $(\"Route by Source Type\").item.json.source?.fileName || \"uploaded PDF\") + \") ---\\n\" + ($json.text || \"\") }}",
                 "type": "string"
               }
             ]
@@ -909,7 +961,7 @@
           "promptType": "define",
           "text": "={{ \"You are a technical writer creating a Confluence page.\\n\\nMode: \" + $json.mode + \"\\nTemplate instruction: \" + ($json.template === \"release-notes\" ? \"Write a Confluence release notes page. Start with a short executive summary, then list the most important changes, any risks or breaking changes, and action items. Use Confluence storage-format HTML.\" : $json.template === \"wiki\" ? \"Write a Confluence wiki page that organizes knowledge clearly with sections and headings. Use Confluence storage-format HTML.\" : $json.template === \"doc\" ? \"Write a Confluence documentation page that is structured, readable, and easy to scan. Use Confluence storage-format HTML.\" : \"Write a general Confluence page that presents the available information clearly. Use Confluence storage-format HTML.\") + \"\\nAdditional instructions: \" + ($json.instructions || \"none\") + \"\\n\\n\" + ($json.existingBody ? \"\\n\\nExisting page body (update this, do not rewrite from scratch):\\n\" + $json.existingBody : \"\") + \"\\n\\nSource data:\\n\" + $json.sourceText + \"\\n\\nGenerate a complete Confluence storage-format HTML body. Output only the HTML.\" }}",
           "options": {
-            "systemMessage": "You write clean HTML for a Confluence page body. Use only standard HTML tags such as h1, h2, h3, p, ul, ol, li, table, thead, tbody, tr, th, td, code, pre, strong, em, a, br, hr. Do NOT use Confluence-specific XML, ac:structured-macro, ac:macro, ac:parameter, or any ac: namespace tags. Do not wrap the output in markdown code fences. Output only the HTML body content."
+            "systemMessage": "You write clean XHTML-compatible standard HTML for a Confluence page body. Use only standard tags such as h1, h2, h3, p, ul, ol, li, table, thead, tbody, tr, th, td, code, pre, strong, em, a, br, hr. Close every non-void tag. Write void tags as self-closing XHTML tags: <br /> and <hr />. Escape < and > inside code and pre content. Do NOT use Confluence-specific XML, ac:structured-macro, ac:macro, ac:parameter, or any ac: namespace tags. Do not use script, iframe, event-handler attributes, or markdown formatting. Do not wrap the output in markdown code fences. Output only the HTML body content."
           }
         },
         "id": "cf249be3-00cc-4e01-a08d-9fcc1a36f015",
@@ -925,9 +977,9 @@
         "parameters": {
           "model": {
             "__rl": true,
-            "value": "claude-haiku-4-5-20251001",
+            "value": "claude-sonnet-4-6",
             "mode": "list",
-            "cachedResultName": "Claude Haiku 4.5"
+            "cachedResultName": "Claude Sonnet 4.6"
           },
           "options": {
             "maxTokensToSample": 4096
@@ -938,8 +990,8 @@
         "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
         "typeVersion": 1.5,
         "position": [
-          3664,
-          608
+          3584,
+          656
         ],
         "credentials": {
           "anthropicApi": {
@@ -991,7 +1043,7 @@
               {
                 "id": "body",
                 "name": "body",
-                "value": "={{ typeof $json.output === 'string' ? $json.output.replace(/^```html\\s*/i, '').replace(/\\s*```$/i, '').replace(/<ac:[^>]+>/gi, '').replace(/<\\/ac:\\w+>/gi, '').trim() : $json.output }}",
+                "value": "={{ typeof $json.output === 'string' ? $json.output.replace(/^```html\\s*/i, '').replace(/\\s*```$/i, '').replace(/<ac:[^>]+>/gi, '').replace(/<\\/ac:\\w+>/gi, '').replace(/<hr\\s*>/gi, '<hr />').replace(/<br\\s*>/gi, '<br />').replace(/<xml>/gi, '&lt;xml&gt;').replace(/<\\/xml>/gi, '&lt;/xml&gt;').trim() : $json.output }}",
                 "type": "string"
               },
               {
@@ -1198,7 +1250,7 @@
         "type": "n8n-nodes-base.mattermost",
         "typeVersion": 1,
         "position": [
-          5056,
+          4832,
           384
         ],
         "credentials": {
@@ -1224,7 +1276,7 @@
         "type": "n8n-nodes-base.emailSend",
         "typeVersion": 2.1,
         "position": [
-          5280,
+          5056,
           384
         ],
         "webhookId": "dbbb3519-bef3-4487-bc31-5500717ac7cf",
@@ -1241,9 +1293,52 @@
         "type": "n8n-nodes-base.respondToWebhook",
         "typeVersion": 1.5,
         "position": [
-          5504,
+          5280,
           384
         ]
+      },
+      {
+        "id": "69df5db2-60bc-47a9-aa77-42ded3715e45",
+        "name": "Normalize Uploads",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          336,
+          768
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const item = items[0];\nconst incoming = item.json || {};\nconst request = incoming.body && typeof incoming.body === 'object' ? incoming.body : incoming;\nlet metadata = request.metadata || {};\nif (typeof metadata === 'string' && metadata.trim()) metadata = JSON.parse(metadata);\nif (!metadata || typeof metadata !== 'object') metadata = {};\nlet sources = metadata.sources ?? request.sources ?? incoming.sources ?? [];\nif (typeof sources === 'string' && sources.trim()) sources = JSON.parse(sources);\nif (!Array.isArray(sources)) sources = [];\nfor (const [binaryProperty, file] of Object.entries(item.binary || {})) {\n  const fileName = file.fileName || binaryProperty;\n  const mimeType = (file.mimeType || '').toLowerCase();\n  const extension = fileName.toLowerCase().split('.').pop();\n  const type = mimeType === 'application/pdf' || extension === 'pdf'\n    ? 'pdfUpload'\n    : mimeType === 'text/markdown' || mimeType === 'text/plain' || extension === 'md' || extension === 'markdown'\n      ? 'markdownUpload'\n      : null;\n  if (!type) throw new Error(`Unsupported upload type: ${fileName}`);\n  sources.push({ type, binaryProperty, fileName });\n}\nreturn [{ json: { ...incoming, ...metadata, sources }, binary: item.binary }];"
+        }
+      },
+      {
+        "id": "14fdcc66-710e-4c6e-8daa-b5ebd782fe40",
+        "name": "Prepare Upload Binary",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1008,
+          480
+        ],
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "return items.map(item => {\n  const source = item.json.source || {};\n  const uploaded = source.binaryProperty ? item.binary?.[source.binaryProperty] : undefined;\n  if (!uploaded) return item;\n  return { json: item.json, binary: { ...(item.binary || {}), data: uploaded } };\n});"
+        }
+      },
+      {
+        "id": "9dc6efa5-c3bf-4a16-b178-a86a3e137535",
+        "name": "Extract Uploaded Markdown",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1.1,
+        "position": [
+          1568,
+          0
+        ],
+        "parameters": {
+          "operation": "text",
+          "binaryPropertyName": "data",
+          "destinationKey": "data"
+        }
       }
     ],
     "connections": {
@@ -1258,33 +1353,11 @@
           ]
         ]
       },
-      "Config": {
-        "main": [
-          [
-            {
-              "node": "Normalize Input",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Normalize Input": {
         "main": [
           [
             {
               "node": "Input OK?",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Split Sources": {
-        "main": [
-          [
-            {
-              "node": "Route by Source Type",
               "type": "main",
               "index": 0
             }
@@ -1324,6 +1397,20 @@
           [
             {
               "node": "Fetch PDF",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extract Uploaded Markdown",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extract PDF Text",
               "type": "main",
               "index": 0
             }
@@ -1454,17 +1541,6 @@
               "node": "Merge Sources",
               "type": "main",
               "index": 4
-            }
-          ]
-        ]
-      },
-      "Format Unknown": {
-        "main": [
-          [
-            {
-              "node": "Merge Sources",
-              "type": "main",
-              "index": 5
             }
           ]
         ]
@@ -1670,15 +1746,81 @@
             }
           ]
         ]
+      },
+      "Config": {
+        "main": [
+          [
+            {
+              "node": "Normalize Uploads",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalize Uploads": {
+        "main": [
+          [
+            {
+              "node": "Normalize Input",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Sources": {
+        "main": [
+          [
+            {
+              "node": "Prepare Upload Binary",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare Upload Binary": {
+        "main": [
+          [
+            {
+              "node": "Route by Source Type",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Uploaded Markdown": {
+        "main": [
+          [
+            {
+              "node": "Format Markdown File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format Unknown": {
+        "main": [
+          [
+            {
+              "node": "Merge Sources",
+              "type": "main",
+              "index": 7
+            }
+          ]
+        ]
       }
     },
     "nodeGroups": [],
     "authors": "Canice James (via MCP)",
-    "name": "Updated Generate Page, Finalize Body",
-    "description": "Updated nodes: Generate Page, Finalize Body",
+    "name": "Escape literal XML tags in generated content",
+    "description": "Uploaded technical documents can contain XML-like text inside code or table content. Escape literal xml tags before sending standard HTML to Confluence.",
     "autosaved": false
   },
-  "activeVersionId": "90668828-9007-4623-b923-6b1fba5e8c86",
+  "activeVersionId": "8c276460-3cd7-4eee-af81-926f366b783b",
   "connections": {
     "Receive Submission": {
       "main": [
@@ -1691,33 +1833,11 @@
         ]
       ]
     },
-    "Config": {
-      "main": [
-        [
-          {
-            "node": "Normalize Input",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Normalize Input": {
       "main": [
         [
           {
             "node": "Input OK?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Split Sources": {
-      "main": [
-        [
-          {
-            "node": "Route by Source Type",
             "type": "main",
             "index": 0
           }
@@ -1757,6 +1877,20 @@
         [
           {
             "node": "Fetch PDF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Uploaded Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract PDF Text",
             "type": "main",
             "index": 0
           }
@@ -1887,17 +2021,6 @@
             "node": "Merge Sources",
             "type": "main",
             "index": 4
-          }
-        ]
-      ]
-    },
-    "Format Unknown": {
-      "main": [
-        [
-          {
-            "node": "Merge Sources",
-            "type": "main",
-            "index": 5
           }
         ]
       ]
@@ -2103,6 +2226,72 @@
           }
         ]
       ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Normalize Uploads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Uploads": {
+      "main": [
+        [
+          {
+            "node": "Normalize Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Sources": {
+      "main": [
+        [
+          {
+            "node": "Prepare Upload Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Upload Binary": {
+      "main": [
+        [
+          {
+            "node": "Route by Source Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Uploaded Markdown": {
+      "main": [
+        [
+          {
+            "node": "Format Markdown File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Unknown": {
+      "main": [
+        [
+          {
+            "node": "Merge Sources",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2026-08-19T20:28:06.551Z",
@@ -2121,7 +2310,9 @@
         "httpMethod": "POST",
         "path": "automated-wikis",
         "responseMode": "responseNode",
-        "options": {}
+        "options": {
+          "binaryPropertyName": "data"
+        }
       },
       "id": "22299cd4-a4b8-4634-a10f-b9d47c13882b",
       "name": "Receive Submission",
@@ -2129,7 +2320,7 @@
       "typeVersion": 2.1,
       "position": [
         0,
-        576
+        624
       ],
       "webhookId": "045f6ab2-4487-42e3-89d8-b159ea5ce5fd"
     },
@@ -2184,7 +2375,7 @@
       "typeVersion": 3.5,
       "position": [
         224,
-        576
+        624
       ]
     },
     {
@@ -2265,6 +2456,7 @@
             }
           ]
         },
+        "includeOtherFields": true,
         "options": {}
       },
       "id": "efb940e7-426f-437c-9113-0f5e88ae2115",
@@ -2272,8 +2464,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        448,
-        576
+        672,
+        624
       ]
     },
     {
@@ -2304,21 +2496,21 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        672,
-        576
+        896,
+        624
       ]
     },
     {
       "parameters": {
-        "jsCode": "const input = items[0].json;\nconst sources = Array.isArray(input.sources) ? input.sources : [];\nreturn sources.map((source, index) => ({\n  json: { index, source, title: input.title, spaceKey: input.spaceKey, template: input.template, mode: input.mode, pageUrl: input.pageUrl, instructions: input.instructions, confluenceBaseUrl: input.confluenceBaseUrl, notify: input.notify, mattermostChannelId: input.mattermostChannelId, senderEmail: input.senderEmail, parentPageId: input.parentPageId },\n}));\n"
+        "jsCode": "const item = items[0];\nconst input = item.json;\nconst sources = Array.isArray(input.sources) ? input.sources : [];\nreturn sources.map((source, index) => ({\n  json: { index, source, title: input.title, spaceKey: input.spaceKey, template: input.template, mode: input.mode, pageUrl: input.pageUrl, instructions: input.instructions, confluenceBaseUrl: input.confluenceBaseUrl, notify: input.notify, mattermostChannelId: input.mattermostChannelId, senderEmail: input.senderEmail, parentPageId: input.parentPageId },\n  binary: item.binary,\n}));"
       },
       "id": "9b84594b-eb67-46ed-99d8-8d75b50f1b21",
       "name": "Split Sources",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        896,
-        480
+        1120,
+        528
       ]
     },
     {
@@ -2429,6 +2621,48 @@
                 ],
                 "combinator": "and"
               }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.source.type }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "markdownUpload"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.source.type }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "pdfUpload"
+                  }
+                ],
+                "combinator": "and"
+              }
             }
           ]
         },
@@ -2442,8 +2676,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        1120,
-        416
+        1568,
+        432
       ]
     },
     {
@@ -2472,21 +2706,21 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        1792,
-        0
+        2240,
+        144
       ]
     },
     {
       "parameters": {
-        "numberInputs": 6
+        "numberInputs": 8
       },
       "id": "72db9dff-6b11-4443-a562-c24061b25725",
       "name": "Merge Sources",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        2016,
-        320
+        2464,
+        336
       ]
     },
     {
@@ -2501,8 +2735,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        1568,
-        192
+        1792,
+        288
       ]
     },
     {
@@ -2512,7 +2746,7 @@
             {
               "id": "text",
               "name": "text",
-              "value": "={{ \"--- Source: markdown file (\" + $json.source.url + \") ---\\n\" + $json.data }}",
+              "value": "={{ \"--- Source: markdown file (\" + ($json.source?.url || $json.source?.fileName || $(\"Route by Source Type\").item.json.source?.url || $(\"Route by Source Type\").item.json.source?.fileName || \"uploaded markdown\") + \") ---\\n\" + ($json.data || \"\") }}",
               "type": "string"
             }
           ]
@@ -2525,8 +2759,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        1792,
-        192
+        2016,
+        0
       ]
     },
     {
@@ -2541,8 +2775,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        1568,
-        384
+        2016,
+        432
       ]
     },
     {
@@ -2565,8 +2799,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        1792,
-        384
+        2240,
+        432
       ]
     },
     {
@@ -2583,8 +2817,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        1568,
-        576
+        2016,
+        624
       ],
       "credentials": {
         "httpBearerAuth": {
@@ -2613,8 +2847,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        1792,
-        576
+        2240,
+        624
       ]
     },
     {
@@ -2629,8 +2863,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        1344,
-        768
+        1792,
+        800
       ]
     },
     {
@@ -2643,8 +2877,8 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1.1,
       "position": [
-        1568,
-        768
+        2016,
+        848
       ]
     },
     {
@@ -2654,7 +2888,7 @@
             {
               "id": "text",
               "name": "text",
-              "value": "={{ \"--- Source: PDF (\" + $json.source.url + \") ---\\n\" + ($json.text || \"\") }}",
+              "value": "={{ \"--- Source: PDF (\" + ($json.source?.url || $json.source?.fileName || $(\"Route by Source Type\").item.json.source?.url || $(\"Route by Source Type\").item.json.source?.fileName || \"uploaded PDF\") + \") ---\\n\" + ($json.text || \"\") }}",
               "type": "string"
             }
           ]
@@ -2667,8 +2901,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        1792,
-        768
+        2240,
+        848
       ]
     },
     {
@@ -2691,8 +2925,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        1792,
-        960
+        2240,
+        1088
       ]
     },
     {
@@ -2708,8 +2942,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        896,
-        672
+        1120,
+        720
       ]
     },
     {
@@ -2721,8 +2955,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2240,
-        384
+        2688,
+        432
       ]
     },
     {
@@ -2753,8 +2987,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        2464,
-        384
+        2912,
+        432
       ]
     },
     {
@@ -2767,8 +3001,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2688,
-        288
+        3136,
+        336
       ]
     },
     {
@@ -2785,8 +3019,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        2912,
-        288
+        3360,
+        336
       ],
       "credentials": {
         "httpBasicAuth": {
@@ -2898,8 +3132,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        3136,
-        288
+        3584,
+        336
       ]
     },
     {
@@ -2909,8 +3143,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        3360,
-        384
+        3808,
+        432
       ]
     },
     {
@@ -3016,8 +3250,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        3136,
-        480
+        3584,
+        528
       ]
     },
     {
@@ -3025,7 +3259,7 @@
         "promptType": "define",
         "text": "={{ \"You are a technical writer creating a Confluence page.\\n\\nMode: \" + $json.mode + \"\\nTemplate instruction: \" + ($json.template === \"release-notes\" ? \"Write a Confluence release notes page. Start with a short executive summary, then list the most important changes, any risks or breaking changes, and action items. Use Confluence storage-format HTML.\" : $json.template === \"wiki\" ? \"Write a Confluence wiki page that organizes knowledge clearly with sections and headings. Use Confluence storage-format HTML.\" : $json.template === \"doc\" ? \"Write a Confluence documentation page that is structured, readable, and easy to scan. Use Confluence storage-format HTML.\" : \"Write a general Confluence page that presents the available information clearly. Use Confluence storage-format HTML.\") + \"\\nAdditional instructions: \" + ($json.instructions || \"none\") + \"\\n\\n\" + ($json.existingBody ? \"\\n\\nExisting page body (update this, do not rewrite from scratch):\\n\" + $json.existingBody : \"\") + \"\\n\\nSource data:\\n\" + $json.sourceText + \"\\n\\nGenerate a complete Confluence storage-format HTML body. Output only the HTML.\" }}",
         "options": {
-          "systemMessage": "You write clean HTML for a Confluence page body. Use only standard HTML tags such as h1, h2, h3, p, ul, ol, li, table, thead, tbody, tr, th, td, code, pre, strong, em, a, br, hr. Do NOT use Confluence-specific XML, ac:structured-macro, ac:macro, ac:parameter, or any ac: namespace tags. Do not wrap the output in markdown code fences. Output only the HTML body content."
+          "systemMessage": "You write clean XHTML-compatible standard HTML for a Confluence page body. Use only standard tags such as h1, h2, h3, p, ul, ol, li, table, thead, tbody, tr, th, td, code, pre, strong, em, a, br, hr. Close every non-void tag. Write void tags as self-closing XHTML tags: <br /> and <hr />. Escape < and > inside code and pre content. Do NOT use Confluence-specific XML, ac:structured-macro, ac:macro, ac:parameter, or any ac: namespace tags. Do not use script, iframe, event-handler attributes, or markdown formatting. Do not wrap the output in markdown code fences. Output only the HTML body content."
         }
       },
       "id": "cf249be3-00cc-4e01-a08d-9fcc1a36f015",
@@ -3033,8 +3267,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        3584,
-        384
+        4032,
+        432
       ]
     },
     {
@@ -3054,8 +3288,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
       "typeVersion": 1.5,
       "position": [
-        3664,
-        608
+        4032,
+        672
       ],
       "credentials": {
         "anthropicApi": {
@@ -3107,7 +3341,7 @@
             {
               "id": "body",
               "name": "body",
-              "value": "={{ typeof $json.output === 'string' ? $json.output.replace(/^```html\\s*/i, '').replace(/\\s*```$/i, '').replace(/<ac:[^>]+>/gi, '').replace(/<\\/ac:\\w+>/gi, '').trim() : $json.output }}",
+              "value": "={{ typeof $json.output === 'string' ? $json.output.replace(/^```html\\s*/i, '').replace(/\\s*```$/i, '').replace(/<ac:[^>]+>/gi, '').replace(/<\\/ac:\\w+>/gi, '').replace(/<hr\\s*>/gi, '<hr />').replace(/<br\\s*>/gi, '<br />').replace(/<xml>/gi, '&lt;xml&gt;').replace(/<\\/xml>/gi, '&lt;/xml&gt;').trim() : $json.output }}",
               "type": "string"
             },
             {
@@ -3155,8 +3389,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        3936,
-        384
+        4384,
+        432
       ]
     },
     {
@@ -3187,8 +3421,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        4160,
-        384
+        4608,
+        432
       ]
     },
     {
@@ -3209,8 +3443,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        4384,
-        288
+        4832,
+        336
       ],
       "credentials": {
         "httpBasicAuth": {
@@ -3268,8 +3502,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        4608,
-        384
+        5056,
+        432
       ]
     },
     {
@@ -3290,8 +3524,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        4384,
-        480
+        4832,
+        528
       ],
       "credentials": {
         "httpBasicAuth": {
@@ -3312,8 +3546,8 @@
       "type": "n8n-nodes-base.mattermost",
       "typeVersion": 1,
       "position": [
-        4832,
-        384
+        5280,
+        336
       ],
       "credentials": {
         "mattermostApi": {
@@ -3338,8 +3572,8 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        5056,
-        384
+        5504,
+        336
       ],
       "webhookId": "dbbb3519-bef3-4487-bc31-5500717ac7cf",
       "disabled": true
@@ -3356,7 +3590,47 @@
       "typeVersion": 1.5,
       "position": [
         5280,
-        384
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = items[0];\nconst incoming = item.json || {};\nconst request = incoming.body && typeof incoming.body === 'object' ? incoming.body : incoming;\nlet metadata = request.metadata || {};\nif (typeof metadata === 'string' && metadata.trim()) metadata = JSON.parse(metadata);\nif (!metadata || typeof metadata !== 'object') metadata = {};\nlet sources = metadata.sources ?? request.sources ?? incoming.sources ?? [];\nif (typeof sources === 'string' && sources.trim()) sources = JSON.parse(sources);\nif (!Array.isArray(sources)) sources = [];\nfor (const [binaryProperty, file] of Object.entries(item.binary || {})) {\n  const fileName = file.fileName || binaryProperty;\n  const mimeType = (file.mimeType || '').toLowerCase();\n  const extension = fileName.toLowerCase().split('.').pop();\n  const type = mimeType === 'application/pdf' || extension === 'pdf'\n    ? 'pdfUpload'\n    : mimeType === 'text/markdown' || mimeType === 'text/plain' || extension === 'md' || extension === 'markdown'\n      ? 'markdownUpload'\n      : null;\n  if (!type) throw new Error(`Unsupported upload type: ${fileName}`);\n  sources.push({ type, binaryProperty, fileName });\n}\nreturn [{ json: { ...incoming, ...metadata, sources }, binary: item.binary }];"
+      },
+      "id": "69df5db2-60bc-47a9-aa77-42ded3715e45",
+      "name": "Normalize Uploads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const source = item.json.source || {};\n  const uploaded = source.binaryProperty ? item.binary?.[source.binaryProperty] : undefined;\n  if (!uploaded) return item;\n  return { json: item.json, binary: { ...(item.binary || {}), data: uploaded } };\n});"
+      },
+      "id": "14fdcc66-710e-4c6e-8daa-b5ebd782fe40",
+      "name": "Prepare Upload Binary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "9dc6efa5-c3bf-4a16-b178-a86a3e137535",
+      "name": "Extract Uploaded Markdown",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        1792,
+        0
       ]
     }
   ],
@@ -3381,6 +3655,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-08-21T22:18:04.435Z",
-  "versionId": "2d8585af-0080-4e79-b0f2-393b4aa13ffb"
+  "updatedAt": "2026-08-24T17:16:22.291Z",
+  "versionId": "5eee6dfe-30cb-4110-8c2a-e335f503e022"
 }
