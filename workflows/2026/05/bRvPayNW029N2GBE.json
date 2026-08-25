@@ -3596,7 +3596,7 @@
           "parameters": [
             {
               "name": "jql",
-              "value": "project = \"Marketing Activity Plan\" AND updated >= -2h"
+              "value": "=project = \"Marketing Activity Plan\" AND updated >= -2h"
             },
             {
               "name": "maxResults",
@@ -4815,7 +4815,7 @@
           "parameters": [
             {
               "name": "jql",
-              "value": "project = \"Marketing Activity Plan\" AND updated >= -2h ORDER BY issuekey ASC"
+              "value": "=project = \"Marketing Activity Plan\" AND updated >= -2h ORDER BY issuekey ASC"
             },
             {
               "name": "maxResults",
@@ -6002,6 +6002,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2026-08-21T17:07:50.473Z",
-  "versionId": "85509673-e54c-4b7f-b10c-d1a2af5970d0"
+  "updatedAt": "2026-08-24T16:53:57.633Z",
+  "versionId": "e863df1b-2bfb-4308-b974-10378e644ee4"
 }
