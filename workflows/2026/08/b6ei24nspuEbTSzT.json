@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-08-25T14:53:37.954Z",
-    "createdAt": "2026-08-25T14:53:37.954Z",
-    "versionId": "5f3bd9b0-36fa-4d75-a7df-a94632c7dc9d",
+    "updatedAt": "2026-08-27T00:24:46.335Z",
+    "createdAt": "2026-08-27T00:24:34.342Z",
+    "versionId": "19faf57a-21bc-4a92-b6ee-d88f6c465718",
     "workflowId": "b6ei24nspuEbTSzT",
     "nodes": [
       {
@@ -558,8 +558,7 @@
           "options": {
             "response": {
               "response": {
-                "responseFormat": "file",
-                "outputPropertyName": "data"
+                "responseFormat": "file"
               }
             }
           }
@@ -981,12 +980,12 @@
         "parameters": {
           "model": {
             "__rl": true,
-            "value": "claude-sonnet-4-6",
+            "value": "claude-sonnet-5",
             "mode": "list",
-            "cachedResultName": "Claude Sonnet 4.6"
+            "cachedResultName": "Claude Sonnet 5"
           },
           "options": {
-            "maxTokensToSample": 4096
+            "maxTokensToSample": 12288
           }
         },
         "id": "384db10c-ba9f-4200-87e9-a7978099ecd9",
@@ -994,7 +993,7 @@
         "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
         "typeVersion": 1.5,
         "position": [
-          4032,
+          4112,
           672
         ],
         "credentials": {
@@ -1127,7 +1126,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          4608,
+          4832,
           432
         ]
       },
@@ -1149,7 +1148,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.5,
         "position": [
-          4832,
+          5056,
           336
         ],
         "credentials": {
@@ -1208,7 +1207,7 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.5,
         "position": [
-          5056,
+          5280,
           432
         ]
       },
@@ -1230,7 +1229,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.5,
         "position": [
-          4832,
+          5056,
           528
         ],
         "credentials": {
@@ -1252,7 +1251,7 @@
         "type": "n8n-nodes-base.mattermost",
         "typeVersion": 1,
         "position": [
-          5280,
+          5504,
           336
         ],
         "credentials": {
@@ -1279,7 +1278,7 @@
         "type": "n8n-nodes-base.emailSend",
         "typeVersion": 2.1,
         "position": [
-          5504,
+          5728,
           336
         ],
         "webhookId": "dbbb3519-bef3-4487-bc31-5500717ac7cf",
@@ -1296,7 +1295,7 @@
         "type": "n8n-nodes-base.respondToWebhook",
         "typeVersion": 1.5,
         "position": [
-          5280,
+          5504,
           528
         ]
       },
@@ -1341,19 +1340,18 @@
         ]
       },
       {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const allowed = new Set(['h1','h2','h3','h4','h5','h6','p','ul','ol','li','table','thead','tbody','tr','th','td','strong','em','code','pre','a','br','hr']);\nconst voidTags = new Set(['br','hr']);\nconst mark = '\\u0000';\nconst escape = (value) => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '&quot;');\nlet html = typeof $json.body === 'string' ? $json.body : String($json.body || '');\nhtml = html.replace(/^```(?:html|xhtml)?\\s*/i, '').replace(/\\s*```$/i, '').replace(/\\*\\*/g, '').replace(/__/g, '').trim();\nhtml = html.replace(/&(?!amp;|lt;|gt;|quot;|apos;|#\\d+;|#x[0-9a-f]+;)/gi, '&amp;');\nhtml = html.replace(/<\\/[a-z][a-z0-9]*(?=<\\/[a-z])/gi, '');\nconst stack = [];\nhtml = html.replace(/<[^>]*>/g, (token) => {\n  const raw = token.slice(1, -1).trim();\n  const closing = raw.startsWith('/');\n  const content = (closing ? raw.slice(1) : raw).trim();\n  const withoutSlash = content.endsWith('/') ? content.slice(0, -1).trim() : content;\n  const name = withoutSlash.split(/\\s+/)[0].toLowerCase();\n  if (!/^[a-z][a-z0-9]*$/.test(name) || !allowed.has(name)) return escape(token);\n  if (voidTags.has(name)) return `${mark}${name} />`;\n  if (closing) {\n    if (stack[stack.length - 1] === name) { stack.pop(); return `${mark}/${name}>`; }\n    return '';\n  }\n  stack.push(name);\n  return `${mark}${name}>`;\n});\nwhile (stack.length) html += `${mark}/${stack.pop()}>`;\nhtml = html.replace(/</g, '&lt;').replace(new RegExp(mark, 'g'), '<');\nif (!html.trim()) throw new Error('Generated page body is empty');\nreturn { json: { ...$json, body: html.trim() } };"
+        },
         "id": "f42e6008-34c1-44fb-b031-ff3f9c4bb8f1",
         "name": "Sanitize XHTML",
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
           4608,
-          640
-        ],
-        "parameters": {
-          "mode": "runOnceForEachItem",
-          "jsCode": "const allowed = new Set(['h1','h2','h3','h4','h5','h6','p','ul','ol','li','table','thead','tbody','tr','th','td','strong','em','code','pre','a','br','hr']);\nconst voidTags = new Set(['br','hr']);\nconst mark = '\\u0000';\nconst escape = (value) => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '&quot;');\nlet html = typeof $json.body === 'string' ? $json.body : String($json.body || '');\nhtml = html.replace(/^```(?:html|xhtml)?\\s*/i, '').replace(/\\s*```$/i, '').replace(/\\*\\*/g, '').replace(/__/g, '').trim();\nhtml = html.replace(/&(?!amp;|lt;|gt;|quot;|apos;|#\\d+;|#x[0-9a-f]+;)/gi, '&amp;');\nhtml = html.replace(/<\\/[a-z][a-z0-9]*(?=<\\/[a-z])/gi, '');\nconst stack = [];\nhtml = html.replace(/<[^>]*>/g, (token) => {\n  const raw = token.slice(1, -1).trim();\n  const closing = raw.startsWith('/');\n  const content = (closing ? raw.slice(1) : raw).trim();\n  const withoutSlash = content.endsWith('/') ? content.slice(0, -1).trim() : content;\n  const name = withoutSlash.split(/\\s+/)[0].toLowerCase();\n  if (!/^[a-z][a-z0-9]*$/.test(name) || !allowed.has(name)) return escape(token);\n  if (voidTags.has(name)) return `${mark}${name} />`;\n  if (closing) {\n    if (stack[stack.length - 1] === name) { stack.pop(); return `${mark}/${name}>`; }\n    return '';\n  }\n  stack.push(name);\n  return `${mark}${name}>`;\n});\nwhile (stack.length) html += `${mark}/${stack.pop()}>`;\nhtml = html.replace(/</g, '&lt;').replace(new RegExp(mark, 'g'), '<');\nif (!html.trim()) throw new Error('Generated page body is empty');\nreturn { json: { ...$json, body: html.trim() } };",
-          "language": "javaScript"
-        }
+          432
+        ]
       }
     ],
     "connections": {
@@ -1841,12 +1839,12 @@
       }
     },
     "nodeGroups": [],
-    "authors": "Canice James (via MCP)",
-    "name": "Harden malformed tag handling",
-    "description": "Escape stray and partial angle-bracket tags while restoring only allowlisted XHTML elements.",
-    "autosaved": false
+    "authors": "Canice James",
+    "name": "Token usage updated",
+    "description": "",
+    "autosaved": true
   },
-  "activeVersionId": "5f3bd9b0-36fa-4d75-a7df-a94632c7dc9d",
+  "activeVersionId": "19faf57a-21bc-4a92-b6ee-d88f6c465718",
   "connections": {
     "Receive Submission": {
       "main": [
@@ -3316,12 +3314,12 @@
       "parameters": {
         "model": {
           "__rl": true,
-          "value": "claude-sonnet-4-6",
+          "value": "claude-sonnet-5",
           "mode": "list",
-          "cachedResultName": "Claude Sonnet 4.6"
+          "cachedResultName": "Claude Sonnet 5"
         },
         "options": {
-          "maxTokensToSample": 4096
+          "maxTokensToSample": 12288
         }
       },
       "id": "384db10c-ba9f-4200-87e9-a7978099ecd9",
@@ -3329,7 +3327,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
       "typeVersion": 1.5,
       "position": [
-        4032,
+        4112,
         672
       ],
       "credentials": {
@@ -3462,7 +3460,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        4608,
+        4832,
         432
       ]
     },
@@ -3484,7 +3482,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        4832,
+        5056,
         336
       ],
       "credentials": {
@@ -3543,7 +3541,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        5056,
+        5280,
         432
       ]
     },
@@ -3565,7 +3563,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        4832,
+        5056,
         528
       ],
       "credentials": {
@@ -3587,7 +3585,7 @@
       "type": "n8n-nodes-base.mattermost",
       "typeVersion": 1,
       "position": [
-        5280,
+        5504,
         336
       ],
       "credentials": {
@@ -3614,7 +3612,7 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        5504,
+        5728,
         336
       ],
       "webhookId": "dbbb3519-bef3-4487-bc31-5500717ac7cf",
@@ -3631,7 +3629,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        5280,
+        5504,
         528
       ]
     },
@@ -3686,7 +3684,7 @@
       "typeVersion": 2,
       "position": [
         4608,
-        640
+        432
       ]
     }
   ],
@@ -3711,6 +3709,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-08-25T18:56:04.463Z",
-  "versionId": "a00328dc-d99f-43b9-893f-c74bfeae5146"
+  "updatedAt": "2026-08-27T00:24:34.339Z",
+  "versionId": "19faf57a-21bc-4a92-b6ee-d88f6c465718"
 }
