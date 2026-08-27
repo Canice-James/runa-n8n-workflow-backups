@@ -1,0 +1,1325 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-08-27T00:07:11.552Z",
+    "createdAt": "2026-08-26T23:35:36.381Z",
+    "versionId": "adfccd95-ad4f-42d4-b07e-9c1d885f0c3c",
+    "workflowId": "zXJWJwDC6YYNnKof",
+    "nodes": [
+      {
+        "parameters": {
+          "formTitle": "MarTech Diffusion",
+          "formDescription": "Send a Markdown announcement to Mattermost users and channels.",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "Markdown message",
+                "fieldType": "textarea",
+                "fieldName": "message",
+                "placeholder": "# Announcement\\n\\nWrite Markdown here",
+                "requiredField": true
+              },
+              {
+                "fieldLabel": "Recipients",
+                "fieldType": "textarea",
+                "fieldName": "recipients",
+                "placeholder": "@scaicedo, #marketing, or a channel ID",
+                "requiredField": true
+              }
+            ]
+          },
+          "responseMode": "lastNode",
+          "options": {
+            "appendAttribution": true,
+            "buttonLabel": "Send announcement",
+            "path": "martech-diffusion-form"
+          }
+        },
+        "id": "3c56b811-746b-414d-aadf-d870267e73d1",
+        "name": "Form Trigger",
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.6,
+        "position": [
+          240,
+          224
+        ],
+        "webhookId": "d130d8ab-7734-4370-840e-a8c426831bdb"
+      },
+      {
+        "parameters": {
+          "jsCode": "const input = $input.first().json;\nconst payload = input.body && typeof input.body === 'object' ? input.body : input;\nconst knownChannelIds = { 'martech-automated-wikis': 'fj4khgjccfnb5g9s3cbq9fj3ar','martech-leadership':'asr6e1kz7jffxbymp8t57cojuc','markops-snr-leadership':'gp69grmkabn39jgpzbi79woibe','markops-leadership-room':'5nup6aug7idmzrm5qtb4xgm5eo','col-team':'fkb6frpfb3bafgiopqi8m1hrtr','markops-specialist':'9wjgoophribbtrnkyyquxt55kc','markops':'gzqrikofstnhzrsb5i5prgzogo','markops-community':'wyrr1wh4qt8ypxf5b9asith8dc' };\nconst parseList = (value, field) => {\n  if (value === undefined || value === null || value === '') return [];\n  if (Array.isArray(value)) return value;\n  if (typeof value !== 'string') throw new Error(field + ' must be a string or array');\n  const trimmed = value.trim();\n  if (!trimmed) return [];\n  if (trimmed.startsWith('[')) return JSON.parse(trimmed);\n  return trimmed.split(',').map((item) => item.trim()).filter(Boolean);\n};\nconst message = typeof payload.message === 'string' ? payload.message : '';\nif (!message.trim()) throw new Error('message is required and must be Markdown text');\nlet recipients;\nlet userIds;\nlet channelIds;\ntry {\n  recipients = parseList(payload.recipients, 'recipients');\n  userIds = parseList(payload.userIds, 'userIds');\n  channelIds = parseList(payload.channelIds, 'channelIds');\n} catch (error) {\n  throw new Error('Invalid recipient input: ' + error.message);\n}\nconst output = [];\nconst seen = new Set();\nconst add = (route, value, destinationType, destinationId, original) => {\n  if (typeof value !== 'string' || !value.trim()) throw new Error('Recipient values must be non-empty strings');\n  const normalized = value.trim();\n  const key = route + ':' + normalized.toLowerCase();\n  if (seen.has(key)) return;\n  seen.add(key);\n  output.push({ json: { message, original: original || normalized, destinationValue: normalized, destinationType, destinationId, routeIndex: route, preflightError: null } });\n};\nfor (const recipient of recipients) {\n  if (typeof recipient !== 'string' || !recipient.trim()) throw new Error('Recipient values must be non-empty strings');\n  const value = recipient.trim();\n  if (value.startsWith('@')) add(0, value.slice(1), 'user', null, value);\n  else if (value.startsWith('#')) {\n    const channelName = value.slice(1);\n    const knownId = knownChannelIds[channelName.toLowerCase()];\n    if (knownId) add(3, knownId, 'channel', knownId, value);\n    else add(1, channelName, 'channel', null, value);\n  } else if (/^[a-z0-9]{26}$/.test(value)) add(3, value, 'channel', value, value);\n  else throw new Error('Recipients must start with @ or #, or be a 26-character channel ID: ' + value);\n}\nfor (const id of userIds) add(2, id, 'user', id, id);\nfor (const id of channelIds) add(3, id, 'channel', id, id);\nif (!output.length) throw new Error('At least one recipient is required');\nconst expectedCount = output.length;\nreturn output.map((item) => ({ json: { ...item.json, expectedCount } }));"
+        },
+        "id": "c1c73db2-9244-4700-ba0a-309cc79d0fcb",
+        "name": "Normalize and Validate Request",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          464,
+          336
+        ]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "martech-diffusion",
+          "responseMode": "lastNode",
+          "options": {}
+        },
+        "id": "268d4211-942e-40c2-856b-cfad9eb31689",
+        "name": "Webhook Trigger",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          240,
+          416
+        ],
+        "webhookId": "daa3bc42-afe2-4981-b42a-e08097d590ae"
+      },
+      {
+        "parameters": {
+          "mode": "expression",
+          "output": "={{ $json.routeIndex }}"
+        },
+        "id": "e183efa8-9dd1-4002-a6a7-aa749468db80",
+        "name": "Route Resolution",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          688,
+          304
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ 'https://chat-ru.corp-apps.com/api/v4/users/username/' + encodeURIComponent($json.destinationValue) }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "mattermostApi",
+          "options": {}
+        },
+        "id": "e5ab187e-0a44-4de2-af83-f930cc592be9",
+        "name": "Resolve User Username",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          912,
+          144
+        ],
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "const source = $('Normalize and Validate Request').item.json;\nconst body = $json.body ?? $json;\nconst error = $json.error;\nconst failed = !!error || !body.id;\nreturn [{ json: { ...source, destinationType: 'user', destinationId: body.id || null, preflightError: failed ? (error?.message || body.message || 'User could not be resolved') : null } }];"
+        },
+        "id": "dd249d40-c871-400c-bd05-7d438a0eedab",
+        "name": "Mark User Resolved",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1136,
+          144
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ 'https://chat-ru.corp-apps.com/api/v4/teams/pqf4tbgy1bg8jryrrjeo6q1gkh/channels/name/' + encodeURIComponent($json.destinationValue) }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "mattermostApi",
+          "options": {}
+        },
+        "id": "c17c7cba-5147-4bc7-90a5-bbc5e63786d6",
+        "name": "Resolve Channel Name",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          912,
+          336
+        ],
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "const source = $('Normalize and Validate Request').item.json;\nconst body = $json.body ?? $json;\nconst error = $json.error;\nconst failed = !!error || !body.id;\nreturn [{ json: { ...source, destinationType: 'channel', destinationId: body.id || null, preflightError: failed ? (error?.message || body.message || 'Channel could not be resolved') : null } }];"
+        },
+        "id": "da0b0da6-9c02-42c1-891b-e104b068d7b0",
+        "name": "Mark Channel Resolved",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1136,
+          336
+        ]
+      },
+      {
+        "parameters": {
+          "numberInputs": 4
+        },
+        "id": "15225be3-4d77-4813-bcaa-b6ccfce13f3a",
+        "name": "Preflight Results",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          1360,
+          304
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const items = $input.all().map((item) => item.json);\nconst expectedCount = items[0]?.expectedCount || 0;\nconst unresolved = items.filter((item) => item.preflightError || !item.destinationId).map((item) => ({ recipient: item.original, error: item.preflightError || 'Destination did not resolve' }));\nif (items.length !== expectedCount || unresolved.length) {\n  return [{ json: { status: 'rejected', deliveryReady: false, unresolved, delivered: 0 } }];\n}\nreturn items.map((item) => ({ json: { ...item, deliveryReady: true } }));"
+        },
+        "id": "64edfdca-68e6-4177-a2d7-08b6f0d7e14c",
+        "name": "Preflight Check",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1584,
+          336
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.deliveryReady }}",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "107baed2-bed1-43ac-b22d-ec1d1f813cb0",
+        "name": "Preflight Passed?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1808,
+          336
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "expression",
+          "numberOutputs": 2,
+          "output": "={{ $json.destinationType === 'channel' ? 0 : 1 }}"
+        },
+        "id": "87d890cb-b0a7-4a4e-971b-e9f5d8a4ad9c",
+        "name": "Route Delivery",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          2032,
+          272
+        ]
+      },
+      {
+        "parameters": {
+          "channelId": "={{ $json.destinationId }}",
+          "message": "={{ $json.message }}",
+          "attachments": [],
+          "otherOptions": {}
+        },
+        "id": "60285fb6-e79b-493a-a82a-b8c6e192b104",
+        "name": "Post Channel Message",
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          2704,
+          144
+        ],
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const source = $('Preflight Check').item.json;\nreturn [{ json: { deliveryStatus: 'delivered', destinationType: 'channel', destination: source.original, destinationId: source.destinationId } }];"
+        },
+        "id": "0126d842-cd3a-4ee5-afe9-25cc85b2b99e",
+        "name": "Mark Channel Delivered",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2928,
+          144
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://chat-ru.corp-apps.com/api/v4/users/me",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "mattermostApi",
+          "options": {}
+        },
+        "id": "91d51bc7-aab1-4513-927c-c6d508846319",
+        "name": "Get CRM Bot User",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          2256,
+          336
+        ],
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://chat-ru.corp-apps.com/api/v4/channels/direct",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "mattermostApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ [$json.id, $('Preflight Check').item.json.destinationId] }}",
+          "options": {}
+        },
+        "id": "6e3acef4-f5a2-46a9-adb7-7254e5448f1e",
+        "name": "Create Direct Channel",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          2480,
+          336
+        ],
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://chat-ru.corp-apps.com/api/v4/posts",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "mattermostApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ { channel_id: $json.id, message: $('Preflight Check').item.json.message } }}",
+          "options": {}
+        },
+        "id": "6f034ba4-2d7e-499d-97a3-a7e7d7059795",
+        "name": "Post Direct Message",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          2704,
+          336
+        ],
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const source = $('Preflight Check').item.json;\nreturn [{ json: { deliveryStatus: 'delivered', destinationType: 'user', destination: source.original, destinationId: source.destinationId } }];"
+        },
+        "id": "72a1fe89-b427-4d85-bec7-14491007778e",
+        "name": "Mark User Delivered",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2928,
+          336
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "769a13a3-e6ac-452c-a556-b31777d0cfcb",
+        "name": "Delivery Results",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          3152,
+          272
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const rows = $input.all().map((item) => item.json);\nif (rows.length === 1 && rows[0].status === 'rejected') return [{ json: rows[0] }];\nreturn [{ json: { status: 'delivered', resolved: { users: rows.filter((row) => row.destinationType === 'user').map((row) => row.destination), channels: rows.filter((row) => row.destinationType === 'channel').map((row) => row.destination) }, delivered: rows.length, failed: [] } }];"
+        },
+        "id": "543f3402-5ada-4e9f-8a61-8dbd5032d9c9",
+        "name": "Build Response",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3376,
+          336
+        ]
+      }
+    ],
+    "connections": {
+      "Webhook Trigger": {
+        "main": [
+          [
+            {
+              "node": "Normalize and Validate Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalize and Validate Request": {
+        "main": [
+          [
+            {
+              "node": "Route Resolution",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route Resolution": {
+        "main": [
+          [
+            {
+              "node": "Resolve User Username",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Resolve Channel Name",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Preflight Results",
+              "type": "main",
+              "index": 2
+            }
+          ],
+          [
+            {
+              "node": "Preflight Results",
+              "type": "main",
+              "index": 3
+            }
+          ]
+        ]
+      },
+      "Resolve User Username": {
+        "main": [
+          [
+            {
+              "node": "Mark User Resolved",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ],
+        "error": [
+          [
+            {
+              "node": "Mark User Resolved",
+              "type": "error",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark User Resolved": {
+        "main": [
+          [
+            {
+              "node": "Preflight Results",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Resolve Channel Name": {
+        "main": [
+          [
+            {
+              "node": "Mark Channel Resolved",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ],
+        "error": [
+          [
+            {
+              "node": "Mark Channel Resolved",
+              "type": "error",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark Channel Resolved": {
+        "main": [
+          [
+            {
+              "node": "Preflight Results",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Preflight Results": {
+        "main": [
+          [
+            {
+              "node": "Preflight Check",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Preflight Check": {
+        "main": [
+          [
+            {
+              "node": "Preflight Passed?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Preflight Passed?": {
+        "main": [
+          [
+            {
+              "node": "Route Delivery",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Build Response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route Delivery": {
+        "main": [
+          [
+            {
+              "node": "Post Channel Message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get CRM Bot User",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Post Channel Message": {
+        "main": [
+          [
+            {
+              "node": "Mark Channel Delivered",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get CRM Bot User": {
+        "main": [
+          [
+            {
+              "node": "Create Direct Channel",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create Direct Channel": {
+        "main": [
+          [
+            {
+              "node": "Post Direct Message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Post Direct Message": {
+        "main": [
+          [
+            {
+              "node": "Mark User Delivered",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark Channel Delivered": {
+        "main": [
+          [
+            {
+              "node": "Delivery Results",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark User Delivered": {
+        "main": [
+          [
+            {
+              "node": "Delivery Results",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Delivery Results": {
+        "main": [
+          [
+            {
+              "node": "Build Response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Form Trigger": {
+        "main": [
+          [
+            {
+              "node": "Normalize and Validate Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Canice James",
+    "name": "New Mapped Groups",
+    "description": "",
+    "autosaved": true
+  },
+  "activeVersionId": "adfccd95-ad4f-42d4-b07e-9c1d885f0c3c",
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Normalize and Validate Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize and Validate Request": {
+      "main": [
+        [
+          {
+            "node": "Route Resolution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Resolution": {
+      "main": [
+        [
+          {
+            "node": "Resolve User Username",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Resolve Channel Name",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Preflight Results",
+            "type": "main",
+            "index": 2
+          }
+        ],
+        [
+          {
+            "node": "Preflight Results",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Resolve User Username": {
+      "main": [
+        [
+          {
+            "node": "Mark User Resolved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ],
+      "error": [
+        [
+          {
+            "node": "Mark User Resolved",
+            "type": "error",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark User Resolved": {
+      "main": [
+        [
+          {
+            "node": "Preflight Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve Channel Name": {
+      "main": [
+        [
+          {
+            "node": "Mark Channel Resolved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ],
+      "error": [
+        [
+          {
+            "node": "Mark Channel Resolved",
+            "type": "error",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Channel Resolved": {
+      "main": [
+        [
+          {
+            "node": "Preflight Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Preflight Results": {
+      "main": [
+        [
+          {
+            "node": "Preflight Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preflight Check": {
+      "main": [
+        [
+          {
+            "node": "Preflight Passed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preflight Passed?": {
+      "main": [
+        [
+          {
+            "node": "Route Delivery",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Delivery": {
+      "main": [
+        [
+          {
+            "node": "Post Channel Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get CRM Bot User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Channel Message": {
+      "main": [
+        [
+          {
+            "node": "Mark Channel Delivered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get CRM Bot User": {
+      "main": [
+        [
+          {
+            "node": "Create Direct Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Direct Channel": {
+      "main": [
+        [
+          {
+            "node": "Post Direct Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Direct Message": {
+      "main": [
+        [
+          {
+            "node": "Mark User Delivered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Channel Delivered": {
+      "main": [
+        [
+          {
+            "node": "Delivery Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark User Delivered": {
+      "main": [
+        [
+          {
+            "node": "Delivery Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Delivery Results": {
+      "main": [
+        [
+          {
+            "node": "Build Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Normalize and Validate Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-08-26T22:23:40.416Z",
+  "id": "zXJWJwDC6YYNnKof",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "MarTech-Diffusion",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "MarTech Diffusion",
+        "formDescription": "Send a Markdown announcement to Mattermost users and channels.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Markdown message",
+              "fieldType": "textarea",
+              "fieldName": "message",
+              "placeholder": "# Announcement\\n\\nWrite Markdown here",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Recipients",
+              "fieldType": "textarea",
+              "fieldName": "recipients",
+              "placeholder": "@scaicedo, #marketing, or a channel ID",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {
+          "appendAttribution": true,
+          "buttonLabel": "Send announcement",
+          "path": "martech-diffusion-form"
+        }
+      },
+      "id": "3c56b811-746b-414d-aadf-d870267e73d1",
+      "name": "Form Trigger",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        240,
+        224
+      ],
+      "webhookId": "d130d8ab-7734-4370-840e-a8c426831bdb"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst payload = input.body && typeof input.body === 'object' ? input.body : input;\nconst knownChannelIds = { 'martech-automated-wikis': 'fj4khgjccfnb5g9s3cbq9fj3ar','martech-leadership':'asr6e1kz7jffxbymp8t57cojuc','markops-snr-leadership':'gp69grmkabn39jgpzbi79woibe','markops-leadership-room':'5nup6aug7idmzrm5qtb4xgm5eo','col-team':'fkb6frpfb3bafgiopqi8m1hrtr','markops-specialist':'9wjgoophribbtrnkyyquxt55kc','markops':'gzqrikofstnhzrsb5i5prgzogo','markops-community':'wyrr1wh4qt8ypxf5b9asith8dc' };\nconst parseList = (value, field) => {\n  if (value === undefined || value === null || value === '') return [];\n  if (Array.isArray(value)) return value;\n  if (typeof value !== 'string') throw new Error(field + ' must be a string or array');\n  const trimmed = value.trim();\n  if (!trimmed) return [];\n  if (trimmed.startsWith('[')) return JSON.parse(trimmed);\n  return trimmed.split(',').map((item) => item.trim()).filter(Boolean);\n};\nconst message = typeof payload.message === 'string' ? payload.message : '';\nif (!message.trim()) throw new Error('message is required and must be Markdown text');\nlet recipients;\nlet userIds;\nlet channelIds;\ntry {\n  recipients = parseList(payload.recipients, 'recipients');\n  userIds = parseList(payload.userIds, 'userIds');\n  channelIds = parseList(payload.channelIds, 'channelIds');\n} catch (error) {\n  throw new Error('Invalid recipient input: ' + error.message);\n}\nconst output = [];\nconst seen = new Set();\nconst add = (route, value, destinationType, destinationId, original) => {\n  if (typeof value !== 'string' || !value.trim()) throw new Error('Recipient values must be non-empty strings');\n  const normalized = value.trim();\n  const key = route + ':' + normalized.toLowerCase();\n  if (seen.has(key)) return;\n  seen.add(key);\n  output.push({ json: { message, original: original || normalized, destinationValue: normalized, destinationType, destinationId, routeIndex: route, preflightError: null } });\n};\nfor (const recipient of recipients) {\n  if (typeof recipient !== 'string' || !recipient.trim()) throw new Error('Recipient values must be non-empty strings');\n  const value = recipient.trim();\n  if (value.startsWith('@')) add(0, value.slice(1), 'user', null, value);\n  else if (value.startsWith('#')) {\n    const channelName = value.slice(1);\n    const knownId = knownChannelIds[channelName.toLowerCase()];\n    if (knownId) add(3, knownId, 'channel', knownId, value);\n    else add(1, channelName, 'channel', null, value);\n  } else if (/^[a-z0-9]{26}$/.test(value)) add(3, value, 'channel', value, value);\n  else throw new Error('Recipients must start with @ or #, or be a 26-character channel ID: ' + value);\n}\nfor (const id of userIds) add(2, id, 'user', id, id);\nfor (const id of channelIds) add(3, id, 'channel', id, id);\nif (!output.length) throw new Error('At least one recipient is required');\nconst expectedCount = output.length;\nreturn output.map((item) => ({ json: { ...item.json, expectedCount } }));"
+      },
+      "id": "c1c73db2-9244-4700-ba0a-309cc79d0fcb",
+      "name": "Normalize and Validate Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "martech-diffusion",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "268d4211-942e-40c2-856b-cfad9eb31689",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        416
+      ],
+      "webhookId": "daa3bc42-afe2-4981-b42a-e08097d590ae"
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "output": "={{ $json.routeIndex }}"
+      },
+      "id": "e183efa8-9dd1-4002-a6a7-aa749468db80",
+      "name": "Route Resolution",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        688,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://chat-ru.corp-apps.com/api/v4/users/username/' + encodeURIComponent($json.destinationValue) }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mattermostApi",
+        "options": {}
+      },
+      "id": "e5ab187e-0a44-4de2-af83-f930cc592be9",
+      "name": "Resolve User Username",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        912,
+        144
+      ],
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const source = $('Normalize and Validate Request').item.json;\nconst body = $json.body ?? $json;\nconst error = $json.error;\nconst failed = !!error || !body.id;\nreturn [{ json: { ...source, destinationType: 'user', destinationId: body.id || null, preflightError: failed ? (error?.message || body.message || 'User could not be resolved') : null } }];"
+      },
+      "id": "dd249d40-c871-400c-bd05-7d438a0eedab",
+      "name": "Mark User Resolved",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://chat-ru.corp-apps.com/api/v4/teams/pqf4tbgy1bg8jryrrjeo6q1gkh/channels/name/' + encodeURIComponent($json.destinationValue) }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mattermostApi",
+        "options": {}
+      },
+      "id": "c17c7cba-5147-4bc7-90a5-bbc5e63786d6",
+      "name": "Resolve Channel Name",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        912,
+        336
+      ],
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const source = $('Normalize and Validate Request').item.json;\nconst body = $json.body ?? $json;\nconst error = $json.error;\nconst failed = !!error || !body.id;\nreturn [{ json: { ...source, destinationType: 'channel', destinationId: body.id || null, preflightError: failed ? (error?.message || body.message || 'Channel could not be resolved') : null } }];"
+      },
+      "id": "da0b0da6-9c02-42c1-891b-e104b068d7b0",
+      "name": "Mark Channel Resolved",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "id": "15225be3-4d77-4813-bcaa-b6ccfce13f3a",
+      "name": "Preflight Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1360,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map((item) => item.json);\nconst expectedCount = items[0]?.expectedCount || 0;\nconst unresolved = items.filter((item) => item.preflightError || !item.destinationId).map((item) => ({ recipient: item.original, error: item.preflightError || 'Destination did not resolve' }));\nif (items.length !== expectedCount || unresolved.length) {\n  return [{ json: { status: 'rejected', deliveryReady: false, unresolved, delivered: 0 } }];\n}\nreturn items.map((item) => ({ json: { ...item, deliveryReady: true } }));"
+      },
+      "id": "64edfdca-68e6-4177-a2d7-08b6f0d7e14c",
+      "name": "Preflight Check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.deliveryReady }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "107baed2-bed1-43ac-b22d-ec1d1f813cb0",
+      "name": "Preflight Passed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1808,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "numberOutputs": 2,
+        "output": "={{ $json.destinationType === 'channel' ? 0 : 1 }}"
+      },
+      "id": "87d890cb-b0a7-4a4e-971b-e9f5d8a4ad9c",
+      "name": "Route Delivery",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2032,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "channelId": "={{ $json.destinationId }}",
+        "message": "={{ $json.message }}",
+        "attachments": [],
+        "otherOptions": {}
+      },
+      "id": "60285fb6-e79b-493a-a82a-b8c6e192b104",
+      "name": "Post Channel Message",
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        2704,
+        144
+      ],
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const source = $('Preflight Check').item.json;\nreturn [{ json: { deliveryStatus: 'delivered', destinationType: 'channel', destination: source.original, destinationId: source.destinationId } }];"
+      },
+      "id": "0126d842-cd3a-4ee5-afe9-25cc85b2b99e",
+      "name": "Mark Channel Delivered",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2928,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://chat-ru.corp-apps.com/api/v4/users/me",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mattermostApi",
+        "options": {}
+      },
+      "id": "91d51bc7-aab1-4513-927c-c6d508846319",
+      "name": "Get CRM Bot User",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2256,
+        336
+      ],
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://chat-ru.corp-apps.com/api/v4/channels/direct",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mattermostApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ [$json.id, $('Preflight Check').item.json.destinationId] }}",
+        "options": {}
+      },
+      "id": "6e3acef4-f5a2-46a9-adb7-7254e5448f1e",
+      "name": "Create Direct Channel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2480,
+        336
+      ],
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://chat-ru.corp-apps.com/api/v4/posts",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mattermostApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { channel_id: $json.id, message: $('Preflight Check').item.json.message } }}",
+        "options": {}
+      },
+      "id": "6f034ba4-2d7e-499d-97a3-a7e7d7059795",
+      "name": "Post Direct Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2704,
+        336
+      ],
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const source = $('Preflight Check').item.json;\nreturn [{ json: { deliveryStatus: 'delivered', destinationType: 'user', destination: source.original, destinationId: source.destinationId } }];"
+      },
+      "id": "72a1fe89-b427-4d85-bec7-14491007778e",
+      "name": "Mark User Delivered",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2928,
+        336
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "769a13a3-e6ac-452c-a556-b31777d0cfcb",
+      "name": "Delivery Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3152,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map((item) => item.json);\nif (rows.length === 1 && rows[0].status === 'rejected') return [{ json: rows[0] }];\nreturn [{ json: { status: 'delivered', resolved: { users: rows.filter((row) => row.destinationType === 'user').map((row) => row.destination), channels: rows.filter((row) => row.destinationType === 'channel').map((row) => row.destination) }, delivered: rows.length, failed: [] } }];"
+      },
+      "id": "543f3402-5ada-4e9f-8a61-8dbd5032d9c9",
+      "name": "Build Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3376,
+        336
+      ]
+    }
+  ],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-08-26T22:23:40.416Z",
+      "createdAt": "2026-08-26T22:23:40.416Z",
+      "role": "workflow:owner",
+      "workflowId": "zXJWJwDC6YYNnKof",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2026-08-26T23:35:36.379Z",
+  "versionId": "adfccd95-ad4f-42d4-b07e-9c1d885f0c3c"
+}
