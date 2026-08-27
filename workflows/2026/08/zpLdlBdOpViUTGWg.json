@@ -259,6 +259,11 @@
             "node": "Screenshot > Short File",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Screenshot > Long Copy",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -780,7 +785,7 @@
     {
       "parameters": {
         "operation": "runFunction",
-        "code": "const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n\nexport default async ({ page, context }) => {\n  await page.setViewport({ width: 1440, height: 750 });\n\n  await page.setCookie(\n    { name: 'sessionId', value: context.sessionId, domain: context.domain },\n    { name: 'sid', value: context.sessionId, domain: context.domain }\n  );\n\n  await page.goto(context.url, { waitUntil: 'networkidle2' });\n\n  await page.waitForSelector('div.ol-notification__root', { timeout: 15000 });\n  await sleep(3000);\n\n  const screenshot = await page.screenshot({ encoding: 'base64' });\n  return { data: { screenshot }, type: 'application/json' };\n};",
+        "code": "const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n\nexport default async ({ page, context }) => {\n  await page.setViewport({ width: 1440, height: 750 });\n\n  await page.setCookie(\n    { name: 'sessionId', value: context.sessionId, domain: context.domain },\n    { name: 'sid', value: context.sessionId, domain: context.domain }\n  );\n\n  // Extract base origin (e.g. https://preview.domain.lv/) to prevent navigating to subroutes like /account/messages\n  const targetUrl = new URL(context.url).origin + '/';\n\n  await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });\n\n  // Force active tab visibility and window focus\n  await page.bringToFront();\n  await page.evaluate(() => {\n    Object.defineProperty(document, 'hidden', { value: false, writable: true });\n    Object.defineProperty(document, 'visibilityState', { value: 'visible', writable: true });\n    document.dispatchEvent(new Event('visibilitychange'));\n    window.dispatchEvent(new Event('focus'));\n  });\n\n  // Simulate user interaction to trigger idle/visibility listeners\n  await page.mouse.move(500, 300);\n  await page.mouse.wheel({ deltaY: 100 });\n  await sleep(300);\n  await page.mouse.wheel({ deltaY: -100 });\n\n  // Wait specifically for visible notification popup or fail execution\n  const selector = 'div.ol-notification__root';\n  try {\n    await page.waitForSelector(selector, { visible: true, timeout: 15000 });\n  } catch (err) {\n    throw new Error(`Target notification popup element \"${selector}\" was not found or not visible within 15 seconds on ${page.url()}`);\n  }\n\n  await sleep(1500);\n\n  const screenshot = await page.screenshot({ encoding: 'base64' });\n  return { data: { screenshot }, type: 'application/json' };\n};",
         "context": "={{ JSON.stringify({ sessionId: $('Casino > Login').item.json.sessionId, url: $('OSN Dynamic Fields Mapping').item.json.previewUrl, domain: $('OSN Dynamic Fields Mapping').item.json.cookieDomain }) }}"
       },
       "type": "n8n-nodes-browserless-api.browserless",
@@ -983,6 +988,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-08-19T15:40:52.130Z",
-  "versionId": "e514ce83-4d9b-40da-928e-c111cb08b93d"
+  "updatedAt": "2026-08-26T19:20:06.318Z",
+  "versionId": "a8d92920-de7a-44eb-bc27-2b413a29faa0"
 }
