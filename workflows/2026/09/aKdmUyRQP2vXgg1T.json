@@ -1,0 +1,1187 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-10-14T19:26:48.291Z",
+    "createdAt": "2026-10-14T19:05:49.353Z",
+    "versionId": "547b590f-2c50-4909-b19e-5cfa3ad90d02",
+    "workflowId": "aKdmUyRQP2vXgg1T",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "minutes",
+                "minutesInterval": 10
+              }
+            ]
+          }
+        },
+        "id": "4533dd52-f713-4e6d-ae33-5c9ca6575ad1",
+        "name": "Every 10 Minutes",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          608,
+          -480
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "83520501-9407-4399-bebf-de0c4c2d8505",
+        "name": "Manual Test",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          608,
+          -288
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "g1",
+                "name": "erpnextUrl",
+                "type": "string",
+                "value": "http://martech-desk.corp-apps.com"
+              },
+              {
+                "id": "g2",
+                "name": "feedUrl",
+                "type": "string",
+                "value": "https://sportsfeeds.bovada.lv/v1/feed?clientId=1&categoryCodes=396&language=en&marketTypes=2W-12,2W-HCAP,2W-OU&periodTypes=MATCH"
+              },
+              {
+                "id": "g3",
+                "name": "ftpBasePath",
+                "type": "string",
+                "value": "/live/"
+              },
+              {
+                "id": "g4",
+                "name": "publicUrlBase",
+                "type": "string",
+                "value": "http://assets.10.161.101.24.nip.io/RUNA"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "3918b4ff-0381-4aa6-96c3-c625a918501f",
+        "name": "Global Config",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          832,
+          -384
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Global Config').first().json.erpnextUrl }}/api/resource/Live Content Template",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "erpNextApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "fields",
+                "value": "=[\"name\",\"url\"]"
+              },
+              {
+                "name": "limit_page_length",
+                "value": "0"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "9deef463-908d-4567-93e2-98e3d79db209",
+        "name": "Get Live Content Templates",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1056,
+          -384
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "igXwqEc4qoT2ai3N",
+            "name": "ERPNext API"
+          },
+          "erpNextApi": {
+            "id": "gM5LrXNEJxHkh01n",
+            "name": "ERPNext account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Global Config').first().json.erpnextUrl }}/api/resource/Live Content",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "erpNextApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "filters",
+                "value": "=[[\"is_active\",\"=\",1]]"
+              },
+              {
+                "name": "fields",
+                "value": "=[\"name\",\"brand\",\"league\",\"uri\",\"event_id\",\"template\",\"last_hash\"]"
+              },
+              {
+                "name": "limit_page_length",
+                "value": "0"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "ec56d4e3-11cc-4212-b798-5c57da1c512f",
+        "name": "Get Active Slots",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1280,
+          -384
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "igXwqEc4qoT2ai3N",
+            "name": "ERPNext API"
+          },
+          "erpNextApi": {
+            "id": "gM5LrXNEJxHkh01n",
+            "name": "ERPNext account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data",
+          "options": {}
+        },
+        "id": "644f808a-1ee3-439e-93fe-32e2dc45f6ef",
+        "name": "Split Out Slots",
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          1488,
+          -384
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Global Config').first().json.feedUrl }}",
+          "options": {
+            "allowUnauthorizedCerts": false,
+            "timeout": 30000
+          }
+        },
+        "id": "be47706f-c9d6-464e-bd9e-2051300ba777",
+        "name": "Get Odds Feed",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1712,
+          -384
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Runs once per active Live Content record.\n// slot = the ERPNext record for THIS item (paired via Split Out Slots).\n// feed = the odds feed response for THIS item (from Get Odds Feed).\nconst slot = $('Split Out Slots').item.json;\nconst feed = $json;\nconst templates = $('Get Live Content Templates').first().json.data || [];\n\nconst TEAMS = {\n  'Arizona Cardinals': 'ARI', 'Atlanta Falcons': 'ATL', 'Baltimore Ravens': 'BAL', 'Buffalo Bills': 'BUF',\n  'Carolina Panthers': 'CAR', 'Chicago Bears': 'CHI', 'Cincinnati Bengals': 'CIN', 'Cleveland Browns': 'CLE',\n  'Dallas Cowboys': 'DAL', 'Denver Broncos': 'DEN', 'Detroit Lions': 'DET', 'Green Bay Packers': 'GB',\n  'Houston Texans': 'HOU', 'Indianapolis Colts': 'IND', 'Jacksonville Jaguars': 'JAX', 'Kansas City Chiefs': 'KC',\n  'Las Vegas Raiders': 'LV', 'Los Angeles Chargers': 'LAC', 'Los Angeles Rams': 'LAR', 'Miami Dolphins': 'MIA',\n  'Minnesota Vikings': 'MIN', 'New England Patriots': 'NE', 'New Orleans Saints': 'NO', 'New York Giants': 'NYG',\n  'New York Jets': 'NYJ', 'Philadelphia Eagles': 'PHI', 'Pittsburgh Steelers': 'PIT', 'San Francisco 49ers': 'SF',\n  'Seattle Seahawks': 'SEA', 'Tampa Bay Buccaneers': 'TB', 'Tennessee Titans': 'TEN', 'Washington Commanders': 'WAS',\n};\n\nif (!slot.event_id) {\n  return { json: { ...slot, skip: true, skipReason: 'No Event ID set on this slot' } };\n}\n\nconst tpl = templates.find((t) => t.name === slot.template);\nif (!tpl || !tpl.url) {\n  return { json: { ...slot, skip: true, skipReason: `No render URL found for template \"${slot.template}\"` } };\n}\n\nconst game = (feed.events || []).find((e) => String(e.id) === String(slot.event_id));\nif (!game) {\n  return { json: { ...slot, skip: true, skipReason: `Event ${slot.event_id} not found in feed (may have started or expired)` } };\n}\n\nconst slug = String(slot.uri || '').replace(/^\\/+|\\/+$/g, '');\nif (!slug) {\n  return { json: { ...slot, skip: true, skipReason: 'No URI (slug) set on this slot' } };\n}\nconst base = $('Global Config').first().json.ftpBasePath.replace(/\\/+$/, '');\nconst ftpPath = `${base}/${slug}.png`;\nconst publicUrlBase = $('Global Config').first().json.publicUrlBase.replace(/\\/+$/, '');\nconst publicImageUrl = `${publicUrlBase}${ftpPath}`;\n\nconst away = game.competitors.find((c) => !c.home);\nconst home = game.competitors.find((c) => c.home);\nconst abbr = (c) => TEAMS[c.description] || c.description;\nconst market = (code) => game.markets.find((m) => m.code === code && m.status === 'OPEN');\nconst byTeam = (m, c) => m?.outcomes.find((o) => o.competitorId === c.id);\nconst byName = (m, n) => m?.outcomes.find((o) => o.description === n);\nconst line = (h) => { const n = Number(h); return n === 0 ? 'PK' : (n > 0 ? '+' : '') + n; };\nconst price = (o) => o.price.american;\n\nconst sp = market('2W-HCAP'), ml = market('2W-12'), tot = market('2W-OU');\nconst [spA, spH] = [byTeam(sp, away), byTeam(sp, home)];\nconst [mlA, mlH] = [byTeam(ml, away), byTeam(ml, home)];\nconst [ov, un] = [byName(tot, 'Over'), byName(tot, 'Under')];\n\nconst tz = 'America/New_York';\nconst fmtET = (d) => {\n  const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: '2-digit', hour12: true }).formatToParts(new Date(d)).map((x) => [x.type, x.value]));\n  return `${p.weekday} ${p.hour}:${p.minute} ${p.dayPeriod} ET`;\n};\n\n// Stable fields feed the change-detection hash. OddsAsOf is excluded on\n// purpose — it's always \"now\", so including it would mark every run as\n// changed and defeat the skip-if-unchanged check below.\nconst stableVars = {\n  League: slot.league || '',\n  Time: fmtET(game.startTime),\n  Team1: away.description,\n  Team2: home.description,\n  Spread: spA && spH ? `Spread: ${abbr(away)} ${line(spA.price.handicap)} (${price(spA)}) | ${abbr(home)} ${line(spH.price.handicap)} (${price(spH)})` : '',\n  MoneyLine: mlA && mlH ? `Moneyline: ${abbr(away)} ${price(mlA)} | ${abbr(home)} ${price(mlH)}` : '',\n  Total: ov && un ? `Total: O ${Number(ov.price.handicap)} (${price(ov)}) | U ${Number(un.price.handicap)} (${price(un)})` : '',\n};\nconst vars = { ...stableVars, OddsAsOf: fmtET(new Date()) };\n\nconst qs = Object.entries(vars).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');\nconst cleanTemplateUrl = String(tpl.url).replace(/[\"']/g, '').split('?')[0];\nconst signature = JSON.stringify({ id: game.id, ...stableVars });\n\nif (signature === slot.last_hash) {\n  return { json: { ...slot, skip: true, skipReason: 'No change since last upload' } };\n}\n\nreturn { json: {\n  ...slot,\n  skip: false,\n  eventId: game.id,\n  matchup: `${away.description} @ ${home.description}`,\n  ...vars,\n  imageUrl: `${cleanTemplateUrl}?${qs}`,\n  ftpPath,\n  publicImageUrl,\n  signature,\n} };\n"
+        },
+        "id": "66c33e4b-4daf-4563-9b04-fa32592de663",
+        "name": "Select Featured Game For Slot",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1936,
+          -384
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "cond1",
+                "leftValue": "={{ $json.skip }}",
+                "rightValue": false,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "d78f4edf-b1f4-499b-b199-dfa906647420",
+        "name": "Has Update?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          2160,
+          -384
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.imageUrl }}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "file"
+              }
+            },
+            "timeout": 30000
+          }
+        },
+        "id": "4a4f2cc3-a60d-499c-a0a7-52b0a8431673",
+        "name": "Get Litmus Image",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2384,
+          -464
+        ],
+        "continueOnFail": true
+      },
+      {
+        "parameters": {
+          "operation": "upload",
+          "path": "={{ '/' + $('Select Featured Game For Slot').item.json.name + '.tmp' }}",
+          "options": {}
+        },
+        "id": "7fb309e3-4d77-4df0-9eff-6d65a75cfd6a",
+        "name": "Upload to FTP (Temp)",
+        "type": "n8n-nodes-base.ftp",
+        "typeVersion": 1,
+        "position": [
+          2592,
+          -464
+        ],
+        "credentials": {
+          "ftp": {
+            "id": "bd9VSmuUycrCJlEg",
+            "name": "FTP account"
+          }
+        },
+        "continueOnFail": true
+      },
+      {
+        "parameters": {
+          "operation": "rename",
+          "oldPath": "={{ '/' + $('Select Featured Game For Slot').item.json.name + '.tmp' }}",
+          "newPath": "={{ $('Select Featured Game For Slot').item.json.ftpPath }}",
+          "options": {
+            "createDirectories": true
+          }
+        },
+        "id": "cfb98395-5712-4750-b558-74d47a4e890d",
+        "name": "Rename Into Place",
+        "type": "n8n-nodes-base.ftp",
+        "typeVersion": 1,
+        "position": [
+          2768,
+          -464
+        ],
+        "credentials": {
+          "ftp": {
+            "id": "bd9VSmuUycrCJlEg",
+            "name": "FTP account"
+          }
+        },
+        "continueOnFail": true
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const src = $('Select Featured Game For Slot').item.json;\nconst result = $json;\nconst uploadFailed = result.error !== undefined;\nconst out = {\n  slotName: src.name,\n  status: uploadFailed ? 'Error' : 'Success',\n  errorMessage: uploadFailed ? String(result.error?.message || result.error) : '',\n};\n// Only touch eventId/signature/imageUrl on a real success — on error, leave\n// ERPNext's existing values alone rather than overwriting with unknowns.\nif (!uploadFailed) {\n  out.eventId = src.eventId;\n  out.signature = src.signature;\n  out.imageUrl = src.publicImageUrl;\n}\nreturn { json: out };\n"
+        },
+        "id": "96f239a9-94b4-4ea1-a3f9-6ad6d4f6f182",
+        "name": "Report Result",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2928,
+          -464
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Nothing changed (or nothing to render) — report the skip but don't\n// touch eventId/signature/imageUrl, so ERPNext keeps its last-known-good values.\nconst d = $json;\nreturn { json: {\n  slotName: d.name,\n  status: 'Skipped',\n  errorMessage: d.skipReason || '',\n} };\n"
+        },
+        "id": "9d7e7b5f-b8fb-4f7e-ae0f-15e1437b2304",
+        "name": "Report Skip",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2368,
+          -288
+        ]
+      },
+      {
+        "parameters": {
+          "method": "PUT",
+          "url": "={{ $('Global Config').first().json.erpnextUrl }}/api/resource/Live Content/{{ $json.slotName }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "erpNextApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ last_run_at: $now.toISO().replace('T', ' ').substring(0, 19), last_event_id: $json.eventId, last_hash: $json.signature, last_upload_status: $json.status, last_error: $json.errorMessage, image_url: $json.imageUrl }) }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "415a826d-659e-4bb7-b75c-76e6592d719b",
+        "name": "Report to ERPNext",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3088,
+          -288
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "igXwqEc4qoT2ai3N",
+            "name": "ERPNext API"
+          },
+          "erpNextApi": {
+            "id": "gM5LrXNEJxHkh01n",
+            "name": "ERPNext account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "protocol": "sftp",
+          "operation": "upload",
+          "path": "={{ '/' + $('Select Featured Game For Slot').item.json.name + '.tmp' }}",
+          "options": {}
+        },
+        "id": "a19dc913-8a65-450c-bbdd-43be4c78152e",
+        "name": "Upload to FTP (Temp)1",
+        "type": "n8n-nodes-base.ftp",
+        "typeVersion": 1,
+        "position": [
+          1984,
+          -752
+        ],
+        "credentials": {
+          "sftp": {
+            "id": "q1WVpeQqdsHxu8Lq",
+            "name": "SFTP account"
+          }
+        },
+        "continueOnFail": true
+      },
+      {
+        "parameters": {
+          "jsCode": "const ftp = require('basic-ftp');\nconst client = new ftp.Client();\ntry {\n  await client.access({\n    host: '10.165.128.20',\n    port: 21,\n    user: 'morrismo-ht-assetsbg',\n    password: 'i6e9mv',          // or pull from a credential/var\n    secure: true,                     // explicit FTPS (AUTH TLS)\n    secureOptions: { rejectUnauthorized: false } // internal IP / self-signed cert\n  });\n  const list = await client.list('/');\n  return list.map(f => ({ json: { name: f.name, size: f.size, type: f.type } }));\n} finally {\n  client.close();\n}"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2336,
+          -784
+        ],
+        "id": "16234ca2-0321-40af-aae8-5313854cc9f7",
+        "name": "Code in JavaScript"
+      }
+    ],
+    "connections": {
+      "Every 10 Minutes": {
+        "main": [
+          [
+            {
+              "node": "Global Config",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Manual Test": {
+        "main": [
+          [
+            {
+              "node": "Global Config",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Global Config": {
+        "main": [
+          [
+            {
+              "node": "Get Live Content Templates",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Live Content Templates": {
+        "main": [
+          [
+            {
+              "node": "Get Active Slots",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Active Slots": {
+        "main": [
+          [
+            {
+              "node": "Split Out Slots",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out Slots": {
+        "main": [
+          [
+            {
+              "node": "Get Odds Feed",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Odds Feed": {
+        "main": [
+          [
+            {
+              "node": "Select Featured Game For Slot",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Select Featured Game For Slot": {
+        "main": [
+          [
+            {
+              "node": "Has Update?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Update?": {
+        "main": [
+          [
+            {
+              "node": "Get Litmus Image",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Report Skip",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Litmus Image": {
+        "main": [
+          [
+            {
+              "node": "Upload to FTP (Temp)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload to FTP (Temp)": {
+        "main": [
+          [
+            {
+              "node": "Rename Into Place",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Rename Into Place": {
+        "main": [
+          [
+            {
+              "node": "Report Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Report Result": {
+        "main": [
+          [
+            {
+              "node": "Report to ERPNext",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Report Skip": {
+        "main": [
+          [
+            {
+              "node": "Report to ERPNext",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Canice James",
+    "name": "Working version",
+    "description": "",
+    "autosaved": true
+  },
+  "activeVersionId": "547b590f-2c50-4909-b19e-5cfa3ad90d02",
+  "connections": {
+    "Every 10 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Global Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Test": {
+      "main": [
+        [
+          {
+            "node": "Global Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Global Config": {
+      "main": [
+        [
+          {
+            "node": "Get Live Content Templates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Live Content Templates": {
+      "main": [
+        [
+          {
+            "node": "Get Active Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Active Slots": {
+      "main": [
+        [
+          {
+            "node": "Split Out Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Slots": {
+      "main": [
+        [
+          {
+            "node": "Get Odds Feed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Odds Feed": {
+      "main": [
+        [
+          {
+            "node": "Select Featured Game For Slot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Featured Game For Slot": {
+      "main": [
+        [
+          {
+            "node": "Has Update?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Update?": {
+      "main": [
+        [
+          {
+            "node": "Get Litmus Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Report Skip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Litmus Image": {
+      "main": [
+        [
+          {
+            "node": "Upload to FTP (Temp)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to FTP (Temp)": {
+      "main": [
+        [
+          {
+            "node": "Rename Into Place",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename Into Place": {
+      "main": [
+        [
+          {
+            "node": "Report Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Report Result": {
+      "main": [
+        [
+          {
+            "node": "Report to ERPNext",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Report Skip": {
+      "main": [
+        [
+          {
+            "node": "Report to ERPNext",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-25T13:35:44.876Z",
+  "id": "aKdmUyRQP2vXgg1T",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Email Live Content",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      },
+      "id": "4533dd52-f713-4e6d-ae33-5c9ca6575ad1",
+      "name": "Every 10 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        608,
+        -480
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "83520501-9407-4399-bebf-de0c4c2d8505",
+      "name": "Manual Test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        608,
+        -288
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "g1",
+              "name": "erpnextUrl",
+              "type": "string",
+              "value": "http://martech-desk.corp-apps.com"
+            },
+            {
+              "id": "g2",
+              "name": "feedUrl",
+              "type": "string",
+              "value": "https://sportsfeeds.bovada.lv/v1/feed?clientId=1&categoryCodes=396&language=en&marketTypes=2W-12,2W-HCAP,2W-OU&periodTypes=MATCH"
+            },
+            {
+              "id": "g3",
+              "name": "ftpBasePath",
+              "type": "string",
+              "value": "/live/"
+            },
+            {
+              "id": "g4",
+              "name": "publicUrlBase",
+              "type": "string",
+              "value": "http://assets.10.161.101.24.nip.io/RUNA"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3918b4ff-0381-4aa6-96c3-c625a918501f",
+      "name": "Global Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        -384
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Global Config').first().json.erpnextUrl }}/api/resource/Live Content Template",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "erpNextApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "=[\"name\",\"url\"]"
+            },
+            {
+              "name": "limit_page_length",
+              "value": "0"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "9deef463-908d-4567-93e2-98e3d79db209",
+      "name": "Get Live Content Templates",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1056,
+        -384
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "igXwqEc4qoT2ai3N",
+          "name": "ERPNext API"
+        },
+        "erpNextApi": {
+          "id": "gM5LrXNEJxHkh01n",
+          "name": "ERPNext account - scaicedo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Global Config').first().json.erpnextUrl }}/api/resource/Live Content",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "erpNextApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filters",
+              "value": "=[[\"is_active\",\"=\",1]]"
+            },
+            {
+              "name": "fields",
+              "value": "=[\"name\",\"brand\",\"league\",\"uri\",\"event_id\",\"template\",\"last_hash\"]"
+            },
+            {
+              "name": "limit_page_length",
+              "value": "0"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "ec56d4e3-11cc-4212-b798-5c57da1c512f",
+      "name": "Get Active Slots",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        -384
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "igXwqEc4qoT2ai3N",
+          "name": "ERPNext API"
+        },
+        "erpNextApi": {
+          "id": "gM5LrXNEJxHkh01n",
+          "name": "ERPNext account - scaicedo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "id": "644f808a-1ee3-439e-93fe-32e2dc45f6ef",
+      "name": "Split Out Slots",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        -384
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Global Config').first().json.feedUrl }}",
+        "options": {
+          "allowUnauthorizedCerts": false,
+          "timeout": 30000
+        }
+      },
+      "id": "be47706f-c9d6-464e-bd9e-2051300ba777",
+      "name": "Get Odds Feed",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1712,
+        -384
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Runs once per active Live Content record.\n// slot = the ERPNext record for THIS item (paired via Split Out Slots).\n// feed = the odds feed response for THIS item (from Get Odds Feed).\nconst slot = $('Split Out Slots').item.json;\nconst feed = $json;\nconst templates = $('Get Live Content Templates').first().json.data || [];\n\nconst TEAMS = {\n  'Arizona Cardinals': 'ARI', 'Atlanta Falcons': 'ATL', 'Baltimore Ravens': 'BAL', 'Buffalo Bills': 'BUF',\n  'Carolina Panthers': 'CAR', 'Chicago Bears': 'CHI', 'Cincinnati Bengals': 'CIN', 'Cleveland Browns': 'CLE',\n  'Dallas Cowboys': 'DAL', 'Denver Broncos': 'DEN', 'Detroit Lions': 'DET', 'Green Bay Packers': 'GB',\n  'Houston Texans': 'HOU', 'Indianapolis Colts': 'IND', 'Jacksonville Jaguars': 'JAX', 'Kansas City Chiefs': 'KC',\n  'Las Vegas Raiders': 'LV', 'Los Angeles Chargers': 'LAC', 'Los Angeles Rams': 'LAR', 'Miami Dolphins': 'MIA',\n  'Minnesota Vikings': 'MIN', 'New England Patriots': 'NE', 'New Orleans Saints': 'NO', 'New York Giants': 'NYG',\n  'New York Jets': 'NYJ', 'Philadelphia Eagles': 'PHI', 'Pittsburgh Steelers': 'PIT', 'San Francisco 49ers': 'SF',\n  'Seattle Seahawks': 'SEA', 'Tampa Bay Buccaneers': 'TB', 'Tennessee Titans': 'TEN', 'Washington Commanders': 'WAS',\n};\n\nif (!slot.event_id) {\n  return { json: { ...slot, skip: true, skipReason: 'No Event ID set on this slot' } };\n}\n\nconst tpl = templates.find((t) => t.name === slot.template);\nif (!tpl || !tpl.url) {\n  return { json: { ...slot, skip: true, skipReason: `No render URL found for template \"${slot.template}\"` } };\n}\n\nconst game = (feed.events || []).find((e) => String(e.id) === String(slot.event_id));\nif (!game) {\n  return { json: { ...slot, skip: true, skipReason: `Event ${slot.event_id} not found in feed (may have started or expired)` } };\n}\n\nconst slug = String(slot.uri || '').replace(/^\\/+|\\/+$/g, '');\nif (!slug) {\n  return { json: { ...slot, skip: true, skipReason: 'No URI (slug) set on this slot' } };\n}\nconst base = $('Global Config').first().json.ftpBasePath.replace(/\\/+$/, '');\nconst ftpPath = `${base}/${slug}.png`;\nconst publicUrlBase = $('Global Config').first().json.publicUrlBase.replace(/\\/+$/, '');\nconst publicImageUrl = `${publicUrlBase}${ftpPath}`;\n\nconst away = game.competitors.find((c) => !c.home);\nconst home = game.competitors.find((c) => c.home);\nconst abbr = (c) => TEAMS[c.description] || c.description;\nconst market = (code) => game.markets.find((m) => m.code === code && m.status === 'OPEN');\nconst byTeam = (m, c) => m?.outcomes.find((o) => o.competitorId === c.id);\nconst byName = (m, n) => m?.outcomes.find((o) => o.description === n);\nconst line = (h) => { const n = Number(h); return n === 0 ? 'PK' : (n > 0 ? '+' : '') + n; };\nconst price = (o) => o.price.american;\n\nconst sp = market('2W-HCAP'), ml = market('2W-12'), tot = market('2W-OU');\nconst [spA, spH] = [byTeam(sp, away), byTeam(sp, home)];\nconst [mlA, mlH] = [byTeam(ml, away), byTeam(ml, home)];\nconst [ov, un] = [byName(tot, 'Over'), byName(tot, 'Under')];\n\nconst tz = 'America/New_York';\nconst fmtET = (d) => {\n  const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: '2-digit', hour12: true }).formatToParts(new Date(d)).map((x) => [x.type, x.value]));\n  return `${p.weekday} ${p.hour}:${p.minute} ${p.dayPeriod} ET`;\n};\n\n// Stable fields feed the change-detection hash. OddsAsOf is excluded on\n// purpose — it's always \"now\", so including it would mark every run as\n// changed and defeat the skip-if-unchanged check below.\nconst stableVars = {\n  League: slot.league || '',\n  Time: fmtET(game.startTime),\n  Team1: away.description,\n  Team2: home.description,\n  Spread: spA && spH ? `Spread: ${abbr(away)} ${line(spA.price.handicap)} (${price(spA)}) | ${abbr(home)} ${line(spH.price.handicap)} (${price(spH)})` : '',\n  MoneyLine: mlA && mlH ? `Moneyline: ${abbr(away)} ${price(mlA)} | ${abbr(home)} ${price(mlH)}` : '',\n  Total: ov && un ? `Total: O ${Number(ov.price.handicap)} (${price(ov)}) | U ${Number(un.price.handicap)} (${price(un)})` : '',\n};\nconst vars = { ...stableVars, OddsAsOf: fmtET(new Date()) };\n\nconst qs = Object.entries(vars).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');\nconst cleanTemplateUrl = String(tpl.url).replace(/[\"']/g, '').split('?')[0];\nconst signature = JSON.stringify({ id: game.id, ...stableVars });\n\nif (signature === slot.last_hash) {\n  return { json: { ...slot, skip: true, skipReason: 'No change since last upload' } };\n}\n\nreturn { json: {\n  ...slot,\n  skip: false,\n  eventId: game.id,\n  matchup: `${away.description} @ ${home.description}`,\n  ...vars,\n  imageUrl: `${cleanTemplateUrl}?${qs}`,\n  ftpPath,\n  publicImageUrl,\n  signature,\n} };\n"
+      },
+      "id": "66c33e4b-4daf-4563-9b04-fa32592de663",
+      "name": "Select Featured Game For Slot",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1936,
+        -384
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond1",
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d78f4edf-b1f4-499b-b199-dfa906647420",
+      "name": "Has Update?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2160,
+        -384
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.imageUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "4a4f2cc3-a60d-499c-a0a7-52b0a8431673",
+      "name": "Get Litmus Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2384,
+        -464
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "path": "={{ '/' + $('Select Featured Game For Slot').item.json.name + '.tmp' }}",
+        "options": {}
+      },
+      "id": "7fb309e3-4d77-4df0-9eff-6d65a75cfd6a",
+      "name": "Upload to FTP (Temp)",
+      "type": "n8n-nodes-base.ftp",
+      "typeVersion": 1,
+      "position": [
+        2592,
+        -464
+      ],
+      "credentials": {
+        "ftp": {
+          "id": "bd9VSmuUycrCJlEg",
+          "name": "FTP account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "rename",
+        "oldPath": "={{ '/' + $('Select Featured Game For Slot').item.json.name + '.tmp' }}",
+        "newPath": "={{ $('Select Featured Game For Slot').item.json.ftpPath }}",
+        "options": {
+          "createDirectories": true
+        }
+      },
+      "id": "cfb98395-5712-4750-b558-74d47a4e890d",
+      "name": "Rename Into Place",
+      "type": "n8n-nodes-base.ftp",
+      "typeVersion": 1,
+      "position": [
+        2768,
+        -464
+      ],
+      "credentials": {
+        "ftp": {
+          "id": "bd9VSmuUycrCJlEg",
+          "name": "FTP account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const src = $('Select Featured Game For Slot').item.json;\nconst result = $json;\nconst uploadFailed = result.error !== undefined;\nconst out = {\n  slotName: src.name,\n  status: uploadFailed ? 'Error' : 'Success',\n  errorMessage: uploadFailed ? String(result.error?.message || result.error) : '',\n};\n// Only touch eventId/signature/imageUrl on a real success — on error, leave\n// ERPNext's existing values alone rather than overwriting with unknowns.\nif (!uploadFailed) {\n  out.eventId = src.eventId;\n  out.signature = src.signature;\n  out.imageUrl = src.publicImageUrl;\n}\nreturn { json: out };\n"
+      },
+      "id": "96f239a9-94b4-4ea1-a3f9-6ad6d4f6f182",
+      "name": "Report Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2928,
+        -464
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Nothing changed (or nothing to render) — report the skip but don't\n// touch eventId/signature/imageUrl, so ERPNext keeps its last-known-good values.\nconst d = $json;\nreturn { json: {\n  slotName: d.name,\n  status: 'Skipped',\n  errorMessage: d.skipReason || '',\n} };\n"
+      },
+      "id": "9d7e7b5f-b8fb-4f7e-ae0f-15e1437b2304",
+      "name": "Report Skip",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2368,
+        -288
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $('Global Config').first().json.erpnextUrl }}/api/resource/Live Content/{{ $json.slotName }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "erpNextApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ last_run_at: $now.toISO().replace('T', ' ').substring(0, 19), last_event_id: $json.eventId, last_hash: $json.signature, last_upload_status: $json.status, last_error: $json.errorMessage, image_url: $json.imageUrl }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "415a826d-659e-4bb7-b75c-76e6592d719b",
+      "name": "Report to ERPNext",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3088,
+        -288
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "igXwqEc4qoT2ai3N",
+          "name": "ERPNext API"
+        },
+        "erpNextApi": {
+          "id": "gM5LrXNEJxHkh01n",
+          "name": "ERPNext account - scaicedo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "protocol": "sftp",
+        "operation": "upload",
+        "path": "={{ '/' + $('Select Featured Game For Slot').item.json.name + '.tmp' }}",
+        "options": {}
+      },
+      "id": "a19dc913-8a65-450c-bbdd-43be4c78152e",
+      "name": "Upload to FTP (Temp)1",
+      "type": "n8n-nodes-base.ftp",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        -752
+      ],
+      "credentials": {
+        "sftp": {
+          "id": "q1WVpeQqdsHxu8Lq",
+          "name": "SFTP account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const ftp = require('basic-ftp');\nconst client = new ftp.Client();\ntry {\n  await client.access({\n    host: '10.165.128.20',\n    port: 21,\n    user: 'morrismo-ht-assetsbg',\n    password: 'i6e9mv',          // or pull from a credential/var\n    secure: true,                     // explicit FTPS (AUTH TLS)\n    secureOptions: { rejectUnauthorized: false } // internal IP / self-signed cert\n  });\n  const list = await client.list('/');\n  return list.map(f => ({ json: { name: f.name, size: f.size, type: f.type } }));\n} finally {\n  client.close();\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2336,
+        -784
+      ],
+      "id": "16234ca2-0321-40af-aae8-5313854cc9f7",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-09-25T13:35:44.876Z",
+      "createdAt": "2026-09-25T13:35:44.876Z",
+      "role": "workflow:owner",
+      "workflowId": "aKdmUyRQP2vXgg1T",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": {
+    "node:Every 10 Minutes": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-10-14T19:05:49.351Z",
+  "versionId": "547b590f-2c50-4909-b19e-5cfa3ad90d02"
+}
