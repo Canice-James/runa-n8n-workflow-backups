@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-08-14T13:28:46.101Z",
-    "createdAt": "2026-08-14T13:28:46.101Z",
-    "versionId": "ad506eff-046d-4570-bb77-745c9c18e915",
+    "updatedAt": "2026-10-14T19:47:27.760Z",
+    "createdAt": "2026-10-14T19:43:34.156Z",
+    "versionId": "8a77658a-aae5-49c3-a146-3380bd889e94",
     "workflowId": "bgf1Wl4h30ZSFPaC",
     "nodes": [
       {
@@ -60,7 +60,7 @@
         "credentials": {
           "n8nApi": {
             "id": "mkIknOTSq3DOp5UH",
-            "name": "n8n account"
+            "name": "N8N - api"
           }
         }
       },
@@ -105,9 +105,10 @@
         "parameters": {
           "conditions": {
             "options": {
-              "leftValue": "",
               "caseSensitive": true,
-              "typeValidation": "strict"
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
             },
             "combinator": "and",
             "conditions": [
@@ -259,7 +260,7 @@
         "credentials": {
           "githubApi": {
             "id": "kDcTPrBOTVrQTTu2",
-            "name": "GitHub account"
+            "name": "GitHub account external - canjames"
           }
         }
       },
@@ -293,7 +294,7 @@
         "credentials": {
           "githubApi": {
             "id": "kDcTPrBOTVrQTTu2",
-            "name": "GitHub account"
+            "name": "GitHub account external - canjames"
           }
         }
       },
@@ -433,7 +434,7 @@
         "credentials": {
           "githubApi": {
             "id": "kDcTPrBOTVrQTTu2",
-            "name": "GitHub account"
+            "name": "GitHub account external - canjames"
           }
         },
         "continueOnFail": true
@@ -473,6 +474,27 @@
           848
         ],
         "typeVersion": 3.4
+      },
+      {
+        "parameters": {
+          "resource": "credential",
+          "operation": "__CUSTOM_API_CALL__",
+          "requestOptions": {}
+        },
+        "type": "n8n-nodes-base.n8n",
+        "typeVersion": 1,
+        "position": [
+          1200,
+          256
+        ],
+        "id": "3e4d13a8-3221-46ae-9c07-f88f62e83922",
+        "name": "__CUSTOM_API_CALL__ credential",
+        "credentials": {
+          "n8nApi": {
+            "id": "mkIknOTSq3DOp5UH",
+            "name": "N8N - api"
+          }
+        }
       }
     ],
     "connections": {
@@ -481,6 +503,11 @@
           [
             {
               "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "__CUSTOM_API_CALL__ credential",
               "type": "main",
               "index": 0
             }
@@ -721,23 +748,18 @@
       }
     },
     "nodeGroups": [],
-    "authors": "system migration",
-    "name": null,
-    "description": null,
-    "autosaved": false
+    "authors": "Canice James",
+    "name": "Version 8a77658a",
+    "description": "",
+    "autosaved": true
   },
-  "activeVersionId": "ad506eff-046d-4570-bb77-745c9c18e915",
+  "activeVersionId": "8a77658a-aae5-49c3-a146-3380bd889e94",
   "connections": {
     "n8n": {
       "main": [
         [
           {
             "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "__CUSTOM_API_CALL__ credential",
             "type": "main",
             "index": 0
           }
@@ -1085,10 +1107,9 @@
       "parameters": {
         "conditions": {
           "options": {
-            "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "strict",
-            "version": 1
+            "caseSensitive": true,
+            "typeValidation": "strict"
           },
           "combinator": "and",
           "conditions": [
@@ -1454,27 +1475,6 @@
         848
       ],
       "typeVersion": 3.4
-    },
-    {
-      "parameters": {
-        "resource": "credential",
-        "operation": "__CUSTOM_API_CALL__",
-        "requestOptions": {}
-      },
-      "type": "n8n-nodes-base.n8n",
-      "typeVersion": 1,
-      "position": [
-        1200,
-        288
-      ],
-      "id": "3e4d13a8-3221-46ae-9c07-f88f62e83922",
-      "name": "__CUSTOM_API_CALL__ credential",
-      "credentials": {
-        "n8nApi": {
-          "id": "mkIknOTSq3DOp5UH",
-          "name": "N8N - api"
-        }
-      }
     }
   ],
   "pinData": {},
@@ -1514,6 +1514,6 @@
     }
   ],
   "triggerCount": 1,
-  "updatedAt": "2026-08-17T21:25:15.333Z",
-  "versionId": "9a76d9f3-a5a7-45c7-87fb-2822bbd3f1b6"
+  "updatedAt": "2026-10-14T19:48:35.299Z",
+  "versionId": "cc25d742-e43b-4ec4-9ed9-6b8fdd19fe8a"
 }
