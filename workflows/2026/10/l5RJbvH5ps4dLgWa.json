@@ -1,0 +1,3122 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-10-01T18:58:11.176Z",
+    "createdAt": "2026-10-01T18:58:11.176Z",
+    "versionId": "96e8fdd8-c81a-457c-aed2-ee67018b3bfd",
+    "workflowId": "l5RJbvH5ps4dLgWa",
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "issue",
+                "type": "object"
+              }
+            ]
+          }
+        },
+        "id": "7a9c9fc2-7a5a-4667-9e7b-5581c16b783d",
+        "name": "When called by Jira MAP",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const issue = ($json.issue && $json.issue.fields) ? $json.issue : $json;\nconst fields = issue.fields || {};\nfunction values(arr) {\n  if (!Array.isArray(arr)) return [];\n  const out = [];\n  for (let i = 0; i < arr.length; i++) {\n    const x = arr[i];\n    const v = (x && typeof x === 'object') ? x.value : x;\n    if (v != null && v !== '') out.push(v);\n  }\n  return out;\n}\nfunction unique(list) {\n  const seen = {};\n  const out = [];\n  for (let i = 0; i < list.length; i++) {\n    if (!seen[list[i]]) { seen[list[i]] = true; out.push(list[i]); }\n  }\n  return out;\n}\nconst brands = unique(values(fields.customfield_11504));\nconst regions = unique(values(fields.customfield_11507));\nconst labels = unique((fields.labels || []).filter(Boolean));\nfunction combo(xs) {\n  return xs.slice().sort().join(' | ') || null;\n}\nconst attachments = fields.attachment || [];\nconst lastAtt = attachments.length ? attachments[attachments.length - 1] : null;\nconst result = Object.assign({}, issue, {\n  issue_key: issue.key,\n  issue_id: String(issue.id),\n  labels_list: labels,\n  brands_list: brands,\n  regions_list: regions,\n  brand: brands[0] || null,\n  region: regions[0] || null,\n  brand_count: brands.length,\n  region_count: regions.length,\n  label_count: labels.length,\n  brands_combo: combo(brands),\n  regions_combo: combo(regions),\n  last_attachment_at: lastAtt ? lastAtt.created : null,\n  last_attachment_by_key: lastAtt && lastAtt.author ? (lastAtt.author.key || lastAtt.author.name || null) : null,\n  last_attachment_by_name: lastAtt && lastAtt.author ? (lastAtt.author.displayName || null) : null,\n  attachments_count: attachments.length\n});\nreturn { json: result };"
+        },
+        "id": "9bb0edb1-7472-430c-b877-cecee6fa540e",
+        "name": "Prepare MAP issue fields",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          224,
+          384
+        ],
+        "notes": "Derives region, counts, combo strings, and per-value lists for Metabase bridge tables."
+      },
+      {
+        "parameters": {
+          "operation": "upsert",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public",
+            "cachedResultName": "public"
+          },
+          "table": {
+            "__rl": true,
+            "mode": "list",
+            "value": "map_jira_issues",
+            "cachedResultName": "map_jira_issues"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "issue_key": "={{ $json.issue_key }}",
+              "issue_id": "={{ $json.issue_id }}",
+              "issue_url": "={{ $json.self }}",
+              "raw_data": "={{ $json.fields }}",
+              "summary": "={{ $json.fields.summary }}",
+              "issuetype_id": "={{ $json.fields.issuetype.id }}",
+              "issuetype_name": "={{ $json.fields.issuetype.name }}",
+              "due_date": "={{ $json.fields.duedate }}",
+              "status_id": "={{ $json.fields.status.id }}",
+              "status_name": "={{ $json.fields.status.name }}",
+              "labels": "={{ $json.fields.labels }}",
+              "created_at": "={{ $json.fields.created }}",
+              "updated_at": "={{ $json.fields.updated }}",
+              "resolution_date": "={{ $json.fields.resolutiondate }}",
+              "live_date": "={{ $json.fields.customfield_17519 }}",
+              "qa_due_date": "={{ $json.fields.customfield_11222 }}",
+              "attachments_count": "={{ $json.attachments_count }}",
+              "time_spent": "={{ $json.fields.timespent }}",
+              "time_estimate": "={{ $json.fields.timeestimate }}",
+              "priority_name": "={{ $json.fields.priority.name }}",
+              "epic_name": "={{ $json.fields.customfield_10004 }}",
+              "brand": "={{ $json.brand }}",
+              "region": "={{ $json.region }}",
+              "brand_count": "={{ $json.brand_count }}",
+              "region_count": "={{ $json.region_count }}",
+              "label_count": "={{ $json.label_count }}",
+              "brands_combo": "={{ $json.brands_combo }}",
+              "regions_combo": "={{ $json.regions_combo }}",
+              "epic_type": "={{ $json.fields.customfield_26454.value }}",
+              "quarters": "={{ $json.fields.customfield_25541[0].value }}",
+              "years": "={{ $json.fields.customfield_25542[0].value }}",
+              "vertical": "={{ $json.fields.customfield_11508[0].value }}",
+              "parent_link": "={{ $json.fields.customfield_16301 }}",
+              "select_products": "={{ $json.fields.customfield_25543[0].value }}",
+              "high_level_target_audience": "={{ $json.fields.customfield_25508 }}",
+              "high_level_details": "={{ $json.fields.customfield_25544 }}",
+              "last_attachment_by_name": "={{ $json.last_attachment_by_name }}",
+              "last_attachment_by_key": "={{ $json.last_attachment_by_key }}",
+              "last_attachment_at": "={{ $json.last_attachment_at }}",
+              "ideal_live_date": "={{ $json.fields.customfield_26467 }}",
+              "strategic_marketing_expert": "={{ $json.fields.customfield_26470.displayName }}",
+              "marketing_operator": "={{ $json.fields.customfield_26469.displayName }}",
+              "marketing_coordinator": "={{ $json.fields.customfield_26501.displayName }}",
+              "owner_name": "={{ $json.fields.customfield_22612.displayName }}",
+              "assignee_name": "={{ $json.fields.assignee.displayName }}",
+              "assignee_key": "={{ $json.fields.assignee.name }}",
+              "work_type": "={{ $json.fields.customfield_26465.value }}",
+              "evergreen_campaign": "={{ $json.fields.customfield_26464.value }}",
+              "business_case_required": "={{ $json.fields.customfield_26461.value }}",
+              "high_level_campaign_needs": "={{ $json.fields.customfield_26458 }}",
+              "expected_behavioral_results": "={{ $json.fields.customfield_25547 }}",
+              "build_due_date": "={{ $json.fields.customfield_25532 }}"
+            },
+            "matchingColumns": [
+              "issue_id"
+            ],
+            "schema": [
+              {
+                "id": "issue_key",
+                "displayName": "issue_key",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "issue_id",
+                "displayName": "issue_id",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "issue_url",
+                "displayName": "issue_url",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "raw_data",
+                "displayName": "raw_data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "object",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "summary",
+                "displayName": "summary",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "status_id",
+                "displayName": "status_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "status_name",
+                "displayName": "status_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "issuetype_id",
+                "displayName": "issuetype_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "issuetype_name",
+                "displayName": "issuetype_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "priority_name",
+                "displayName": "priority_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "labels",
+                "displayName": "labels",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "array",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "epic_name",
+                "displayName": "epic_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "epic_type",
+                "displayName": "epic_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "brand",
+                "displayName": "brand",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "quarters",
+                "displayName": "quarters",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "years",
+                "displayName": "years",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "vertical",
+                "displayName": "vertical",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "parent_link",
+                "displayName": "parent_link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "select_products",
+                "displayName": "select_products",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "high_level_details",
+                "displayName": "high_level_details",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "expected_behavioral_results",
+                "displayName": "expected_behavioral_results",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "high_level_target_audience",
+                "displayName": "high_level_target_audience",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "high_level_campaign_needs",
+                "displayName": "high_level_campaign_needs",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "business_case_required",
+                "displayName": "business_case_required",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "evergreen_campaign",
+                "displayName": "evergreen_campaign",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "work_type",
+                "displayName": "work_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "assignee_key",
+                "displayName": "assignee_key",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "assignee_name",
+                "displayName": "assignee_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "owner_name",
+                "displayName": "owner_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "marketing_coordinator",
+                "displayName": "marketing_coordinator",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "marketing_operator",
+                "displayName": "marketing_operator",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "strategic_marketing_expert",
+                "displayName": "strategic_marketing_expert",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "updated_at",
+                "displayName": "updated_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "ideal_live_date",
+                "displayName": "ideal_live_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "due_date",
+                "displayName": "due_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "resolution_date",
+                "displayName": "resolution_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "live_date",
+                "displayName": "live_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "qa_due_date",
+                "displayName": "qa_due_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "time_spent",
+                "displayName": "time_spent",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "time_estimate",
+                "displayName": "time_estimate",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "has_attachments",
+                "displayName": "has_attachments",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "boolean",
+                "canBeUsedToMatch": false,
+                "removed": false
+              },
+              {
+                "id": "attachments_count",
+                "displayName": "attachments_count",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "last_attachment_at",
+                "displayName": "last_attachment_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "last_attachment_by_key",
+                "displayName": "last_attachment_by_key",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "last_attachment_by_name",
+                "displayName": "last_attachment_by_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "synced_at",
+                "displayName": "synced_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false,
+                "removed": false
+              },
+              {
+                "id": "build_due_date",
+                "displayName": "build_due_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "region",
+                "displayName": "region",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "brand_count",
+                "displayName": "brand_count",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "region_count",
+                "displayName": "region_count",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "label_count",
+                "displayName": "label_count",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "brands_combo",
+                "displayName": "brands_combo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "regions_combo",
+                "displayName": "regions_combo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "3e502a9d-11d8-4d68-96fa-bee0e079234f",
+        "name": "UPSERT map_jira_issues",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          448,
+          384
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "credentials": {
+          "postgres": {
+            "id": "1eZL0LK34Dt3rgRN",
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "deleteTable",
+          "schema": {
+            "__rl": true,
+            "cachedResultName": "public",
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "cachedResultName": "map_jira_issue_labels",
+            "mode": "list",
+            "value": "map_jira_issue_labels"
+          },
+          "deleteCommand": "delete",
+          "where": {
+            "values": [
+              {
+                "column": "issue_id",
+                "value": "={{ $json.issue_id }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "ef93e79b-acec-4117-9685-5d37cf07f9fd",
+        "name": "Delete issue labels",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          896,
+          0
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "credentials": {
+          "postgres": {
+            "id": "1eZL0LK34Dt3rgRN",
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "labels_list",
+          "include": "selectedOtherFields",
+          "fieldsToInclude": "issue_id,issue_key",
+          "options": {}
+        },
+        "id": "167c8ad9-49e2-4c4e-968b-80f01f4cab44",
+        "name": "Split issue labels",
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "schema": {
+            "__rl": true,
+            "cachedResultName": "public",
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "cachedResultName": "map_jira_issue_labels",
+            "mode": "list",
+            "value": "map_jira_issue_labels"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "issue_id": "={{ $json.issue_id }}",
+              "issue_key": "={{ $json.issue_key }}",
+              "label": "={{ $json.labels_list }}"
+            }
+          },
+          "options": {
+            "skipOnConflict": true
+          }
+        },
+        "id": "374201c3-bb97-41ca-a6b7-a9a79bc76a7f",
+        "name": "Insert issue labels",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          1344,
+          0
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "credentials": {
+          "postgres": {
+            "id": "1eZL0LK34Dt3rgRN",
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "deleteTable",
+          "schema": {
+            "__rl": true,
+            "cachedResultName": "public",
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "cachedResultName": "map_jira_issue_brands",
+            "mode": "list",
+            "value": "map_jira_issue_brands"
+          },
+          "deleteCommand": "delete",
+          "where": {
+            "values": [
+              {
+                "column": "issue_id",
+                "value": "={{ $json.issue_id }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "3931fb44-26c2-46d1-a503-39fc5e8ae08a",
+        "name": "Delete issue brands",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          896,
+          192
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "credentials": {
+          "postgres": {
+            "id": "1eZL0LK34Dt3rgRN",
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "brands_list",
+          "include": "selectedOtherFields",
+          "fieldsToInclude": "issue_id,issue_key",
+          "options": {}
+        },
+        "id": "10449ee5-2b45-476f-b583-06cf378e8b12",
+        "name": "Split issue brands",
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "schema": {
+            "__rl": true,
+            "cachedResultName": "public",
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "cachedResultName": "map_jira_issue_brands",
+            "mode": "list",
+            "value": "map_jira_issue_brands"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "brand": "={{ $json.brands_list }}",
+              "issue_id": "={{ $json.issue_id }}",
+              "issue_key": "={{ $json.issue_key }}"
+            }
+          },
+          "options": {
+            "skipOnConflict": true
+          }
+        },
+        "id": "41ac6cd3-799d-43e3-ac19-d61a6f2c5b23",
+        "name": "Insert issue brands",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          1344,
+          192
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "credentials": {
+          "postgres": {
+            "id": "1eZL0LK34Dt3rgRN",
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "deleteTable",
+          "schema": {
+            "__rl": true,
+            "cachedResultName": "public",
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "cachedResultName": "map_jira_issue_regions",
+            "mode": "list",
+            "value": "map_jira_issue_regions"
+          },
+          "deleteCommand": "delete",
+          "where": {
+            "values": [
+              {
+                "column": "issue_id",
+                "value": "={{ $json.issue_id }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "a4204cff-7935-421f-927e-324148b86d1a",
+        "name": "Delete issue regions",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          896,
+          384
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "credentials": {
+          "postgres": {
+            "id": "1eZL0LK34Dt3rgRN",
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "regions_list",
+          "include": "selectedOtherFields",
+          "fieldsToInclude": "issue_id,issue_key",
+          "options": {}
+        },
+        "id": "28958007-1bb2-4837-a7de-31eb3b30952b",
+        "name": "Split issue regions",
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "schema": {
+            "__rl": true,
+            "cachedResultName": "public",
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "cachedResultName": "map_jira_issue_regions",
+            "mode": "list",
+            "value": "map_jira_issue_regions"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "issue_id": "={{ $json.issue_id }}",
+              "issue_key": "={{ $json.issue_key }}",
+              "region": "={{ $json.regions_list }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "issue_id",
+                "displayName": "issue_id",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "issue_key",
+                "displayName": "issue_key",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "region",
+                "displayName": "region",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "synced_at",
+                "displayName": "synced_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "skipOnConflict": true
+          }
+        },
+        "id": "14444972-a74f-4fe1-a9b5-d01acf07e897",
+        "name": "Insert issue regions",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          1344,
+          384
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "credentials": {
+          "postgres": {
+            "id": "1eZL0LK34Dt3rgRN",
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://jiraops.corp-apps.com/rest/api/2/issue/{{ $json.issue_id }}/worklog",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "jiraSoftwareServerApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "maxResults",
+                "value": "100"
+              }
+            ]
+          },
+          "options": {
+            "pagination": {
+              "pagination": {
+                "parameters": {
+                  "parameters": [
+                    {
+                      "name": "startAt",
+                      "value": "={{ $pageCount * 100 }}"
+                    }
+                  ]
+                },
+                "paginationCompleteWhen": "other",
+                "completeExpression": "={{ ($response.body.startAt + ($response.body.worklogs || []).length) >= $response.body.total }}",
+                "limitPagesFetched": true,
+                "maxRequests": 50,
+                "requestInterval": 200
+              }
+            },
+            "timeout": 30000
+          }
+        },
+        "id": "53b22e18-dd6b-4d50-9a8c-d2ad781464e5",
+        "name": "Page issue worklogs",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          896,
+          576
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "credentials": {
+          "jiraSoftwareServerApi": {
+            "id": "7MgXJNgpxtJeD70Z",
+            "name": "Jira SW Server account - canjames"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "worklogs",
+          "options": {}
+        },
+        "id": "1d13af0f-4269-4de8-8f17-24863674987f",
+        "name": "Split worklogs",
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          576
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "upsert",
+          "schema": {
+            "__rl": true,
+            "cachedResultName": "public",
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "cachedResultName": "map_jira_worklogs",
+            "mode": "list",
+            "value": "map_jira_worklogs"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "matchingColumns": [
+              "worklog_id"
+            ],
+            "value": {
+              "author_key": "={{ $json.author.name }}",
+              "author_name": "={{ $json.author.displayName }}",
+              "created_at": "={{ $json.created }}",
+              "issue_id": "={{ $json.issueId }}",
+              "issue_key": "={{ $('Prepare MAP issue fields').item.json.issue_key }}",
+              "started": "={{ $json.started }}",
+              "time_spent_seconds": "={{ $json.timeSpentSeconds }}",
+              "updated_at": "={{ $json.updated }}",
+              "worklog_id": "={{ $json.id }}"
+            }
+          },
+          "options": {}
+        },
+        "id": "5a52976a-244a-44d4-97cd-a4866c97772b",
+        "name": "UPSERT map_jira_worklogs",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          1344,
+          576
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "credentials": {
+          "postgres": {
+            "id": "1eZL0LK34Dt3rgRN",
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const issue = $('Prepare MAP issue fields').first().json;\nconst changelog = (issue && issue.changelog) || {};\nconst histories = changelog.histories || changelog.values || [];\nconst output = [];\nfor (let h = 0; h < histories.length; h++) {\n  const history = histories[h] || {};\n  const items = history.items || [];\n  for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {\n    const item = items[itemIndex] || {};\n    output.push({ json: {\n      changelog_id: String(history.id),\n      item_index: itemIndex,\n      issue_key: issue.issue_key,\n      issue_id: String(issue.issue_id),\n      author_key: (history.author && (history.author.key || history.author.name)) || null,\n      author_name: (history.author && history.author.displayName) || null,\n      created_at: history.created || null,\n      field: item.field || null,\n      fieldtype: item.fieldtype || null,\n      from_value: item.from || null,\n      from_string: item.fromString || null,\n      to_value: item.to || null,\n      to_string: item.toString || null\n    }});\n  }\n}\nreturn output;",
+          "language": "javaScript",
+          "mode": "runOnceForAllItems"
+        },
+        "id": "4c08136d-0665-4530-bf2c-05ba773c12b7",
+        "name": "Flatten changelog items",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1120,
+          768
+        ],
+        "notes": "Uses Prepare MAP issue fields for issue identity so every changelog page maps to the current issue."
+      },
+      {
+        "parameters": {
+          "operation": "upsert",
+          "schema": {
+            "__rl": true,
+            "cachedResultName": "public",
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "cachedResultName": "map_jira_changelogs",
+            "mode": "list",
+            "value": "map_jira_changelogs"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "matchingColumns": [
+              "changelog_id",
+              "item_index"
+            ],
+            "value": {
+              "author_key": "={{ $json.author_key }}",
+              "author_name": "={{ $json.author_name }}",
+              "changelog_id": "={{ $json.changelog_id }}",
+              "created_at": "={{ $json.created_at }}",
+              "field": "={{ $json.field }}",
+              "fieldtype": "={{ $json.fieldtype }}",
+              "from_string": "={{ $json.from_string }}",
+              "from_value": "={{ $json.from_value }}",
+              "issue_id": "={{ $json.issue_id }}",
+              "issue_key": "={{ $json.issue_key }}",
+              "item_index": "={{ $json.item_index }}",
+              "to_string": "={{ $json.to_string }}",
+              "to_value": "={{ $json.to_value }}"
+            }
+          },
+          "options": {}
+        },
+        "id": "7301b378-164f-4af3-be0f-05f057caee6d",
+        "name": "UPSERT map_jira_changelogs",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          1344,
+          768
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 2000,
+        "credentials": {
+          "postgres": {
+            "id": "1eZL0LK34Dt3rgRN",
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "keep-issue-id",
+                "name": "issue_id",
+                "type": "string",
+                "value": "={{ $('Prepare MAP issue fields').item.json.issue_id }}"
+              },
+              {
+                "id": "keep-issue-key",
+                "name": "issue_key",
+                "type": "string",
+                "value": "={{ $('Prepare MAP issue fields').item.json.issue_key }}"
+              },
+              {
+                "id": "keep-labels",
+                "name": "labels_list",
+                "type": "array",
+                "value": "={{ $('Prepare MAP issue fields').item.json.labels_list }}"
+              },
+              {
+                "id": "keep-brands",
+                "name": "brands_list",
+                "type": "array",
+                "value": "={{ $('Prepare MAP issue fields').item.json.brands_list }}"
+              },
+              {
+                "id": "keep-regions",
+                "name": "regions_list",
+                "type": "array",
+                "value": "={{ $('Prepare MAP issue fields').item.json.regions_list }}"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "id": "affd37d5-2781-48ec-9f24-cb527a741738",
+        "name": "Keep issue lists",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          672,
+          384
+        ]
+      },
+      {
+        "id": "cac4bad7-87fc-44dd-b32a-58adb5f4ca9a",
+        "name": "Restore lists after label delete",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "rl-id",
+                "name": "issue_id",
+                "type": "string",
+                "value": "={{ $('Prepare MAP issue fields').item.json.issue_id }}"
+              },
+              {
+                "id": "rl-key",
+                "name": "issue_key",
+                "type": "string",
+                "value": "={{ $('Prepare MAP issue fields').item.json.issue_key }}"
+              },
+              {
+                "id": "rl-labels",
+                "name": "labels_list",
+                "type": "array",
+                "value": "={{ $('Prepare MAP issue fields').item.json.labels_list }}"
+              }
+            ]
+          },
+          "includeOtherFields": false,
+          "mode": "manual",
+          "options": {}
+        },
+        "notes": "Delete returns {success} and drops labels_list. Re-read lists from Prepare so Split still has values."
+      },
+      {
+        "id": "ee1f274f-3f5c-4a26-8d4a-59176cc0d30b",
+        "name": "Restore lists after brand delete",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "rb-id",
+                "name": "issue_id",
+                "type": "string",
+                "value": "={{ $('Prepare MAP issue fields').item.json.issue_id }}"
+              },
+              {
+                "id": "rb-key",
+                "name": "issue_key",
+                "type": "string",
+                "value": "={{ $('Prepare MAP issue fields').item.json.issue_key }}"
+              },
+              {
+                "id": "rb-brands",
+                "name": "brands_list",
+                "type": "array",
+                "value": "={{ $('Prepare MAP issue fields').item.json.brands_list }}"
+              }
+            ]
+          },
+          "includeOtherFields": false,
+          "mode": "manual",
+          "options": {}
+        },
+        "notes": "Delete returns {success} and drops brands_list. Re-read lists from Prepare so Split still has values."
+      },
+      {
+        "id": "a578399f-43f1-41d7-b5a1-551399863233",
+        "name": "Restore lists after region delete",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "rr-id",
+                "name": "issue_id",
+                "type": "string",
+                "value": "={{ $('Prepare MAP issue fields').item.json.issue_id }}"
+              },
+              {
+                "id": "rr-key",
+                "name": "issue_key",
+                "type": "string",
+                "value": "={{ $('Prepare MAP issue fields').item.json.issue_key }}"
+              },
+              {
+                "id": "rr-regions",
+                "name": "regions_list",
+                "type": "array",
+                "value": "={{ $('Prepare MAP issue fields').item.json.regions_list }}"
+              }
+            ]
+          },
+          "includeOtherFields": false,
+          "mode": "manual",
+          "options": {}
+        },
+        "notes": "Delete returns {success} and drops regions_list. Re-read lists from Prepare so Split still has values."
+      }
+    ],
+    "connections": {
+      "When called by Jira MAP": {
+        "main": [
+          [
+            {
+              "node": "Prepare MAP issue fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare MAP issue fields": {
+        "main": [
+          [
+            {
+              "node": "UPSERT map_jira_issues",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split issue labels": {
+        "main": [
+          [
+            {
+              "node": "Insert issue labels",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split issue brands": {
+        "main": [
+          [
+            {
+              "node": "Insert issue brands",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split issue regions": {
+        "main": [
+          [
+            {
+              "node": "Insert issue regions",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Page issue worklogs": {
+        "main": [
+          [
+            {
+              "node": "Split worklogs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split worklogs": {
+        "main": [
+          [
+            {
+              "node": "UPSERT map_jira_worklogs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Flatten changelog items": {
+        "main": [
+          [
+            {
+              "node": "UPSERT map_jira_changelogs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "UPSERT map_jira_issues": {
+        "main": [
+          [
+            {
+              "node": "Keep issue lists",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Keep issue lists": {
+        "main": [
+          [
+            {
+              "node": "Delete issue labels",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Delete issue brands",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Delete issue regions",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Page issue worklogs",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Flatten changelog items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Delete issue labels": {
+        "main": [
+          [
+            {
+              "node": "Restore lists after label delete",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Restore lists after label delete": {
+        "main": [
+          [
+            {
+              "node": "Split issue labels",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Delete issue brands": {
+        "main": [
+          [
+            {
+              "node": "Restore lists after brand delete",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Restore lists after brand delete": {
+        "main": [
+          [
+            {
+              "node": "Split issue brands",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Delete issue regions": {
+        "main": [
+          [
+            {
+              "node": "Restore lists after region delete",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Restore lists after region delete": {
+        "main": [
+          [
+            {
+              "node": "Split issue regions",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Canice James (via MCP)",
+    "name": "Fix bridge inserts and Server changelogs",
+    "description": "Restore label/brand/region lists after delete so bridge inserts actually run. Flatten changelogs from the issue expand payload; missing changelog is empty, not a 404.",
+    "autosaved": false
+  },
+  "activeVersionId": "96e8fdd8-c81a-457c-aed2-ee67018b3bfd",
+  "connections": {
+    "When called by Jira MAP": {
+      "main": [
+        [
+          {
+            "node": "Prepare MAP issue fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare MAP issue fields": {
+      "main": [
+        [
+          {
+            "node": "UPSERT map_jira_issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split issue labels": {
+      "main": [
+        [
+          {
+            "node": "Insert issue labels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split issue brands": {
+      "main": [
+        [
+          {
+            "node": "Insert issue brands",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split issue regions": {
+      "main": [
+        [
+          {
+            "node": "Insert issue regions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page issue worklogs": {
+      "main": [
+        [
+          {
+            "node": "Split worklogs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split worklogs": {
+      "main": [
+        [
+          {
+            "node": "UPSERT map_jira_worklogs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flatten changelog items": {
+      "main": [
+        [
+          {
+            "node": "UPSERT map_jira_changelogs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UPSERT map_jira_issues": {
+      "main": [
+        [
+          {
+            "node": "Keep issue lists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep issue lists": {
+      "main": [
+        [
+          {
+            "node": "Delete issue labels",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Delete issue brands",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Delete issue regions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Page issue worklogs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Flatten changelog items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete issue labels": {
+      "main": [
+        [
+          {
+            "node": "Restore lists after label delete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore lists after label delete": {
+      "main": [
+        [
+          {
+            "node": "Split issue labels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete issue brands": {
+      "main": [
+        [
+          {
+            "node": "Restore lists after brand delete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore lists after brand delete": {
+      "main": [
+        [
+          {
+            "node": "Split issue brands",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete issue regions": {
+      "main": [
+        [
+          {
+            "node": "Restore lists after region delete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore lists after region delete": {
+      "main": [
+        [
+          {
+            "node": "Split issue regions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-01T16:29:02.317Z",
+  "id": "l5RJbvH5ps4dLgWa",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Upsert MAP issue bundle",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "issue",
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "id": "7a9c9fc2-7a5a-4667-9e7b-5581c16b783d",
+      "name": "When called by Jira MAP",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const issue = ($json.issue && $json.issue.fields) ? $json.issue : $json;\nconst fields = issue.fields || {};\nfunction values(arr) {\n  if (!Array.isArray(arr)) return [];\n  const out = [];\n  for (let i = 0; i < arr.length; i++) {\n    const x = arr[i];\n    const v = (x && typeof x === 'object') ? x.value : x;\n    if (v != null && v !== '') out.push(v);\n  }\n  return out;\n}\nfunction unique(list) {\n  const seen = {};\n  const out = [];\n  for (let i = 0; i < list.length; i++) {\n    if (!seen[list[i]]) { seen[list[i]] = true; out.push(list[i]); }\n  }\n  return out;\n}\nconst brands = unique(values(fields.customfield_11504));\nconst regions = unique(values(fields.customfield_11507));\nconst labels = unique((fields.labels || []).filter(Boolean));\nfunction combo(xs) {\n  return xs.slice().sort().join(' | ') || null;\n}\nconst attachments = fields.attachment || [];\nconst lastAtt = attachments.length ? attachments[attachments.length - 1] : null;\nconst result = Object.assign({}, issue, {\n  issue_key: issue.key,\n  issue_id: String(issue.id),\n  labels_list: labels,\n  brands_list: brands,\n  regions_list: regions,\n  brand: brands[0] || null,\n  region: regions[0] || null,\n  brand_count: brands.length,\n  region_count: regions.length,\n  label_count: labels.length,\n  brands_combo: combo(brands),\n  regions_combo: combo(regions),\n  last_attachment_at: lastAtt ? lastAtt.created : null,\n  last_attachment_by_key: lastAtt && lastAtt.author ? (lastAtt.author.key || lastAtt.author.name || null) : null,\n  last_attachment_by_name: lastAtt && lastAtt.author ? (lastAtt.author.displayName || null) : null,\n  attachments_count: attachments.length\n});\nreturn { json: result };"
+      },
+      "id": "9bb0edb1-7472-430c-b877-cecee6fa540e",
+      "name": "Prepare MAP issue fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        384
+      ],
+      "notes": "Derives region, counts, combo strings, and per-value lists for Metabase bridge tables."
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": "map_jira_issues",
+          "cachedResultName": "map_jira_issues"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "issue_key": "={{ $json.issue_key }}",
+            "issue_id": "={{ $json.issue_id }}",
+            "issue_url": "={{ $json.self }}",
+            "raw_data": "={{ $json.fields }}",
+            "summary": "={{ $json.fields.summary }}",
+            "issuetype_id": "={{ $json.fields.issuetype.id }}",
+            "issuetype_name": "={{ $json.fields.issuetype.name }}",
+            "due_date": "={{ $json.fields.duedate }}",
+            "status_id": "={{ $json.fields.status.id }}",
+            "status_name": "={{ $json.fields.status.name }}",
+            "labels": "={{ $json.fields.labels }}",
+            "created_at": "={{ $json.fields.created }}",
+            "updated_at": "={{ $json.fields.updated }}",
+            "resolution_date": "={{ $json.fields.resolutiondate }}",
+            "live_date": "={{ $json.fields.customfield_17519 }}",
+            "qa_due_date": "={{ $json.fields.customfield_11222 }}",
+            "attachments_count": "={{ $json.attachments_count }}",
+            "time_spent": "={{ $json.fields.timespent }}",
+            "time_estimate": "={{ $json.fields.timeestimate }}",
+            "priority_name": "={{ $json.fields.priority.name }}",
+            "epic_name": "={{ $json.fields.customfield_10004 }}",
+            "brand": "={{ $json.brand }}",
+            "region": "={{ $json.region }}",
+            "brand_count": "={{ $json.brand_count }}",
+            "region_count": "={{ $json.region_count }}",
+            "label_count": "={{ $json.label_count }}",
+            "brands_combo": "={{ $json.brands_combo }}",
+            "regions_combo": "={{ $json.regions_combo }}",
+            "epic_type": "={{ $json.fields.customfield_26454.value }}",
+            "quarters": "={{ $json.fields.customfield_25541[0].value }}",
+            "years": "={{ $json.fields.customfield_25542[0].value }}",
+            "vertical": "={{ $json.fields.customfield_11508[0].value }}",
+            "parent_link": "={{ $json.fields.customfield_16301 }}",
+            "select_products": "={{ $json.fields.customfield_25543[0].value }}",
+            "high_level_target_audience": "={{ $json.fields.customfield_25508 }}",
+            "high_level_details": "={{ $json.fields.customfield_25544 }}",
+            "last_attachment_by_name": "={{ $json.last_attachment_by_name }}",
+            "last_attachment_by_key": "={{ $json.last_attachment_by_key }}",
+            "last_attachment_at": "={{ $json.last_attachment_at }}",
+            "ideal_live_date": "={{ $json.fields.customfield_26467 }}",
+            "strategic_marketing_expert": "={{ $json.fields.customfield_26470.displayName }}",
+            "marketing_operator": "={{ $json.fields.customfield_26469.displayName }}",
+            "marketing_coordinator": "={{ $json.fields.customfield_26501.displayName }}",
+            "owner_name": "={{ $json.fields.customfield_22612.displayName }}",
+            "assignee_name": "={{ $json.fields.assignee.displayName }}",
+            "assignee_key": "={{ $json.fields.assignee.name }}",
+            "work_type": "={{ $json.fields.customfield_26465.value }}",
+            "evergreen_campaign": "={{ $json.fields.customfield_26464.value }}",
+            "business_case_required": "={{ $json.fields.customfield_26461.value }}",
+            "high_level_campaign_needs": "={{ $json.fields.customfield_26458 }}",
+            "expected_behavioral_results": "={{ $json.fields.customfield_25547 }}",
+            "build_due_date": "={{ $json.fields.customfield_25532 }}"
+          },
+          "matchingColumns": [
+            "issue_id"
+          ],
+          "schema": [
+            {
+              "id": "issue_key",
+              "displayName": "issue_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "issue_id",
+              "displayName": "issue_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_url",
+              "displayName": "issue_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "raw_data",
+              "displayName": "raw_data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "status_id",
+              "displayName": "status_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "status_name",
+              "displayName": "status_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "issuetype_id",
+              "displayName": "issuetype_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "issuetype_name",
+              "displayName": "issuetype_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "priority_name",
+              "displayName": "priority_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "labels",
+              "displayName": "labels",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "array",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "epic_name",
+              "displayName": "epic_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "epic_type",
+              "displayName": "epic_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "brand",
+              "displayName": "brand",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "quarters",
+              "displayName": "quarters",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "years",
+              "displayName": "years",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "vertical",
+              "displayName": "vertical",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "parent_link",
+              "displayName": "parent_link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "select_products",
+              "displayName": "select_products",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "high_level_details",
+              "displayName": "high_level_details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "expected_behavioral_results",
+              "displayName": "expected_behavioral_results",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "high_level_target_audience",
+              "displayName": "high_level_target_audience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "high_level_campaign_needs",
+              "displayName": "high_level_campaign_needs",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "business_case_required",
+              "displayName": "business_case_required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "evergreen_campaign",
+              "displayName": "evergreen_campaign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "work_type",
+              "displayName": "work_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "assignee_key",
+              "displayName": "assignee_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "assignee_name",
+              "displayName": "assignee_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "owner_name",
+              "displayName": "owner_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "marketing_coordinator",
+              "displayName": "marketing_coordinator",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "marketing_operator",
+              "displayName": "marketing_operator",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "strategic_marketing_expert",
+              "displayName": "strategic_marketing_expert",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "ideal_live_date",
+              "displayName": "ideal_live_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "due_date",
+              "displayName": "due_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "resolution_date",
+              "displayName": "resolution_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "live_date",
+              "displayName": "live_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "qa_due_date",
+              "displayName": "qa_due_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "time_spent",
+              "displayName": "time_spent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "time_estimate",
+              "displayName": "time_estimate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "has_attachments",
+              "displayName": "has_attachments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "attachments_count",
+              "displayName": "attachments_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "last_attachment_at",
+              "displayName": "last_attachment_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "last_attachment_by_key",
+              "displayName": "last_attachment_by_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "last_attachment_by_name",
+              "displayName": "last_attachment_by_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "synced_at",
+              "displayName": "synced_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "build_due_date",
+              "displayName": "build_due_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "region",
+              "displayName": "region",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "brand_count",
+              "displayName": "brand_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "region_count",
+              "displayName": "region_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "label_count",
+              "displayName": "label_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "brands_combo",
+              "displayName": "brands_combo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "regions_combo",
+              "displayName": "regions_combo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "3e502a9d-11d8-4d68-96fa-bee0e079234f",
+      "name": "UPSERT map_jira_issues",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        448,
+        384
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "cachedResultName": "public",
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "cachedResultName": "map_jira_issue_labels",
+          "mode": "list",
+          "value": "map_jira_issue_labels"
+        },
+        "deleteCommand": "delete",
+        "where": {
+          "values": [
+            {
+              "column": "issue_id",
+              "value": "={{ $json.issue_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ef93e79b-acec-4117-9685-5d37cf07f9fd",
+      "name": "Delete issue labels",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        896,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "labels_list",
+        "include": "selectedOtherFields",
+        "fieldsToInclude": "issue_id,issue_key",
+        "options": {}
+      },
+      "id": "167c8ad9-49e2-4c4e-968b-80f01f4cab44",
+      "name": "Split issue labels",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "cachedResultName": "public",
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "cachedResultName": "map_jira_issue_labels",
+          "mode": "list",
+          "value": "map_jira_issue_labels"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "issue_id": "={{ $json.issue_id }}",
+            "issue_key": "={{ $json.issue_key }}",
+            "label": "={{ $json.labels_list }}"
+          }
+        },
+        "options": {
+          "skipOnConflict": true
+        }
+      },
+      "id": "374201c3-bb97-41ca-a6b7-a9a79bc76a7f",
+      "name": "Insert issue labels",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1344,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "cachedResultName": "public",
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "cachedResultName": "map_jira_issue_brands",
+          "mode": "list",
+          "value": "map_jira_issue_brands"
+        },
+        "deleteCommand": "delete",
+        "where": {
+          "values": [
+            {
+              "column": "issue_id",
+              "value": "={{ $json.issue_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3931fb44-26c2-46d1-a503-39fc5e8ae08a",
+      "name": "Delete issue brands",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        896,
+        192
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "brands_list",
+        "include": "selectedOtherFields",
+        "fieldsToInclude": "issue_id,issue_key",
+        "options": {}
+      },
+      "id": "10449ee5-2b45-476f-b583-06cf378e8b12",
+      "name": "Split issue brands",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "cachedResultName": "public",
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "cachedResultName": "map_jira_issue_brands",
+          "mode": "list",
+          "value": "map_jira_issue_brands"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "brand": "={{ $json.brands_list }}",
+            "issue_id": "={{ $json.issue_id }}",
+            "issue_key": "={{ $json.issue_key }}"
+          }
+        },
+        "options": {
+          "skipOnConflict": true
+        }
+      },
+      "id": "41ac6cd3-799d-43e3-ac19-d61a6f2c5b23",
+      "name": "Insert issue brands",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1344,
+        192
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "cachedResultName": "public",
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "cachedResultName": "map_jira_issue_regions",
+          "mode": "list",
+          "value": "map_jira_issue_regions"
+        },
+        "deleteCommand": "delete",
+        "where": {
+          "values": [
+            {
+              "column": "issue_id",
+              "value": "={{ $json.issue_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a4204cff-7935-421f-927e-324148b86d1a",
+      "name": "Delete issue regions",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        896,
+        384
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "regions_list",
+        "include": "selectedOtherFields",
+        "fieldsToInclude": "issue_id,issue_key",
+        "options": {}
+      },
+      "id": "28958007-1bb2-4837-a7de-31eb3b30952b",
+      "name": "Split issue regions",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "cachedResultName": "public",
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "cachedResultName": "map_jira_issue_regions",
+          "mode": "list",
+          "value": "map_jira_issue_regions"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "issue_id": "={{ $json.issue_id }}",
+            "issue_key": "={{ $json.issue_key }}",
+            "region": "={{ $json.regions_list }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "issue_id",
+              "displayName": "issue_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "issue_key",
+              "displayName": "issue_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "region",
+              "displayName": "region",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "synced_at",
+              "displayName": "synced_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "skipOnConflict": true
+        }
+      },
+      "id": "14444972-a74f-4fe1-a9b5-d01acf07e897",
+      "name": "Insert issue regions",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1344,
+        384
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://jiraops.corp-apps.com/rest/api/2/issue/{{ $json.issue_id }}/worklog",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "jiraSoftwareServerApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "maxResults",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "parameters": {
+                "parameters": [
+                  {
+                    "name": "startAt",
+                    "value": "={{ $pageCount * 100 }}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ ($response.body.startAt + ($response.body.worklogs || []).length) >= $response.body.total }}",
+              "limitPagesFetched": true,
+              "maxRequests": 50,
+              "requestInterval": 200
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "53b22e18-dd6b-4d50-9a8c-d2ad781464e5",
+      "name": "Page issue worklogs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        896,
+        576
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "jiraSoftwareServerApi": {
+          "id": "7MgXJNgpxtJeD70Z",
+          "name": "Jira SW Server account - canjames"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "worklogs",
+        "options": {}
+      },
+      "id": "1d13af0f-4269-4de8-8f17-24863674987f",
+      "name": "Split worklogs",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "cachedResultName": "public",
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "cachedResultName": "map_jira_worklogs",
+          "mode": "list",
+          "value": "map_jira_worklogs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "worklog_id"
+          ],
+          "value": {
+            "author_key": "={{ $json.author.name }}",
+            "author_name": "={{ $json.author.displayName }}",
+            "created_at": "={{ $json.created }}",
+            "issue_id": "={{ $json.issueId }}",
+            "issue_key": "={{ $('Prepare MAP issue fields').item.json.issue_key }}",
+            "started": "={{ $json.started }}",
+            "time_spent_seconds": "={{ $json.timeSpentSeconds }}",
+            "updated_at": "={{ $json.updated }}",
+            "worklog_id": "={{ $json.id }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "5a52976a-244a-44d4-97cd-a4866c97772b",
+      "name": "UPSERT map_jira_worklogs",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1344,
+        576
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const issue = $('Prepare MAP issue fields').first().json;\nconst changelog = (issue && issue.changelog) || {};\nconst histories = changelog.histories || changelog.values || [];\nconst output = [];\nfor (let h = 0; h < histories.length; h++) {\n  const history = histories[h] || {};\n  const items = history.items || [];\n  for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {\n    const item = items[itemIndex] || {};\n    output.push({ json: {\n      changelog_id: String(history.id),\n      item_index: itemIndex,\n      issue_key: issue.issue_key,\n      issue_id: String(issue.issue_id),\n      author_key: (history.author && (history.author.key || history.author.name)) || null,\n      author_name: (history.author && history.author.displayName) || null,\n      created_at: history.created || null,\n      field: item.field || null,\n      fieldtype: item.fieldtype || null,\n      from_value: item.from || null,\n      from_string: item.fromString || null,\n      to_value: item.to || null,\n      to_string: item.toString || null\n    }});\n  }\n}\nreturn output;",
+        "language": "javaScript",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "4c08136d-0665-4530-bf2c-05ba773c12b7",
+      "name": "Flatten changelog items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        768
+      ],
+      "notes": "Uses Prepare MAP issue fields for issue identity so every changelog page maps to the current issue."
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "cachedResultName": "public",
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "cachedResultName": "map_jira_changelogs",
+          "mode": "list",
+          "value": "map_jira_changelogs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "changelog_id",
+            "item_index"
+          ],
+          "value": {
+            "author_key": "={{ $json.author_key }}",
+            "author_name": "={{ $json.author_name }}",
+            "changelog_id": "={{ $json.changelog_id }}",
+            "created_at": "={{ $json.created_at }}",
+            "field": "={{ $json.field }}",
+            "fieldtype": "={{ $json.fieldtype }}",
+            "from_string": "={{ $json.from_string }}",
+            "from_value": "={{ $json.from_value }}",
+            "issue_id": "={{ $json.issue_id }}",
+            "issue_key": "={{ $json.issue_key }}",
+            "item_index": "={{ $json.item_index }}",
+            "to_string": "={{ $json.to_string }}",
+            "to_value": "={{ $json.to_value }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "7301b378-164f-4af3-be0f-05f057caee6d",
+      "name": "UPSERT map_jira_changelogs",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1344,
+        768
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "keep-issue-id",
+              "name": "issue_id",
+              "type": "string",
+              "value": "={{ $('Prepare MAP issue fields').item.json.issue_id }}"
+            },
+            {
+              "id": "keep-issue-key",
+              "name": "issue_key",
+              "type": "string",
+              "value": "={{ $('Prepare MAP issue fields').item.json.issue_key }}"
+            },
+            {
+              "id": "keep-labels",
+              "name": "labels_list",
+              "type": "array",
+              "value": "={{ $('Prepare MAP issue fields').item.json.labels_list }}"
+            },
+            {
+              "id": "keep-brands",
+              "name": "brands_list",
+              "type": "array",
+              "value": "={{ $('Prepare MAP issue fields').item.json.brands_list }}"
+            },
+            {
+              "id": "keep-regions",
+              "name": "regions_list",
+              "type": "array",
+              "value": "={{ $('Prepare MAP issue fields').item.json.regions_list }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "affd37d5-2781-48ec-9f24-cb527a741738",
+      "name": "Keep issue lists",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        384
+      ]
+    },
+    {
+      "id": "cac4bad7-87fc-44dd-b32a-58adb5f4ca9a",
+      "name": "Restore lists after label delete",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "rl-id",
+              "name": "issue_id",
+              "type": "string",
+              "value": "={{ $('Prepare MAP issue fields').item.json.issue_id }}"
+            },
+            {
+              "id": "rl-key",
+              "name": "issue_key",
+              "type": "string",
+              "value": "={{ $('Prepare MAP issue fields').item.json.issue_key }}"
+            },
+            {
+              "id": "rl-labels",
+              "name": "labels_list",
+              "type": "array",
+              "value": "={{ $('Prepare MAP issue fields').item.json.labels_list }}"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "mode": "manual",
+        "options": {}
+      },
+      "notes": "Delete returns {success} and drops labels_list. Re-read lists from Prepare so Split still has values."
+    },
+    {
+      "id": "ee1f274f-3f5c-4a26-8d4a-59176cc0d30b",
+      "name": "Restore lists after brand delete",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "rb-id",
+              "name": "issue_id",
+              "type": "string",
+              "value": "={{ $('Prepare MAP issue fields').item.json.issue_id }}"
+            },
+            {
+              "id": "rb-key",
+              "name": "issue_key",
+              "type": "string",
+              "value": "={{ $('Prepare MAP issue fields').item.json.issue_key }}"
+            },
+            {
+              "id": "rb-brands",
+              "name": "brands_list",
+              "type": "array",
+              "value": "={{ $('Prepare MAP issue fields').item.json.brands_list }}"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "mode": "manual",
+        "options": {}
+      },
+      "notes": "Delete returns {success} and drops brands_list. Re-read lists from Prepare so Split still has values."
+    },
+    {
+      "id": "a578399f-43f1-41d7-b5a1-551399863233",
+      "name": "Restore lists after region delete",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "rr-id",
+              "name": "issue_id",
+              "type": "string",
+              "value": "={{ $('Prepare MAP issue fields').item.json.issue_id }}"
+            },
+            {
+              "id": "rr-key",
+              "name": "issue_key",
+              "type": "string",
+              "value": "={{ $('Prepare MAP issue fields').item.json.issue_key }}"
+            },
+            {
+              "id": "rr-regions",
+              "name": "regions_list",
+              "type": "array",
+              "value": "={{ $('Prepare MAP issue fields').item.json.regions_list }}"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "mode": "manual",
+        "options": {}
+      },
+      "notes": "Delete returns {success} and drops regions_list. Re-read lists from Prepare so Split still has values."
+    }
+  ],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "errorWorkflow": "q9iMNQK9WMIfT5Ev",
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-10-01T16:29:02.317Z",
+      "createdAt": "2026-10-01T16:29:02.317Z",
+      "role": "workflow:owner",
+      "workflowId": "l5RJbvH5ps4dLgWa",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2026-10-01T16:29:24.296Z",
+      "createdAt": "2026-10-01T16:29:24.296Z",
+      "id": "mZ8S2UQB66XRf6Pn",
+      "name": "subworkflow"
+    },
+    {
+      "updatedAt": "2026-05-28T16:41:19.349Z",
+      "createdAt": "2026-05-28T16:41:19.349Z",
+      "id": "LkakKvqKgfr1MWA0",
+      "name": "MAP"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-01T18:58:11.174Z",
+  "versionId": "96e8fdd8-c81a-457c-aed2-ee67018b3bfd"
+}
