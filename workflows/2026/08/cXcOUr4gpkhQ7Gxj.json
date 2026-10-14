@@ -1,0 +1,460 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get brand info6": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Share Alert Red1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Share Alert Orange1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "Share Alert Blue1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert Red1": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert Orange1": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert Green1": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert Blue1": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-08-31T17:23:28.463Z",
+  "id": "cXcOUr4gpkhQ7Gxj",
+  "isArchived": false,
+  "meta": null,
+  "name": "Test slastra",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://metabase.10.161.101.24.nip.io/api/card/272/query",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "metabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"parameters\": [\n    {\n      \"type\": \"number\",\n      \"target\": [\"variable\", [\"template-tag\", \"brand\"]],\n      \"value\": {{ $json[\"Site Key\"] }}\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3232,
+        2160
+      ],
+      "id": "db59afc6-bdb6-4c63-b4d4-125edb2cb501",
+      "name": "HTTP Request",
+      "credentials": {
+        "metabaseApi": {
+          "id": "dwSjIoOcie0zoBsn",
+          "name": "Metabase account - scaicedo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 537,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5197,
+                "operator": "not_empty",
+                "value": "True"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        -3472,
+        2160
+      ],
+      "id": "69e68ef8-5c6e-46f8-820f-51ce66a64745",
+      "name": "Get brand info6",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account - canjames"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] > 0\n}}",
+                    "rightValue": "=",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "7d676332-9744-40f8-aa7e-5d72c1658444"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "red"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1fd5cce0-33c5-4d32-89fa-6128d87334a2",
+                    "leftValue": "={{\n  $json.data.rows[0][1] > $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 5\n  &&\n  $json.data.rows[0][1] > 0\n}}",
+                    "rightValue": "=",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "orange"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d400b7d0-8324-4b38-98a2-44ba2c2ea05e",
+                    "leftValue": "={{ $json.data.rows[0][1] > 0 }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "green"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "error"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -2960,
+        2128
+      ],
+      "id": "c30e0e90-7569-414f-a8f4-249851564541",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
+            "footer": "=MarkOps to investigate Delivery Rate: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
+            "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
+            "color": "#FF0000",
+            "pretext": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        -2656,
+        2016
+      ],
+      "id": "ab2624a5-2824-4f28-ba3a-d65a89b92884",
+      "name": "Share Alert Red1",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
+            "footer": "=MarkOps to investigate Delivery Rate: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
+            "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
+            "color": "#FF9100",
+            "pretext": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        -2416,
+        2112
+      ],
+      "id": "9d357b4a-568d-4acd-889c-7b9cf4562c90",
+      "name": "Share Alert Orange1",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "=3coic5jpjjyo7rs88wkot9bdjo",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
+            "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
+            "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
+            "color": "#55FF00",
+            "pretext": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        -2640,
+        2176
+      ],
+      "id": "880d3d30-3e4c-461f-acc4-f7566baa99a5",
+      "name": "Share Alert Green1",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=The EEF database was not populated this week.",
+            "footer": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }} notified @slastra about this",
+            "title": "={{ $('Get brand info6').item.json.Name }} Database Not Populated",
+            "color": "#001EFF",
+            "pretext": "@slastra"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        -2432,
+        2320
+      ],
+      "id": "0220f1ff-4a0c-4951-9f30-0feab7d3c1e6",
+      "name": "Share Alert Blue1",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "databaseId": 105,
+        "tableId": 538,
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5131,
+              "fieldValue": "={{ $('Get brand info6').item.json.Name }}"
+            },
+            {
+              "fieldId": 5141,
+              "fieldValue": "={{ $json.message }}"
+            },
+            {
+              "fieldId": 5146,
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldId": 5147,
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": 5140,
+              "fieldValue": "Delivery Rate Drop"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        2128
+      ],
+      "id": "d96c1b00-1326-4fae-8125-8a84d03ee9f8",
+      "name": "Create Alert Record1",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account - canjames"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-08-31T17:23:28.463Z",
+      "createdAt": "2026-08-31T17:23:28.463Z",
+      "role": "workflow:owner",
+      "workflowId": "cXcOUr4gpkhQ7Gxj",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-06T20:39:30.601Z",
+  "versionId": "8a0f57cb-7068-43ae-81fa-718828b77c13"
+}
