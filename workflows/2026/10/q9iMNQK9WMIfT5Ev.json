@@ -1,0 +1,200 @@
+{
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-10-01T19:09:44.294Z",
+    "createdAt": "2026-10-01T19:09:44.294Z",
+    "versionId": "a76dfbc2-2d90-40d0-bd9b-878aa34edefd",
+    "workflowId": "q9iMNQK9WMIfT5Ev",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "ca6d71a4-44d0-4b56-bd34-c04e7ad177fd",
+        "name": "Error Trigger",
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "attachments": [
+            {
+              "color": "#FF0000",
+              "fallback": "MAP Jira sync failed",
+              "footer": "",
+              "text": "={{ (() => {\n  const b = (s) => String.fromCharCode(42, 42) + s + String.fromCharCode(42, 42);\n  const payload = $('Error Trigger').item.json;\n  const wf = payload.workflow || {};\n  const exec = payload.execution || {};\n  const errObj = exec.error || {};\n  let reason = String(errObj.message || 'n8n workflow failed').replace(/\\[line \\d+\\]/gi, '').trim();\n  return [\n    '@scaicedo',\n    b('Workflow:') + ' ' + (wf.name || '') + ' (`' + (wf.id || '') + '`)',\n    b('Failed node:') + ' `' + (exec.lastNodeExecuted || '') + '`',\n    b('Reason:') + ' ' + reason,\n    b('Execution:') + ' ' + (exec.url || ''),\n    b('Time:') + ' ' + $now.toISO()\n  ].join('\\n');\n})() }}",
+              "thumb_url": "https://www.freeiconspng.com/uploads/recycle-icon-png-18.png",
+              "title": ":x: MAP Jira Sync Failed"
+            }
+          ],
+          "channelId": "71s7kcpk3pfrbgtf1oxyn9tr6o",
+          "operation": "post",
+          "otherOptions": {},
+          "resource": "message"
+        },
+        "id": "6c378011-a831-4011-a983-36cfdc0f25d8",
+        "name": "Notify MAP workflow failure",
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          224,
+          0
+        ],
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Shared MAP error handler\nPosts unhandled production failures to the CRM Bot MAP channel. Checkpoint is not advanced when the caller fails. Manual test runs do not fire this workflow.",
+          "height": 352,
+          "width": 960
+        },
+        "id": "44fc5a92-0ef6-414d-add7-c3d7a5d31c3d",
+        "name": "Sticky Note 32a8310f",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -288,
+          -144
+        ]
+      }
+    ],
+    "connections": {
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Notify MAP workflow failure",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Canice James (via MCP)",
+    "name": "OSN-style red MAP error notification",
+    "description": "Red OSN-style attachment for MAP failures; mention @scaicedo only on errors.",
+    "autosaved": false
+  },
+  "activeVersionId": "a76dfbc2-2d90-40d0-bd9b-878aa34edefd",
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Notify MAP workflow failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-01T16:24:38.262Z",
+  "id": "q9iMNQK9WMIfT5Ev",
+  "isArchived": false,
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
+  },
+  "name": "Notify MAP workflow failure",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "ca6d71a4-44d0-4b56-bd34-c04e7ad177fd",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "attachments": [
+          {
+            "color": "#FF0000",
+            "fallback": "MAP Jira sync failed",
+            "footer": "",
+            "text": "={{ (() => {\n  const b = (s) => String.fromCharCode(42, 42) + s + String.fromCharCode(42, 42);\n  const payload = $('Error Trigger').item.json;\n  const wf = payload.workflow || {};\n  const exec = payload.execution || {};\n  const errObj = exec.error || {};\n  let reason = String(errObj.message || 'n8n workflow failed').replace(/\\[line \\d+\\]/gi, '').trim();\n  return [\n    '@scaicedo',\n    b('Workflow:') + ' ' + (wf.name || '') + ' (`' + (wf.id || '') + '`)',\n    b('Failed node:') + ' `' + (exec.lastNodeExecuted || '') + '`',\n    b('Reason:') + ' ' + reason,\n    b('Execution:') + ' ' + (exec.url || ''),\n    b('Time:') + ' ' + $now.toISO()\n  ].join('\\n');\n})() }}",
+            "thumb_url": "https://www.freeiconspng.com/uploads/recycle-icon-png-18.png",
+            "title": ":x: MAP Jira Sync Failed"
+          }
+        ],
+        "channelId": "71s7kcpk3pfrbgtf1oxyn9tr6o",
+        "operation": "post",
+        "otherOptions": {},
+        "resource": "message"
+      },
+      "id": "6c378011-a831-4011-a983-36cfdc0f25d8",
+      "name": "Notify MAP workflow failure",
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Shared MAP error handler\nPosts unhandled production failures to the CRM Bot MAP channel. Checkpoint is not advanced when the caller fails. Manual test runs do not fire this workflow.",
+        "height": 352,
+        "width": 960
+      },
+      "id": "44fc5a92-0ef6-414d-add7-c3d7a5d31c3d",
+      "name": "Sticky Note 32a8310f",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        -144
+      ]
+    }
+  ],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-10-01T16:24:38.262Z",
+      "createdAt": "2026-10-01T16:24:38.262Z",
+      "role": "workflow:owner",
+      "workflowId": "q9iMNQK9WMIfT5Ev",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": null,
+  "tags": [
+    {
+      "updatedAt": "2026-05-28T16:41:19.349Z",
+      "createdAt": "2026-05-28T16:41:19.349Z",
+      "id": "LkakKvqKgfr1MWA0",
+      "name": "MAP"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-01T19:09:44.292Z",
+  "versionId": "a76dfbc2-2d90-40d0-bd9b-878aa34edefd"
+}
