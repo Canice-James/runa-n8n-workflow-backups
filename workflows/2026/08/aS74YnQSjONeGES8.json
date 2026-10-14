@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-08-25T20:48:02.791Z",
-    "createdAt": "2026-08-25T20:31:44.172Z",
-    "versionId": "d4e7391c-f6ee-416b-8866-fe375df173b3",
+    "updatedAt": "2026-10-01T20:05:34.826Z",
+    "createdAt": "2026-10-01T20:04:47.398Z",
+    "versionId": "ebc7ba0d-e897-44f6-9739-3c6c4ef8fcb9",
     "workflowId": "aS74YnQSjONeGES8",
     "nodes": [
       {
@@ -158,8 +158,8 @@
       {
         "parameters": {
           "content": "",
-          "height": 912,
-          "width": 2544,
+          "height": 976,
+          "width": 2576,
           "color": 5
         },
         "type": "n8n-nodes-base.stickyNote",
@@ -173,75 +173,17 @@
       },
       {
         "parameters": {
-          "method": "POST",
-          "url": "http://metabase.10.161.101.24.nip.io/api/card/98/query",
-          "authentication": "predefinedCredentialType",
-          "nodeCredentialType": "metabaseApi",
-          "sendBody": true,
-          "specifyBody": "json",
-          "jsonBody": "={\n  \"parameters\": [\n    {\n      \"type\": \"text\",\n      \"target\": [\"variable\", [\"template-tag\", \"brand\"]],\n      \"value\": \"{{ $json['Brand Code'] }}\"\n    }\n  ]\n}",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          -16,
-          -736
-        ],
-        "id": "1eff386d-8c2d-48f1-9c6d-7b46e157942b",
-        "name": "HTTP Request",
-        "credentials": {
-          "metabaseApi": {
-            "id": "dwSjIoOcie0zoBsn",
-            "name": "Metabase account - scaicedo"
-          }
-        }
-      },
-      {
-        "parameters": {
           "content": "## Delivery Rate drop",
           "height": 80
         },
         "type": "n8n-nodes-base.stickyNote",
         "position": [
           -768,
-          -720
+          -800
         ],
         "typeVersion": 1,
         "id": "7e6aa3a4-ec4e-4df7-8217-3cb8e9f61619",
         "name": "Sticky Note8"
-      },
-      {
-        "parameters": {
-          "databaseId": 105,
-          "tableId": 537,
-          "returnAll": true,
-          "additionalOptions": {
-            "filters": {
-              "fields": [
-                {
-                  "field": 5127,
-                  "operator": "boolean",
-                  "value": "True"
-                }
-              ]
-            }
-          }
-        },
-        "type": "n8n-nodes-base.baserow",
-        "typeVersion": 1,
-        "position": [
-          -224,
-          -736
-        ],
-        "id": "7fa0bfbf-ff49-4682-8ad5-11ba8f41720a",
-        "name": "Get brand info6",
-        "credentials": {
-          "baserowApi": {
-            "id": "MK0sZSY5DZaYOoTr",
-            "name": "Baserow account - canjames"
-          }
-        }
       },
       {
         "parameters": {
@@ -253,7 +195,8 @@
               "text": "= Sender Score dropped from {{ $json.results.sender_score.trend[88].value }} to {{ $json.results.sender_score.trend[89].value }} on {{ $json.results.sender_score.trend[89].day }}.",
               "footer": "=MarkOps to investigate in Everest and provide reasons: @{{ $('Get brand info').item.json['Supervisor Mattermost'] }}",
               "title": "={{ $('Get brand info').item.json.Name }} {{ \n  $if(\n    $('Get Sender Scores from Everest1').isExecuted,\n    'Mail2',\n    'Mail1'\n  )\n}} Sender Score Drop ",
-              "color": "#FF0000"
+              "color": "#FF0000",
+              "pretext": "=@{{ $('Get brand info').item.json['Supervisor Mattermost'] }}"
             }
           ],
           "otherOptions": {}
@@ -285,7 +228,8 @@
               "text": "= Sender Score dropped from {{ $json.results.sender_score.trend[88].value }} to {{ $json.results.sender_score.trend[89].value }} on {{ $json.results.sender_score.trend[89].day }}.",
               "footer": "=MarkOps to investigate in Everest and provide reasons: @{{ $('Get brand info').item.json['Supervisor Mattermost'] }}",
               "title": "={{ $('Get brand info').item.json.Name }} {{ \n  $if(\n    $('Get Sender Scores from Everest1').isExecuted,\n    'Mail2',\n    'Mail1'\n  )\n}} Sender Score Drop ",
-              "color": "#FF9100"
+              "color": "#FF9100",
+              "pretext": "=@{{ $('Get brand info').item.json['Supervisor Mattermost'] }}"
             }
           ],
           "otherOptions": {}
@@ -317,7 +261,8 @@
               "text": "=Sender Score changed from {{ $json.results.sender_score.trend[88].value }} to {{ $json.results.sender_score.trend[89].value }} on {{ $json.results.sender_score.trend[89].day }}.",
               "footer": "=MarkOps to investigate in Everest and provide reasons: @{{ $('Get brand info').item.json['Supervisor Mattermost'] }}",
               "title": "={{ $('Get brand info').item.json.Name }} {{ \n  $if(\n    $('Get Sender Scores from Everest1').isExecuted,\n    'Mail2',\n    'Mail1'\n  )\n}} Sender Score",
-              "color": "#55FF00"
+              "color": "#55FF00",
+              "pretext": "=@{{ $('Get brand info').item.json['Supervisor Mattermost'] }}"
             }
           ],
           "otherOptions": {}
@@ -338,101 +283,6 @@
             "name": "CRM Bot"
           }
         }
-      },
-      {
-        "parameters": {
-          "rules": {
-            "values": [
-              {
-                "conditions": {
-                  "options": {
-                    "caseSensitive": true,
-                    "leftValue": "",
-                    "typeValidation": "strict",
-                    "version": 2
-                  },
-                  "conditions": [
-                    {
-                      "leftValue": "={{\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] > 0\n}}",
-                      "rightValue": "=",
-                      "operator": {
-                        "type": "boolean",
-                        "operation": "true",
-                        "singleValue": true
-                      },
-                      "id": "7d676332-9744-40f8-aa7e-5d72c1658444"
-                    }
-                  ],
-                  "combinator": "and"
-                },
-                "renameOutput": true,
-                "outputKey": "red"
-              },
-              {
-                "conditions": {
-                  "options": {
-                    "caseSensitive": true,
-                    "leftValue": "",
-                    "typeValidation": "strict",
-                    "version": 2
-                  },
-                  "conditions": [
-                    {
-                      "id": "1fd5cce0-33c5-4d32-89fa-6128d87334a2",
-                      "leftValue": "={{\n  $json.data.rows[0][1] > $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 5\n  &&\n  $json.data.rows[0][1] > 0\n}}",
-                      "rightValue": "=",
-                      "operator": {
-                        "type": "boolean",
-                        "operation": "true",
-                        "singleValue": true
-                      }
-                    }
-                  ],
-                  "combinator": "and"
-                },
-                "renameOutput": true,
-                "outputKey": "orange"
-              },
-              {
-                "conditions": {
-                  "options": {
-                    "caseSensitive": true,
-                    "leftValue": "",
-                    "typeValidation": "strict",
-                    "version": 2
-                  },
-                  "conditions": [
-                    {
-                      "id": "d400b7d0-8324-4b38-98a2-44ba2c2ea05e",
-                      "leftValue": "={{ $json.data.rows[0][1] > 0 }}",
-                      "rightValue": "",
-                      "operator": {
-                        "type": "boolean",
-                        "operation": "true",
-                        "singleValue": true
-                      }
-                    }
-                  ],
-                  "combinator": "and"
-                },
-                "renameOutput": true,
-                "outputKey": "green"
-              }
-            ]
-          },
-          "options": {
-            "fallbackOutput": "extra",
-            "renameFallbackOutput": "error"
-          }
-        },
-        "type": "n8n-nodes-base.switch",
-        "typeVersion": 3.2,
-        "position": [
-          256,
-          -768
-        ],
-        "id": "2ba9f7d5-7308-4b55-920d-fb427272d0e0",
-        "name": "Switch1"
       },
       {
         "parameters": {
@@ -531,136 +381,6 @@
       },
       {
         "parameters": {
-          "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-          "message": "=",
-          "attachments": [
-            {
-              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-              "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
-              "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
-              "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
-              "color": "#FF0000"
-            }
-          ],
-          "otherOptions": {}
-        },
-        "type": "n8n-nodes-base.mattermost",
-        "typeVersion": 1,
-        "position": [
-          560,
-          -880
-        ],
-        "id": "dd7bc03d-bc4d-427a-9cfc-4ab4e8fe1323",
-        "name": "Share Alert Red1",
-        "executeOnce": false,
-        "alwaysOutputData": false,
-        "credentials": {
-          "mattermostApi": {
-            "id": "1D4PtSqWCtdoPt4d",
-            "name": "CRM Bot"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-          "message": "=",
-          "attachments": [
-            {
-              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-              "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
-              "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
-              "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
-              "color": "#FF9100"
-            }
-          ],
-          "otherOptions": {}
-        },
-        "type": "n8n-nodes-base.mattermost",
-        "typeVersion": 1,
-        "position": [
-          800,
-          -784
-        ],
-        "id": "d49700a9-af80-41b9-9e9b-25740dc2a167",
-        "name": "Share Alert Orange1",
-        "executeOnce": false,
-        "alwaysOutputData": false,
-        "credentials": {
-          "mattermostApi": {
-            "id": "1D4PtSqWCtdoPt4d",
-            "name": "CRM Bot"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-          "message": "=",
-          "attachments": [
-            {
-              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-              "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
-              "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
-              "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
-              "color": "#55FF00"
-            }
-          ],
-          "otherOptions": {}
-        },
-        "type": "n8n-nodes-base.mattermost",
-        "typeVersion": 1,
-        "position": [
-          576,
-          -704
-        ],
-        "id": "0de3f8bb-4bfa-443f-bc4e-33aa7d3bbd16",
-        "name": "Share Alert Green1",
-        "executeOnce": false,
-        "alwaysOutputData": false,
-        "credentials": {
-          "mattermostApi": {
-            "id": "1D4PtSqWCtdoPt4d",
-            "name": "CRM Bot"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 3
-            },
-            "conditions": [
-              {
-                "id": "71de3d5e-87b2-4959-93ef-d7b64ab1ebdb",
-                "leftValue": true,
-                "rightValue": "",
-                "operator": {
-                  "type": "boolean",
-                  "operation": "true",
-                  "singleValue": true
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          1232,
-          -752
-        ],
-        "id": "dec04e2d-d7cb-48f7-a15e-30e871845798",
-        "name": "If1"
-      },
-      {
-        "parameters": {
           "channelId": "=3coic5jpjjyo7rs88wkot9bdjo",
           "message": "=",
           "attachments": [
@@ -669,7 +389,8 @@
               "text": "=The sender score was not populated today.",
               "footer": "=@{{ $('Get brand info').item.json['Supervisor Mattermost'] }} notifies @slastra of the new IP",
               "title": "={{ $('Get brand info').item.json.Name }} {{ \n  $if(\n    $('Get Sender Scores from Everest1').isExecuted,\n    'Mail2',\n    'Mail1'\n  )\n}} Sender Score not Populated",
-              "color": "#001EFF"
+              "color": "#001EFF",
+              "pretext": "@slastra"
             }
           ],
           "otherOptions": {}
@@ -682,38 +403,6 @@
         ],
         "id": "70d749c0-56f6-4242-b1ea-5b9188347c13",
         "name": "Share Alert Blue",
-        "executeOnce": false,
-        "alwaysOutputData": false,
-        "credentials": {
-          "mattermostApi": {
-            "id": "1D4PtSqWCtdoPt4d",
-            "name": "CRM Bot"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-          "message": "=",
-          "attachments": [
-            {
-              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-              "text": "=The database was not populated this week.",
-              "footer": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }} notified @slastra about this",
-              "title": "={{ $('Get brand info6').item.json.Name }} Database Not Populated",
-              "color": "#001EFF"
-            }
-          ],
-          "otherOptions": {}
-        },
-        "type": "n8n-nodes-base.mattermost",
-        "typeVersion": 1,
-        "position": [
-          816,
-          -624
-        ],
-        "id": "1d31da18-00d4-4d6a-af2a-ce5125f66df0",
-        "name": "Share Alert Blue1",
         "executeOnce": false,
         "alwaysOutputData": false,
         "credentials": {
@@ -806,30 +495,6 @@
         ],
         "id": "34ba1e47-aab4-4f95-8b07-80cec2f45dd2",
         "name": "Sticky Note3"
-      },
-      {
-        "parameters": {
-          "rule": {
-            "interval": [
-              {
-                "field": "weeks",
-                "triggerAtDay": [
-                  4
-                ],
-                "triggerAtHour": 6,
-                "triggerAtMinute": 45
-              }
-            ]
-          }
-        },
-        "type": "n8n-nodes-base.scheduleTrigger",
-        "typeVersion": 1.2,
-        "position": [
-          -416,
-          -736
-        ],
-        "id": "432757f5-66cc-4eb6-b5fe-b2740ecd0109",
-        "name": "6:45am Weekly"
       },
       {
         "parameters": {
@@ -983,8 +648,8 @@
       {
         "parameters": {
           "content": "",
-          "height": 1568,
-          "width": 2544,
+          "height": 2064,
+          "width": 2560,
           "color": "#374B35"
         },
         "type": "n8n-nodes-base.stickyNote",
@@ -998,75 +663,17 @@
       },
       {
         "parameters": {
-          "method": "POST",
-          "url": "http://metabase.10.161.101.24.nip.io/api/card/98/query",
-          "authentication": "predefinedCredentialType",
-          "nodeCredentialType": "metabaseApi",
-          "sendBody": true,
-          "specifyBody": "json",
-          "jsonBody": "={\n  \"parameters\": [\n    {\n      \"type\": \"text\",\n      \"target\": [\"variable\", [\"template-tag\", \"brand\"]],\n      \"value\": \"{{ $json['Brand Code'] }}\"\n    }\n  ]\n}",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          0,
-          1040
-        ],
-        "id": "12f4453d-9d8a-460f-afcd-f2a5bebf48b7",
-        "name": "HTTP Request1",
-        "credentials": {
-          "metabaseApi": {
-            "id": "dwSjIoOcie0zoBsn",
-            "name": "Metabase account - scaicedo"
-          }
-        }
-      },
-      {
-        "parameters": {
           "content": "## Delivery Rate drop",
           "height": 80
         },
         "type": "n8n-nodes-base.stickyNote",
         "position": [
-          -752,
-          1056
+          -784,
+          832
         ],
         "typeVersion": 1,
         "id": "f4f32347-f5a8-4578-b4a4-a5ee20dffd54",
         "name": "Sticky Note11"
-      },
-      {
-        "parameters": {
-          "databaseId": 105,
-          "tableId": 537,
-          "returnAll": true,
-          "additionalOptions": {
-            "filters": {
-              "fields": [
-                {
-                  "field": 5127,
-                  "operator": "boolean",
-                  "value": "True"
-                }
-              ]
-            }
-          }
-        },
-        "type": "n8n-nodes-base.baserow",
-        "typeVersion": 1,
-        "position": [
-          -208,
-          1040
-        ],
-        "id": "1159ded3-a7e5-41e3-a953-aaebbfae6768",
-        "name": "Get brand info8",
-        "credentials": {
-          "baserowApi": {
-            "id": "MK0sZSY5DZaYOoTr",
-            "name": "Baserow account - canjames"
-          }
-        }
       },
       {
         "parameters": {
@@ -1078,7 +685,8 @@
               "text": "= Sender Score dropped from {{ $json.results.sender_score.trend[88].value }} to {{ $json.results.sender_score.trend[89].value }} on {{ $json.results.sender_score.trend[89].day }}.",
               "footer": "=MarkOps to investigate in Everest and provide reasons: @{{ $('Get brand info7').item.json['Supervisor Mattermost'] }}",
               "title": "={{ $('Get brand info7').item.json.Name }} {{ \n  $if(\n    $('Get Sender Scores from Everest3').isExecuted,\n    'Mail2',\n    'Mail1'\n  )\n}} Sender Score Drop ",
-              "color": "#FF0000"
+              "color": "#FF0000",
+              "pretext": "=@{{ $('Get brand info7').item.json['Supervisor Mattermost'] }}"
             }
           ],
           "otherOptions": {}
@@ -1091,263 +699,6 @@
         ],
         "id": "8ec213b3-d3d9-4464-bdc4-a3716b82fccd",
         "name": "Share Alert Red2",
-        "executeOnce": false,
-        "alwaysOutputData": false,
-        "credentials": {
-          "mattermostApi": {
-            "id": "1D4PtSqWCtdoPt4d",
-            "name": "CRM Bot"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "rules": {
-            "values": [
-              {
-                "conditions": {
-                  "options": {
-                    "caseSensitive": true,
-                    "leftValue": "",
-                    "typeValidation": "strict",
-                    "version": 2
-                  },
-                  "conditions": [
-                    {
-                      "leftValue": "={{\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] > 0\n}}",
-                      "rightValue": "=",
-                      "operator": {
-                        "type": "boolean",
-                        "operation": "true",
-                        "singleValue": true
-                      },
-                      "id": "7d676332-9744-40f8-aa7e-5d72c1658444"
-                    }
-                  ],
-                  "combinator": "and"
-                },
-                "renameOutput": true,
-                "outputKey": "red"
-              },
-              {
-                "conditions": {
-                  "options": {
-                    "caseSensitive": true,
-                    "leftValue": "",
-                    "typeValidation": "strict",
-                    "version": 2
-                  },
-                  "conditions": [
-                    {
-                      "id": "1fd5cce0-33c5-4d32-89fa-6128d87334a2",
-                      "leftValue": "={{\n  $json.data.rows[0][1] > $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 5\n  &&\n  $json.data.rows[0][1] > 0\n}}",
-                      "rightValue": "=",
-                      "operator": {
-                        "type": "boolean",
-                        "operation": "true",
-                        "singleValue": true
-                      }
-                    }
-                  ],
-                  "combinator": "and"
-                },
-                "renameOutput": true,
-                "outputKey": "orange"
-              },
-              {
-                "conditions": {
-                  "options": {
-                    "caseSensitive": true,
-                    "leftValue": "",
-                    "typeValidation": "strict",
-                    "version": 2
-                  },
-                  "conditions": [
-                    {
-                      "id": "d400b7d0-8324-4b38-98a2-44ba2c2ea05e",
-                      "leftValue": "={{ $json.data.rows[0][1] > 0 }}",
-                      "rightValue": "",
-                      "operator": {
-                        "type": "boolean",
-                        "operation": "true",
-                        "singleValue": true
-                      }
-                    }
-                  ],
-                  "combinator": "and"
-                },
-                "renameOutput": true,
-                "outputKey": "green"
-              }
-            ]
-          },
-          "options": {
-            "fallbackOutput": "extra",
-            "renameFallbackOutput": "error"
-          }
-        },
-        "type": "n8n-nodes-base.switch",
-        "typeVersion": 3.2,
-        "position": [
-          272,
-          1008
-        ],
-        "id": "bf6c7881-b303-48df-9453-3a3d823b8ce1",
-        "name": "Switch"
-      },
-      {
-        "parameters": {
-          "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-          "message": "=",
-          "attachments": [
-            {
-              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-              "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
-              "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info8').item.json['Supervisor Mattermost'] }}",
-              "title": "={{ $('Get brand info8').item.json.Name }} Delivery Rate Drop ",
-              "color": "#FF0000"
-            }
-          ],
-          "otherOptions": {}
-        },
-        "type": "n8n-nodes-base.mattermost",
-        "typeVersion": 1,
-        "position": [
-          576,
-          896
-        ],
-        "id": "a1412873-eb90-4880-a02c-11b787f1a7bd",
-        "name": "Share Alert Red3",
-        "executeOnce": false,
-        "alwaysOutputData": false,
-        "credentials": {
-          "mattermostApi": {
-            "id": "1D4PtSqWCtdoPt4d",
-            "name": "CRM Bot"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-          "message": "=",
-          "attachments": [
-            {
-              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-              "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
-              "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info8').item.json['Supervisor Mattermost'] }}",
-              "title": "={{ $('Get brand info8').item.json.Name }} Delivery Rate Drop ",
-              "color": "#FF9100"
-            }
-          ],
-          "otherOptions": {}
-        },
-        "type": "n8n-nodes-base.mattermost",
-        "typeVersion": 1,
-        "position": [
-          816,
-          992
-        ],
-        "id": "e07b3472-b349-4ea5-a896-744a62afb197",
-        "name": "Share Alert Orange3",
-        "executeOnce": false,
-        "alwaysOutputData": false,
-        "credentials": {
-          "mattermostApi": {
-            "id": "1D4PtSqWCtdoPt4d",
-            "name": "CRM Bot"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-          "message": "=",
-          "attachments": [
-            {
-              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-              "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
-              "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info8').item.json['Supervisor Mattermost'] }}",
-              "title": "={{ $('Get brand info8').item.json.Name }} Delivery Rate Drop ",
-              "color": "#55FF00"
-            }
-          ],
-          "otherOptions": {}
-        },
-        "type": "n8n-nodes-base.mattermost",
-        "typeVersion": 1,
-        "position": [
-          592,
-          1072
-        ],
-        "id": "be72d70b-0bd4-454f-b2d9-93bbbcabc0df",
-        "name": "Share Alert Green3",
-        "executeOnce": false,
-        "alwaysOutputData": false,
-        "credentials": {
-          "mattermostApi": {
-            "id": "1D4PtSqWCtdoPt4d",
-            "name": "CRM Bot"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 3
-            },
-            "conditions": [
-              {
-                "id": "71de3d5e-87b2-4959-93ef-d7b64ab1ebdb",
-                "leftValue": true,
-                "rightValue": "",
-                "operator": {
-                  "type": "boolean",
-                  "operation": "true",
-                  "singleValue": true
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          1264,
-          1024
-        ],
-        "id": "3facc3da-e77f-4598-a05d-08079d918d41",
-        "name": "If5"
-      },
-      {
-        "parameters": {
-          "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-          "message": "=",
-          "attachments": [
-            {
-              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-              "text": "=The database was not populated this week.",
-              "footer": "=@{{ $('Get brand info8').item.json['Supervisor Mattermost'] }} notified @slastra about this",
-              "title": "={{ $('Get brand info8').item.json.Name }} Database Not Populated",
-              "color": "#001EFF"
-            }
-          ],
-          "otherOptions": {}
-        },
-        "type": "n8n-nodes-base.mattermost",
-        "typeVersion": 1,
-        "position": [
-          832,
-          1152
-        ],
-        "id": "3b4d7245-fd6e-47a1-82a4-fc78460a5f5c",
-        "name": "Share Alert Blue3",
         "executeOnce": false,
         "alwaysOutputData": false,
         "credentials": {
@@ -1440,30 +791,6 @@
         ],
         "id": "d46b2aad-8559-4f2a-a46d-dc1a8090be87",
         "name": "Sticky Note12"
-      },
-      {
-        "parameters": {
-          "rule": {
-            "interval": [
-              {
-                "field": "weeks",
-                "triggerAtDay": [
-                  1
-                ],
-                "triggerAtHour": 6,
-                "triggerAtMinute": 45
-              }
-            ]
-          }
-        },
-        "type": "n8n-nodes-base.scheduleTrigger",
-        "typeVersion": 1.2,
-        "position": [
-          -400,
-          1040
-        ],
-        "id": "18b781d8-f724-4a1a-96c9-646d39a09028",
-        "name": "6:45am Weekly1"
       },
       {
         "parameters": {
@@ -1855,6 +1182,995 @@
         ],
         "id": "32a4cfec-cccd-43b6-abf3-2b7b3a66f4ea",
         "name": "6:30am Daily"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://metabase.10.161.101.24.nip.io/api/card/98/query",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "metabaseApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"parameters\": [\n    {\n      \"type\": \"number\",\n      \"target\": [\"variable\", [\"template-tag\", \"brand\"]],\n      \"value\": {{ $json[\"Site Key\"] }}\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          32,
+          -704
+        ],
+        "id": "77db632e-3789-4daa-abe0-f33845ebbe4f",
+        "name": "HTTP Request",
+        "credentials": {
+          "metabaseApi": {
+            "id": "dwSjIoOcie0zoBsn",
+            "name": "Metabase account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "databaseId": 105,
+          "tableId": 537,
+          "returnAll": true,
+          "additionalOptions": {
+            "filters": {
+              "fields": [
+                {
+                  "field": 5197,
+                  "operator": "not_empty",
+                  "value": "True"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          -208,
+          -704
+        ],
+        "id": "b5b565ae-f942-4aed-a815-b5a55654105a",
+        "name": "Get brand info6",
+        "credentials": {
+          "baserowApi": {
+            "id": "MK0sZSY5DZaYOoTr",
+            "name": "Baserow account - canjames"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] > 0\n}}",
+                      "rightValue": "=",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      },
+                      "id": "7d676332-9744-40f8-aa7e-5d72c1658444"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "red"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "1fd5cce0-33c5-4d32-89fa-6128d87334a2",
+                      "leftValue": "={{\n  $json.data.rows[0][1] > $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 5\n  &&\n  $json.data.rows[0][1] > 0\n}}",
+                      "rightValue": "=",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "orange"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "d400b7d0-8324-4b38-98a2-44ba2c2ea05e",
+                      "leftValue": "={{ $json.data.rows[0][1] > 0 }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "green"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra",
+            "renameFallbackOutput": "error"
+          }
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          304,
+          -736
+        ],
+        "id": "c2878f72-a24d-41f4-af2b-de18081a50f0",
+        "name": "Switch1"
+      },
+      {
+        "parameters": {
+          "channelId": "=3coic5jpjjyo7rs88wkot9bdjo",
+          "message": "=",
+          "attachments": [
+            {
+              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+              "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
+              "footer": "=MarkOps to investigate Delivery Rate: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
+              "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
+              "color": "#FF0000",
+              "pretext": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}"
+            }
+          ],
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          608,
+          -848
+        ],
+        "id": "d977fb80-04d6-46be-bf2f-f11965825c86",
+        "name": "Share Alert Red1",
+        "executeOnce": false,
+        "alwaysOutputData": false,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "channelId": "=3coic5jpjjyo7rs88wkot9bdjo",
+          "message": "=",
+          "attachments": [
+            {
+              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+              "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
+              "footer": "=MarkOps to investigate Delivery Rate: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
+              "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
+              "color": "#FF9100",
+              "pretext": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}"
+            }
+          ],
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          848,
+          -752
+        ],
+        "id": "b0c1e001-3931-47f1-b95d-d33523e4f2fa",
+        "name": "Share Alert Orange1",
+        "executeOnce": false,
+        "alwaysOutputData": false,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "channelId": "=3coic5jpjjyo7rs88wkot9bdjo",
+          "message": "=",
+          "attachments": [
+            {
+              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+              "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
+              "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
+              "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
+              "color": "#55FF00",
+              "pretext": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}"
+            }
+          ],
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          624,
+          -688
+        ],
+        "id": "028043fd-9a31-4639-a805-cf4bf0b42fef",
+        "name": "Share Alert Green1",
+        "executeOnce": false,
+        "alwaysOutputData": false,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "channelId": "=3coic5jpjjyo7rs88wkot9bdjo",
+          "message": "=",
+          "attachments": [
+            {
+              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+              "text": "=The EEF database was not populated this week.",
+              "footer": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }} notified @slastra about this",
+              "title": "={{ $('Get brand info6').item.json.Name }} Database Not Populated",
+              "color": "#001EFF",
+              "pretext": "@slastra"
+            }
+          ],
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          832,
+          -544
+        ],
+        "id": "fc32f1c3-770b-4cd0-8f60-1fa9a9e71026",
+        "name": "Share Alert Blue1",
+        "executeOnce": false,
+        "alwaysOutputData": false,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 8,
+                "triggerAtMinute": 30
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -448,
+          -704
+        ],
+        "id": "1ad6e2f3-2ab9-4667-a409-9198323f561f",
+        "name": "8:30am Daily"
+      },
+      {
+        "parameters": {
+          "operation": "create",
+          "databaseId": 105,
+          "tableId": 538,
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": 5131,
+                "fieldValue": "={{ $('Get brand info6').item.json.Name }}"
+              },
+              {
+                "fieldId": 5141,
+                "fieldValue": "={{ $json.message }}"
+              },
+              {
+                "fieldId": 5146,
+                "fieldValue": "={{ $now }}"
+              },
+              {
+                "fieldId": 5147,
+                "fieldValue": "={{ $json.id }}"
+              },
+              {
+                "fieldId": 5140,
+                "fieldValue": "Delivery Rate Drop"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          1264,
+          -736
+        ],
+        "id": "6e9c4a55-bb12-49b9-b10a-d8006efdfe09",
+        "name": "Create Alert Record1",
+        "credentials": {
+          "baserowApi": {
+            "id": "MK0sZSY5DZaYOoTr",
+            "name": "Baserow account - canjames"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://metabase.10.161.101.24.nip.io/api/card/98/query",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "metabaseApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"parameters\": [\n    {\n      \"type\": \"number\",\n      \"target\": [\"variable\", [\"template-tag\", \"brand\"]],\n      \"value\": {{ $json[\"Site Key\"] }}\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          160,
+          816
+        ],
+        "id": "95895461-27b9-4023-a0ef-3cde8a9e0a6a",
+        "name": "HTTP Request1",
+        "credentials": {
+          "metabaseApi": {
+            "id": "dwSjIoOcie0zoBsn",
+            "name": "Metabase account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "databaseId": 105,
+          "tableId": 537,
+          "returnAll": true,
+          "additionalOptions": {
+            "filters": {
+              "fields": [
+                {
+                  "field": 5197,
+                  "operator": "not_empty",
+                  "value": "True"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          -80,
+          816
+        ],
+        "id": "02f7c999-545f-4c33-9b36-180c405c2abf",
+        "name": "Get brand info8",
+        "credentials": {
+          "baserowApi": {
+            "id": "MK0sZSY5DZaYOoTr",
+            "name": "Baserow account - canjames"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] > 0\n}}",
+                      "rightValue": "=",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      },
+                      "id": "7d676332-9744-40f8-aa7e-5d72c1658444"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "red"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra",
+            "renameFallbackOutput": "error"
+          }
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          448,
+          816
+        ],
+        "id": "32c6eded-a417-4c81-8301-ca24ae3e1089",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "channelId": "={{ $('Get brand info8').item.json['Mattermost Channel'] }}",
+          "message": "=",
+          "attachments": [
+            {
+              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+              "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
+              "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info8').item.json['Supervisor Mattermost'] }}",
+              "title": "={{ $('Get brand info8').item.json.Name }} Delivery Rate Drop ",
+              "color": "#FF0000",
+              "pretext": "=@{{ $('Get brand info8').item.json['Supervisor Mattermost'] }}"
+            }
+          ],
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          720,
+          816
+        ],
+        "id": "f4ea3f1a-de1a-4822-9982-fed29c48a708",
+        "name": "Share Alert Red3",
+        "executeOnce": false,
+        "alwaysOutputData": false,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "create",
+          "databaseId": 105,
+          "tableId": 538,
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": 5131,
+                "fieldValue": "={{ $('Get brand info8').item.json.Name }}"
+              },
+              {
+                "fieldId": 5141,
+                "fieldValue": "={{ $json.message }}"
+              },
+              {
+                "fieldId": 5146,
+                "fieldValue": "={{ $now }}"
+              },
+              {
+                "fieldId": 5147,
+                "fieldValue": "={{ $json.id }}"
+              },
+              {
+                "fieldId": 5140,
+                "fieldValue": "Delivery Rate Drop"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          992,
+          816
+        ],
+        "id": "d998af50-f575-4f42-86c8-6764a55075a1",
+        "name": "Create Alert Record2",
+        "credentials": {
+          "baserowApi": {
+            "id": "MK0sZSY5DZaYOoTr",
+            "name": "Baserow account - canjames"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 9
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -272,
+          816
+        ],
+        "id": "ef8e615c-acc2-4bc3-849d-3291bbbdf9c0",
+        "name": "9:00am Daily"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "5df4dba7-74e7-496c-88fd-21bb82b883d6",
+                "name": "tabla_markdown",
+                "value": "={{\n(() => {\n  const rows = $json.data.rows;\n\n  const headers = [\"Date\", \"Campaign Name\", \"Error Description\"];\n\n  const escape = (v) => v === null || v === undefined ? \"\" : String(v).replace(/\\|/g, \"\\\\|\").replace(/\\n/g, \" \");\n\n  const headerRow = \"| \" + headers.join(\" | \") + \" |\";\n  const separator = \"| \" + headers.map(() => \"---\").join(\" | \") + \" |\";\n  const dataRows = rows.map(row => \"| \" + row.map(v => escape(v)).join(\" | \") + \" |\").join(\"\\n\");\n\n  return [headerRow, separator, dataRows].join(\"\\n\");\n})()\n}}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          640,
+          1216
+        ],
+        "id": "8ad8457c-5c2e-4392-91ed-496695bdf9e7",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "channelId": "={{ $('Get brand info10').item.json['Mattermost Channel'] }}",
+          "message": "=",
+          "attachments": [
+            {
+              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+              "text": "={{ $json.tabla_markdown }}",
+              "title": "={{ $('Get brand info10').item.json.Name }} Failed One-Off Email Campaigns Last Week"
+            }
+          ],
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          864,
+          1216
+        ],
+        "id": "5269e83f-7eb9-4b26-8aa6-cc778b0ad2cc",
+        "name": "Share Alert1",
+        "executeOnce": false,
+        "alwaysOutputData": false,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "165f65c2-5ceb-4127-acd7-9862a0848c3f",
+                "leftValue": "={{ $json.data.rows }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "array",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          368,
+          1232
+        ],
+        "id": "463157e9-9fac-45bc-999e-60284602fbf2",
+        "name": "If4"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "weeks",
+                "triggerAtDay": [
+                  1
+                ],
+                "triggerAtHour": 10
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -416,
+          1232
+        ],
+        "id": "98c66643-1df3-42cd-b61c-681b23960f3a",
+        "name": "10:00am Weekly"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "5df4dba7-74e7-496c-88fd-21bb82b883d6",
+                "name": "tabla_markdown",
+                "value": "={{\n(() => {\n  const rows = $json.data.rows;\n\n  const headers = [\"Date\", \"Campaign Name\", \"Error Description\"];\n\n  const escape = (v) => v === null || v === undefined ? \"\" : String(v).replace(/\\|/g, \"\\\\|\").replace(/\\n/g, \" \");\n\n  const headerRow = \"| \" + headers.join(\" | \") + \" |\";\n  const separator = \"| \" + headers.map(() => \"---\").join(\" | \") + \" |\";\n  const dataRows = rows.map(row => \"| \" + row.map(v => escape(v)).join(\" | \") + \" |\").join(\"\\n\");\n\n  return [headerRow, separator, dataRows].join(\"\\n\");\n})()\n}}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          640,
+          1504
+        ],
+        "id": "8fa36378-08fa-4275-81f0-67bef7128b82",
+        "name": "Edit Fields1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "165f65c2-5ceb-4127-acd7-9862a0848c3f",
+                "leftValue": "={{ $json.data.rows }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "array",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          368,
+          1520
+        ],
+        "id": "9867aee9-5c5a-42f5-9abd-cab07ec179d6",
+        "name": "If5"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 10
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -416,
+          1520
+        ],
+        "id": "159bd37d-2eff-45a7-bd86-1f16addb3e3c",
+        "name": "10:00am Daily"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://metabase.10.161.101.24.nip.io/api/card/194/query",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "metabaseApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"parameters\": [\n    {\n      \"type\": \"number\",\n      \"target\": [\"variable\", [\"template-tag\", \"brand\"]],\n      \"value\": {{ $json[\"Site Key\"] }}\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          128,
+          1232
+        ],
+        "id": "fb174ac1-d593-4e30-945f-49bcd711a501",
+        "name": "HTTP Request2",
+        "credentials": {
+          "metabaseApi": {
+            "id": "dwSjIoOcie0zoBsn",
+            "name": "Metabase account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "databaseId": 105,
+          "tableId": 537,
+          "returnAll": true,
+          "additionalOptions": {
+            "filters": {
+              "fields": [
+                {
+                  "field": 5197,
+                  "operator": "not_empty",
+                  "value": "True"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          -160,
+          1232
+        ],
+        "id": "a0476d6d-55e6-4211-8307-d0a0af9d61d3",
+        "name": "Get brand info10",
+        "credentials": {
+          "baserowApi": {
+            "id": "MK0sZSY5DZaYOoTr",
+            "name": "Baserow account - canjames"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## ONE OFF CAMPAIGN",
+          "height": 80
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -784,
+          1232
+        ],
+        "typeVersion": 1,
+        "id": "153cdae4-2921-4631-8e80-d9f942120276",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://metabase.10.161.101.24.nip.io/api/card/195/query",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "metabaseApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"parameters\": [\n    {\n      \"type\": \"number\",\n      \"target\": [\"variable\", [\"template-tag\", \"brand\"]],\n      \"value\": {{ $json[\"Site Key\"] }}\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          128,
+          1520
+        ],
+        "id": "f797ef4c-b117-46f7-99c9-38da250c4993",
+        "name": "HTTP Request3",
+        "credentials": {
+          "metabaseApi": {
+            "id": "dwSjIoOcie0zoBsn",
+            "name": "Metabase account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "databaseId": 105,
+          "tableId": 537,
+          "returnAll": true,
+          "additionalOptions": {
+            "filters": {
+              "fields": [
+                {
+                  "field": 5197,
+                  "operator": "not_empty",
+                  "value": "True"
+                }
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          -160,
+          1520
+        ],
+        "id": "1ebc4cd7-97b3-475a-8373-6e4fc912c99c",
+        "name": "Get brand info11",
+        "credentials": {
+          "baserowApi": {
+            "id": "MK0sZSY5DZaYOoTr",
+            "name": "Baserow account - canjames"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "channelId": "={{ $('Get brand info11').item.json['Mattermost Channel'] }}",
+          "message": "=",
+          "attachments": [
+            {
+              "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+              "text": "={{ $json.tabla_markdown }}",
+              "footer": "=Notifies @{{ $('Get brand info11').item.json['Supervisor Mattermost'] }}",
+              "title": "={{ $('Get brand info11').item.json.Name }} Failed One-Off Email Campaigns Yesterday",
+              "color": "#ff0000",
+              "pretext": "=@{{ $('Get brand info11').item.json['Supervisor Mattermost'] }}"
+            }
+          ],
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          864,
+          1504
+        ],
+        "id": "43f6f617-d245-4552-abf1-8668eaf01f92",
+        "name": "Share Alert2",
+        "executeOnce": false,
+        "alwaysOutputData": false,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "create",
+          "databaseId": 105,
+          "tableId": 538,
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": 5131,
+                "fieldValue": "={{ $('Get brand info10').item.json.Name }}"
+              },
+              {
+                "fieldId": 5141,
+                "fieldValue": "={{ $json.message }}"
+              },
+              {
+                "fieldId": 5146,
+                "fieldValue": "={{ $now }}"
+              },
+              {
+                "fieldId": 5147,
+                "fieldValue": "={{ $json.id }}"
+              },
+              {
+                "fieldId": 5140,
+                "fieldValue": "One Off Campaign"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          1168,
+          1216
+        ],
+        "id": "021dce10-4265-4301-84b0-a34d483e860a",
+        "name": "Create Alert Record5",
+        "credentials": {
+          "baserowApi": {
+            "id": "MK0sZSY5DZaYOoTr",
+            "name": "Baserow account - canjames"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "create",
+          "databaseId": 105,
+          "tableId": 538,
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": 5131,
+                "fieldValue": "={{ $('Get brand info11').item.json.Name }}"
+              },
+              {
+                "fieldId": 5141,
+                "fieldValue": "={{ $json.message }}"
+              },
+              {
+                "fieldId": 5146,
+                "fieldValue": "={{ $now }}"
+              },
+              {
+                "fieldId": 5147,
+                "fieldValue": "={{ $json.id }}"
+              },
+              {
+                "fieldId": 5140,
+                "fieldValue": "One Off Campaign"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          1168,
+          1504
+        ],
+        "id": "f710babb-971e-4681-879b-7c4c3c52a47a",
+        "name": "Create Alert Record6",
+        "credentials": {
+          "baserowApi": {
+            "id": "MK0sZSY5DZaYOoTr",
+            "name": "Baserow account - canjames"
+          }
+        }
       }
     ],
     "connections": {
@@ -1890,28 +2206,6 @@
           [
             {
               "node": "Multiple IF",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "HTTP Request": {
-        "main": [
-          [
-            {
-              "node": "Switch1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Get brand info6": {
-        "main": [
-          [
-            {
-              "node": "HTTP Request",
               "type": "main",
               "index": 0
             }
@@ -1977,81 +2271,11 @@
           ]
         ]
       },
-      "Switch1": {
-        "main": [
-          [
-            {
-              "node": "Share Alert Red1",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Share Alert Orange1",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [],
-          [
-            {
-              "node": "Share Alert Blue1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Share Alert Red1": {
-        "main": [
-          [
-            {
-              "node": "If1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Share Alert Orange1": {
-        "main": [
-          [
-            {
-              "node": "If1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Share Alert Green1": {
-        "main": [
-          [
-            {
-              "node": "If1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Share Alert Blue": {
         "main": [
           [
             {
               "node": "Create Alert Record",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Share Alert Blue1": {
-        "main": [
-          [
-            {
-              "node": "If1",
               "type": "main",
               "index": 0
             }
@@ -2078,11 +2302,6 @@
               "index": 0
             }
           ]
-        ]
-      },
-      "6:45am Weekly": {
-        "main": [
-          []
         ]
       },
       "Get Sender Scores from Everest2": {
@@ -2123,103 +2342,11 @@
           ]
         ]
       },
-      "HTTP Request1": {
-        "main": [
-          [
-            {
-              "node": "Switch",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Get brand info8": {
-        "main": [
-          [
-            {
-              "node": "HTTP Request1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Share Alert Red2": {
         "main": [
           [
             {
               "node": "Create Alert Record3",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Switch": {
-        "main": [
-          [
-            {
-              "node": "Share Alert Red3",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Share Alert Orange3",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [],
-          [
-            {
-              "node": "Share Alert Blue3",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Share Alert Red3": {
-        "main": [
-          [
-            {
-              "node": "If5",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Share Alert Orange3": {
-        "main": [
-          [
-            {
-              "node": "If5",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Share Alert Green3": {
-        "main": [
-          [
-            {
-              "node": "If5",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Share Alert Blue3": {
-        "main": [
-          [
-            {
-              "node": "If5",
               "type": "main",
               "index": 0
             }
@@ -2246,11 +2373,6 @@
               "index": 0
             }
           ]
-        ]
-      },
-      "6:45am Weekly1": {
-        "main": [
-          []
         ]
       },
       "If8": {
@@ -2338,13 +2460,7 @@
       },
       "7:45am Weekly Monday": {
         "main": [
-          [
-            {
-              "node": "Get brand info9",
-              "type": "main",
-              "index": 0
-            }
-          ]
+          []
         ]
       },
       "Multiple IF1": {
@@ -2360,20 +2476,299 @@
       },
       "7am Daily3": {
         "main": [
+          []
+        ]
+      },
+      "6:30am Daily": {
+        "main": [
+          []
+        ]
+      },
+      "HTTP Request": {
+        "main": [
           [
             {
-              "node": "Get brand info7",
+              "node": "Switch1",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "6:30am Daily": {
+      "Get brand info6": {
         "main": [
           [
             {
-              "node": "Get brand info",
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch1": {
+        "main": [
+          [
+            {
+              "node": "Share Alert Red1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Share Alert Orange1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [],
+          [
+            {
+              "node": "Share Alert Blue1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Share Alert Red1": {
+        "main": [
+          [
+            {
+              "node": "Create Alert Record1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Share Alert Orange1": {
+        "main": [
+          [
+            {
+              "node": "Create Alert Record1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Share Alert Green1": {
+        "main": [
+          [
+            {
+              "node": "Create Alert Record1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Share Alert Blue1": {
+        "main": [
+          [
+            {
+              "node": "Create Alert Record1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "8:30am Daily": {
+        "main": [
+          [
+            {
+              "node": "Get brand info6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request1": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get brand info8": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Share Alert Red3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Share Alert Red3": {
+        "main": [
+          [
+            {
+              "node": "Create Alert Record2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "9:00am Daily": {
+        "main": [
+          [
+            {
+              "node": "Get brand info8",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Share Alert1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If4": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "10:00am Weekly": {
+        "main": [
+          [
+            {
+              "node": "Get brand info10",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields1": {
+        "main": [
+          [
+            {
+              "node": "Share Alert2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If5": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "10:00am Daily": {
+        "main": [
+          [
+            {
+              "node": "Get brand info11",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request2": {
+        "main": [
+          [
+            {
+              "node": "If4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get brand info10": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request3": {
+        "main": [
+          [
+            {
+              "node": "If5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get brand info11": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Share Alert1": {
+        "main": [
+          [
+            {
+              "node": "Create Alert Record5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Share Alert2": {
+        "main": [
+          [
+            {
+              "node": "Create Alert Record6",
               "type": "main",
               "index": 0
             }
@@ -2383,11 +2778,11 @@
     },
     "nodeGroups": [],
     "authors": "Canice James",
-    "name": "Initial Release",
-    "description": "",
+    "name": "Version ebc7ba0d",
+    "description": "Adding Pretext to Mattermost Channel",
     "autosaved": true
   },
-  "activeVersionId": "d4e7391c-f6ee-416b-8866-fe375df173b3",
+  "activeVersionId": "ebc7ba0d-e897-44f6-9739-3c6c4ef8fcb9",
   "connections": {
     "Get Sender Scores from Everest": {
       "main": [
@@ -2421,28 +2816,6 @@
         [
           {
             "node": "Multiple IF",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request": {
-      "main": [
-        [
-          {
-            "node": "Switch1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get brand info6": {
-      "main": [
-        [
-          {
-            "node": "HTTP Request",
             "type": "main",
             "index": 0
           }
@@ -2508,81 +2881,11 @@
         ]
       ]
     },
-    "Switch1": {
-      "main": [
-        [
-          {
-            "node": "Share Alert Red1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Share Alert Orange1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [],
-        [
-          {
-            "node": "Share Alert Blue1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Share Alert Red1": {
-      "main": [
-        [
-          {
-            "node": "If1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Share Alert Orange1": {
-      "main": [
-        [
-          {
-            "node": "If1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Share Alert Green1": {
-      "main": [
-        [
-          {
-            "node": "If1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Share Alert Blue": {
       "main": [
         [
           {
             "node": "Create Alert Record",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Share Alert Blue1": {
-      "main": [
-        [
-          {
-            "node": "If1",
             "type": "main",
             "index": 0
           }
@@ -2609,11 +2912,6 @@
             "index": 0
           }
         ]
-      ]
-    },
-    "6:45am Weekly": {
-      "main": [
-        []
       ]
     },
     "Get Sender Scores from Everest2": {
@@ -2654,103 +2952,11 @@
         ]
       ]
     },
-    "HTTP Request1": {
-      "main": [
-        [
-          {
-            "node": "Switch",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get brand info8": {
-      "main": [
-        [
-          {
-            "node": "HTTP Request1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Share Alert Red2": {
       "main": [
         [
           {
             "node": "Create Alert Record3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Switch": {
-      "main": [
-        [
-          {
-            "node": "Share Alert Red3",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Share Alert Orange3",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [],
-        [
-          {
-            "node": "Share Alert Blue3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Share Alert Red3": {
-      "main": [
-        [
-          {
-            "node": "If5",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Share Alert Orange3": {
-      "main": [
-        [
-          {
-            "node": "If5",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Share Alert Green3": {
-      "main": [
-        [
-          {
-            "node": "If5",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Share Alert Blue3": {
-      "main": [
-        [
-          {
-            "node": "If5",
             "type": "main",
             "index": 0
           }
@@ -2777,11 +2983,6 @@
             "index": 0
           }
         ]
-      ]
-    },
-    "6:45am Weekly1": {
-      "main": [
-        []
       ]
     },
     "If8": {
@@ -2869,13 +3070,7 @@
     },
     "7:45am Weekly Monday": {
       "main": [
-        [
-          {
-            "node": "Get brand info9",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Multiple IF1": {
@@ -2891,20 +3086,299 @@
     },
     "7am Daily3": {
       "main": [
+        []
+      ]
+    },
+    "6:30am Daily": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "main": [
         [
           {
-            "node": "Get brand info7",
+            "node": "Switch1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "6:30am Daily": {
+    "Get brand info6": {
       "main": [
         [
           {
-            "node": "Get brand info",
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Share Alert Red1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Share Alert Orange1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "Share Alert Blue1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert Red1": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert Orange1": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert Green1": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert Blue1": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "8:30am Daily": {
+      "main": [
+        [
+          {
+            "node": "Get brand info6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get brand info8": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Share Alert Red3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Share Alert Red3": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "9:00am Daily": {
+      "main": [
+        [
+          {
+            "node": "Get brand info8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Share Alert1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "10:00am Weekly": {
+      "main": [
+        [
+          {
+            "node": "Get brand info10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Share Alert2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "10:00am Daily": {
+      "main": [
+        [
+          {
+            "node": "Get brand info11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get brand info10": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get brand info11": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert1": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Alert2": {
+      "main": [
+        [
+          {
+            "node": "Create Alert Record6",
             "type": "main",
             "index": 0
           }
@@ -2918,7 +3392,7 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "name": "Guardians Alerts - Test",
+  "name": "Guardians Alerts",
   "nodeGroups": [],
   "nodes": [
     {
@@ -3073,8 +3547,8 @@
     {
       "parameters": {
         "content": "",
-        "height": 912,
-        "width": 2544,
+        "height": 976,
+        "width": 2576,
         "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -3088,75 +3562,17 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "http://metabase.10.161.101.24.nip.io/api/card/98/query",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "metabaseApi",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"parameters\": [\n    {\n      \"type\": \"text\",\n      \"target\": [\"variable\", [\"template-tag\", \"brand\"]],\n      \"value\": \"{{ $json['Brand Code'] }}\"\n    }\n  ]\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        -16,
-        -736
-      ],
-      "id": "1eff386d-8c2d-48f1-9c6d-7b46e157942b",
-      "name": "HTTP Request",
-      "credentials": {
-        "metabaseApi": {
-          "id": "dwSjIoOcie0zoBsn",
-          "name": "Metabase account - scaicedo"
-        }
-      }
-    },
-    {
-      "parameters": {
         "content": "## Delivery Rate drop",
         "height": 80
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
         -768,
-        -720
+        -800
       ],
       "typeVersion": 1,
       "id": "7e6aa3a4-ec4e-4df7-8217-3cb8e9f61619",
       "name": "Sticky Note8"
-    },
-    {
-      "parameters": {
-        "databaseId": 105,
-        "tableId": 537,
-        "returnAll": true,
-        "additionalOptions": {
-          "filters": {
-            "fields": [
-              {
-                "field": 5127,
-                "operator": "boolean",
-                "value": "True"
-              }
-            ]
-          }
-        }
-      },
-      "type": "n8n-nodes-base.baserow",
-      "typeVersion": 1,
-      "position": [
-        -224,
-        -736
-      ],
-      "id": "7fa0bfbf-ff49-4682-8ad5-11ba8f41720a",
-      "name": "Get brand info6",
-      "credentials": {
-        "baserowApi": {
-          "id": "MK0sZSY5DZaYOoTr",
-          "name": "Baserow account - canjames"
-        }
-      }
     },
     {
       "parameters": {
@@ -3168,7 +3584,8 @@
             "text": "= Sender Score dropped from {{ $json.results.sender_score.trend[88].value }} to {{ $json.results.sender_score.trend[89].value }} on {{ $json.results.sender_score.trend[89].day }}.",
             "footer": "=MarkOps to investigate in Everest and provide reasons: @{{ $('Get brand info').item.json['Supervisor Mattermost'] }}",
             "title": "={{ $('Get brand info').item.json.Name }} {{ \n  $if(\n    $('Get Sender Scores from Everest1').isExecuted,\n    'Mail2',\n    'Mail1'\n  )\n}} Sender Score Drop ",
-            "color": "#FF0000"
+            "color": "#FF0000",
+            "pretext": "=@{{ $('Get brand info').item.json['Supervisor Mattermost'] }}"
           }
         ],
         "otherOptions": {}
@@ -3200,7 +3617,8 @@
             "text": "= Sender Score dropped from {{ $json.results.sender_score.trend[88].value }} to {{ $json.results.sender_score.trend[89].value }} on {{ $json.results.sender_score.trend[89].day }}.",
             "footer": "=MarkOps to investigate in Everest and provide reasons: @{{ $('Get brand info').item.json['Supervisor Mattermost'] }}",
             "title": "={{ $('Get brand info').item.json.Name }} {{ \n  $if(\n    $('Get Sender Scores from Everest1').isExecuted,\n    'Mail2',\n    'Mail1'\n  )\n}} Sender Score Drop ",
-            "color": "#FF9100"
+            "color": "#FF9100",
+            "pretext": "=@{{ $('Get brand info').item.json['Supervisor Mattermost'] }}"
           }
         ],
         "otherOptions": {}
@@ -3232,7 +3650,8 @@
             "text": "=Sender Score changed from {{ $json.results.sender_score.trend[88].value }} to {{ $json.results.sender_score.trend[89].value }} on {{ $json.results.sender_score.trend[89].day }}.",
             "footer": "=MarkOps to investigate in Everest and provide reasons: @{{ $('Get brand info').item.json['Supervisor Mattermost'] }}",
             "title": "={{ $('Get brand info').item.json.Name }} {{ \n  $if(\n    $('Get Sender Scores from Everest1').isExecuted,\n    'Mail2',\n    'Mail1'\n  )\n}} Sender Score",
-            "color": "#55FF00"
+            "color": "#55FF00",
+            "pretext": "=@{{ $('Get brand info').item.json['Supervisor Mattermost'] }}"
           }
         ],
         "otherOptions": {}
@@ -3253,101 +3672,6 @@
           "name": "CRM Bot"
         }
       }
-    },
-    {
-      "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] > 0\n}}",
-                    "rightValue": "=",
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "true",
-                      "singleValue": true
-                    },
-                    "id": "7d676332-9744-40f8-aa7e-5d72c1658444"
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "red"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "id": "1fd5cce0-33c5-4d32-89fa-6128d87334a2",
-                    "leftValue": "={{\n  $json.data.rows[0][1] > $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 5\n  &&\n  $json.data.rows[0][1] > 0\n}}",
-                    "rightValue": "=",
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "true",
-                      "singleValue": true
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "orange"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "id": "d400b7d0-8324-4b38-98a2-44ba2c2ea05e",
-                    "leftValue": "={{ $json.data.rows[0][1] > 0 }}",
-                    "rightValue": "",
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "true",
-                      "singleValue": true
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "green"
-            }
-          ]
-        },
-        "options": {
-          "fallbackOutput": "extra",
-          "renameFallbackOutput": "error"
-        }
-      },
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.2,
-      "position": [
-        256,
-        -768
-      ],
-      "id": "2ba9f7d5-7308-4b55-920d-fb427272d0e0",
-      "name": "Switch1"
     },
     {
       "parameters": {
@@ -3446,136 +3770,6 @@
     },
     {
       "parameters": {
-        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-        "message": "=",
-        "attachments": [
-          {
-            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-            "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
-            "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
-            "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
-            "color": "#FF0000"
-          }
-        ],
-        "otherOptions": {}
-      },
-      "type": "n8n-nodes-base.mattermost",
-      "typeVersion": 1,
-      "position": [
-        560,
-        -880
-      ],
-      "id": "dd7bc03d-bc4d-427a-9cfc-4ab4e8fe1323",
-      "name": "Share Alert Red1",
-      "executeOnce": false,
-      "alwaysOutputData": false,
-      "credentials": {
-        "mattermostApi": {
-          "id": "1D4PtSqWCtdoPt4d",
-          "name": "CRM Bot"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-        "message": "=",
-        "attachments": [
-          {
-            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-            "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
-            "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
-            "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
-            "color": "#FF9100"
-          }
-        ],
-        "otherOptions": {}
-      },
-      "type": "n8n-nodes-base.mattermost",
-      "typeVersion": 1,
-      "position": [
-        800,
-        -784
-      ],
-      "id": "d49700a9-af80-41b9-9e9b-25740dc2a167",
-      "name": "Share Alert Orange1",
-      "executeOnce": false,
-      "alwaysOutputData": false,
-      "credentials": {
-        "mattermostApi": {
-          "id": "1D4PtSqWCtdoPt4d",
-          "name": "CRM Bot"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-        "message": "=",
-        "attachments": [
-          {
-            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-            "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
-            "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
-            "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
-            "color": "#55FF00"
-          }
-        ],
-        "otherOptions": {}
-      },
-      "type": "n8n-nodes-base.mattermost",
-      "typeVersion": 1,
-      "position": [
-        576,
-        -704
-      ],
-      "id": "0de3f8bb-4bfa-443f-bc4e-33aa7d3bbd16",
-      "name": "Share Alert Green1",
-      "executeOnce": false,
-      "alwaysOutputData": false,
-      "credentials": {
-        "mattermostApi": {
-          "id": "1D4PtSqWCtdoPt4d",
-          "name": "CRM Bot"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "71de3d5e-87b2-4959-93ef-d7b64ab1ebdb",
-              "leftValue": true,
-              "rightValue": "",
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        1232,
-        -752
-      ],
-      "id": "dec04e2d-d7cb-48f7-a15e-30e871845798",
-      "name": "If1"
-    },
-    {
-      "parameters": {
         "channelId": "=3coic5jpjjyo7rs88wkot9bdjo",
         "message": "=",
         "attachments": [
@@ -3584,7 +3778,8 @@
             "text": "=The sender score was not populated today.",
             "footer": "=@{{ $('Get brand info').item.json['Supervisor Mattermost'] }} notifies @slastra of the new IP",
             "title": "={{ $('Get brand info').item.json.Name }} {{ \n  $if(\n    $('Get Sender Scores from Everest1').isExecuted,\n    'Mail2',\n    'Mail1'\n  )\n}} Sender Score not Populated",
-            "color": "#001EFF"
+            "color": "#001EFF",
+            "pretext": "@slastra"
           }
         ],
         "otherOptions": {}
@@ -3597,38 +3792,6 @@
       ],
       "id": "70d749c0-56f6-4242-b1ea-5b9188347c13",
       "name": "Share Alert Blue",
-      "executeOnce": false,
-      "alwaysOutputData": false,
-      "credentials": {
-        "mattermostApi": {
-          "id": "1D4PtSqWCtdoPt4d",
-          "name": "CRM Bot"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-        "message": "=",
-        "attachments": [
-          {
-            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-            "text": "=The database was not populated this week.",
-            "footer": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }} notified @slastra about this",
-            "title": "={{ $('Get brand info6').item.json.Name }} Database Not Populated",
-            "color": "#001EFF"
-          }
-        ],
-        "otherOptions": {}
-      },
-      "type": "n8n-nodes-base.mattermost",
-      "typeVersion": 1,
-      "position": [
-        816,
-        -624
-      ],
-      "id": "1d31da18-00d4-4d6a-af2a-ce5125f66df0",
-      "name": "Share Alert Blue1",
       "executeOnce": false,
       "alwaysOutputData": false,
       "credentials": {
@@ -3721,30 +3884,6 @@
       ],
       "id": "34ba1e47-aab4-4f95-8b07-80cec2f45dd2",
       "name": "Sticky Note3"
-    },
-    {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "field": "weeks",
-              "triggerAtDay": [
-                4
-              ],
-              "triggerAtHour": 6,
-              "triggerAtMinute": 45
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.2,
-      "position": [
-        -416,
-        -736
-      ],
-      "id": "432757f5-66cc-4eb6-b5fe-b2740ecd0109",
-      "name": "6:45am Weekly"
     },
     {
       "parameters": {
@@ -3898,8 +4037,8 @@
     {
       "parameters": {
         "content": "",
-        "height": 1568,
-        "width": 2544,
+        "height": 2064,
+        "width": 2560,
         "color": "#374B35"
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -3913,75 +4052,17 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "http://metabase.10.161.101.24.nip.io/api/card/98/query",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "metabaseApi",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"parameters\": [\n    {\n      \"type\": \"text\",\n      \"target\": [\"variable\", [\"template-tag\", \"brand\"]],\n      \"value\": \"{{ $json['Brand Code'] }}\"\n    }\n  ]\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        0,
-        1040
-      ],
-      "id": "12f4453d-9d8a-460f-afcd-f2a5bebf48b7",
-      "name": "HTTP Request1",
-      "credentials": {
-        "metabaseApi": {
-          "id": "dwSjIoOcie0zoBsn",
-          "name": "Metabase account - scaicedo"
-        }
-      }
-    },
-    {
-      "parameters": {
         "content": "## Delivery Rate drop",
         "height": 80
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -752,
-        1056
+        -784,
+        832
       ],
       "typeVersion": 1,
       "id": "f4f32347-f5a8-4578-b4a4-a5ee20dffd54",
       "name": "Sticky Note11"
-    },
-    {
-      "parameters": {
-        "databaseId": 105,
-        "tableId": 537,
-        "returnAll": true,
-        "additionalOptions": {
-          "filters": {
-            "fields": [
-              {
-                "field": 5127,
-                "operator": "boolean",
-                "value": "True"
-              }
-            ]
-          }
-        }
-      },
-      "type": "n8n-nodes-base.baserow",
-      "typeVersion": 1,
-      "position": [
-        -208,
-        1040
-      ],
-      "id": "1159ded3-a7e5-41e3-a953-aaebbfae6768",
-      "name": "Get brand info8",
-      "credentials": {
-        "baserowApi": {
-          "id": "MK0sZSY5DZaYOoTr",
-          "name": "Baserow account - canjames"
-        }
-      }
     },
     {
       "parameters": {
@@ -3993,7 +4074,8 @@
             "text": "= Sender Score dropped from {{ $json.results.sender_score.trend[88].value }} to {{ $json.results.sender_score.trend[89].value }} on {{ $json.results.sender_score.trend[89].day }}.",
             "footer": "=MarkOps to investigate in Everest and provide reasons: @{{ $('Get brand info7').item.json['Supervisor Mattermost'] }}",
             "title": "={{ $('Get brand info7').item.json.Name }} {{ \n  $if(\n    $('Get Sender Scores from Everest3').isExecuted,\n    'Mail2',\n    'Mail1'\n  )\n}} Sender Score Drop ",
-            "color": "#FF0000"
+            "color": "#FF0000",
+            "pretext": "=@{{ $('Get brand info7').item.json['Supervisor Mattermost'] }}"
           }
         ],
         "otherOptions": {}
@@ -4006,263 +4088,6 @@
       ],
       "id": "8ec213b3-d3d9-4464-bdc4-a3716b82fccd",
       "name": "Share Alert Red2",
-      "executeOnce": false,
-      "alwaysOutputData": false,
-      "credentials": {
-        "mattermostApi": {
-          "id": "1D4PtSqWCtdoPt4d",
-          "name": "CRM Bot"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] > 0\n}}",
-                    "rightValue": "=",
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "true",
-                      "singleValue": true
-                    },
-                    "id": "7d676332-9744-40f8-aa7e-5d72c1658444"
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "red"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "id": "1fd5cce0-33c5-4d32-89fa-6128d87334a2",
-                    "leftValue": "={{\n  $json.data.rows[0][1] > $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 5\n  &&\n  $json.data.rows[0][1] > 0\n}}",
-                    "rightValue": "=",
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "true",
-                      "singleValue": true
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "orange"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "id": "d400b7d0-8324-4b38-98a2-44ba2c2ea05e",
-                    "leftValue": "={{ $json.data.rows[0][1] > 0 }}",
-                    "rightValue": "",
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "true",
-                      "singleValue": true
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "green"
-            }
-          ]
-        },
-        "options": {
-          "fallbackOutput": "extra",
-          "renameFallbackOutput": "error"
-        }
-      },
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.2,
-      "position": [
-        272,
-        1008
-      ],
-      "id": "bf6c7881-b303-48df-9453-3a3d823b8ce1",
-      "name": "Switch"
-    },
-    {
-      "parameters": {
-        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-        "message": "=",
-        "attachments": [
-          {
-            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-            "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
-            "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info8').item.json['Supervisor Mattermost'] }}",
-            "title": "={{ $('Get brand info8').item.json.Name }} Delivery Rate Drop ",
-            "color": "#FF0000"
-          }
-        ],
-        "otherOptions": {}
-      },
-      "type": "n8n-nodes-base.mattermost",
-      "typeVersion": 1,
-      "position": [
-        576,
-        896
-      ],
-      "id": "a1412873-eb90-4880-a02c-11b787f1a7bd",
-      "name": "Share Alert Red3",
-      "executeOnce": false,
-      "alwaysOutputData": false,
-      "credentials": {
-        "mattermostApi": {
-          "id": "1D4PtSqWCtdoPt4d",
-          "name": "CRM Bot"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-        "message": "=",
-        "attachments": [
-          {
-            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-            "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
-            "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info8').item.json['Supervisor Mattermost'] }}",
-            "title": "={{ $('Get brand info8').item.json.Name }} Delivery Rate Drop ",
-            "color": "#FF9100"
-          }
-        ],
-        "otherOptions": {}
-      },
-      "type": "n8n-nodes-base.mattermost",
-      "typeVersion": 1,
-      "position": [
-        816,
-        992
-      ],
-      "id": "e07b3472-b349-4ea5-a896-744a62afb197",
-      "name": "Share Alert Orange3",
-      "executeOnce": false,
-      "alwaysOutputData": false,
-      "credentials": {
-        "mattermostApi": {
-          "id": "1D4PtSqWCtdoPt4d",
-          "name": "CRM Bot"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-        "message": "=",
-        "attachments": [
-          {
-            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-            "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
-            "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info8').item.json['Supervisor Mattermost'] }}",
-            "title": "={{ $('Get brand info8').item.json.Name }} Delivery Rate Drop ",
-            "color": "#55FF00"
-          }
-        ],
-        "otherOptions": {}
-      },
-      "type": "n8n-nodes-base.mattermost",
-      "typeVersion": 1,
-      "position": [
-        592,
-        1072
-      ],
-      "id": "be72d70b-0bd4-454f-b2d9-93bbbcabc0df",
-      "name": "Share Alert Green3",
-      "executeOnce": false,
-      "alwaysOutputData": false,
-      "credentials": {
-        "mattermostApi": {
-          "id": "1D4PtSqWCtdoPt4d",
-          "name": "CRM Bot"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "71de3d5e-87b2-4959-93ef-d7b64ab1ebdb",
-              "leftValue": true,
-              "rightValue": "",
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        1264,
-        1024
-      ],
-      "id": "3facc3da-e77f-4598-a05d-08079d918d41",
-      "name": "If5"
-    },
-    {
-      "parameters": {
-        "channelId": "=ipiyxnynaj8ejnwqw75m3ee5hy",
-        "message": "=",
-        "attachments": [
-          {
-            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
-            "text": "=The database was not populated this week.",
-            "footer": "=@{{ $('Get brand info8').item.json['Supervisor Mattermost'] }} notified @slastra about this",
-            "title": "={{ $('Get brand info8').item.json.Name }} Database Not Populated",
-            "color": "#001EFF"
-          }
-        ],
-        "otherOptions": {}
-      },
-      "type": "n8n-nodes-base.mattermost",
-      "typeVersion": 1,
-      "position": [
-        832,
-        1152
-      ],
-      "id": "3b4d7245-fd6e-47a1-82a4-fc78460a5f5c",
-      "name": "Share Alert Blue3",
       "executeOnce": false,
       "alwaysOutputData": false,
       "credentials": {
@@ -4355,30 +4180,6 @@
       ],
       "id": "d46b2aad-8559-4f2a-a46d-dc1a8090be87",
       "name": "Sticky Note12"
-    },
-    {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "field": "weeks",
-              "triggerAtDay": [
-                1
-              ],
-              "triggerAtHour": 6,
-              "triggerAtMinute": 45
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.2,
-      "position": [
-        -400,
-        1040
-      ],
-      "id": "18b781d8-f724-4a1a-96c9-646d39a09028",
-      "name": "6:45am Weekly1"
     },
     {
       "parameters": {
@@ -4770,6 +4571,995 @@
       ],
       "id": "32a4cfec-cccd-43b6-abf3-2b7b3a66f4ea",
       "name": "6:30am Daily"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://metabase.10.161.101.24.nip.io/api/card/98/query",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "metabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"parameters\": [\n    {\n      \"type\": \"number\",\n      \"target\": [\"variable\", [\"template-tag\", \"brand\"]],\n      \"value\": {{ $json[\"Site Key\"] }}\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        32,
+        -704
+      ],
+      "id": "77db632e-3789-4daa-abe0-f33845ebbe4f",
+      "name": "HTTP Request",
+      "credentials": {
+        "metabaseApi": {
+          "id": "dwSjIoOcie0zoBsn",
+          "name": "Metabase account - scaicedo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 537,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5197,
+                "operator": "not_empty",
+                "value": "True"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -704
+      ],
+      "id": "b5b565ae-f942-4aed-a815-b5a55654105a",
+      "name": "Get brand info6",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account - canjames"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] > 0\n}}",
+                    "rightValue": "=",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "7d676332-9744-40f8-aa7e-5d72c1658444"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "red"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1fd5cce0-33c5-4d32-89fa-6128d87334a2",
+                    "leftValue": "={{\n  $json.data.rows[0][1] > $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 5\n  &&\n  $json.data.rows[0][1] > 0\n}}",
+                    "rightValue": "=",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "orange"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d400b7d0-8324-4b38-98a2-44ba2c2ea05e",
+                    "leftValue": "={{ $json.data.rows[0][1] > 0 }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "green"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "error"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        304,
+        -736
+      ],
+      "id": "c2878f72-a24d-41f4-af2b-de18081a50f0",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "channelId": "=3coic5jpjjyo7rs88wkot9bdjo",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
+            "footer": "=MarkOps to investigate Delivery Rate: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
+            "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
+            "color": "#FF0000",
+            "pretext": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        608,
+        -848
+      ],
+      "id": "d977fb80-04d6-46be-bf2f-f11965825c86",
+      "name": "Share Alert Red1",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "=3coic5jpjjyo7rs88wkot9bdjo",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
+            "footer": "=MarkOps to investigate Delivery Rate: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
+            "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
+            "color": "#FF9100",
+            "pretext": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        848,
+        -752
+      ],
+      "id": "b0c1e001-3931-47f1-b95d-d33523e4f2fa",
+      "name": "Share Alert Orange1",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "=3coic5jpjjyo7rs88wkot9bdjo",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
+            "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}",
+            "title": "={{ $('Get brand info6').item.json.Name }} Delivery Rate Drop ",
+            "color": "#55FF00",
+            "pretext": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }}"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        624,
+        -688
+      ],
+      "id": "028043fd-9a31-4639-a805-cf4bf0b42fef",
+      "name": "Share Alert Green1",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "=3coic5jpjjyo7rs88wkot9bdjo",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=The EEF database was not populated this week.",
+            "footer": "=@{{ $('Get brand info6').item.json['Supervisor Mattermost'] }} notified @slastra about this",
+            "title": "={{ $('Get brand info6').item.json.Name }} Database Not Populated",
+            "color": "#001EFF",
+            "pretext": "@slastra"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        832,
+        -544
+      ],
+      "id": "fc32f1c3-770b-4cd0-8f60-1fa9a9e71026",
+      "name": "Share Alert Blue1",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -448,
+        -704
+      ],
+      "id": "1ad6e2f3-2ab9-4667-a409-9198323f561f",
+      "name": "8:30am Daily"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "databaseId": 105,
+        "tableId": 538,
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5131,
+              "fieldValue": "={{ $('Get brand info6').item.json.Name }}"
+            },
+            {
+              "fieldId": 5141,
+              "fieldValue": "={{ $json.message }}"
+            },
+            {
+              "fieldId": 5146,
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldId": 5147,
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": 5140,
+              "fieldValue": "Delivery Rate Drop"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        -736
+      ],
+      "id": "6e9c4a55-bb12-49b9-b10a-d8006efdfe09",
+      "name": "Create Alert Record1",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account - canjames"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://metabase.10.161.101.24.nip.io/api/card/98/query",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "metabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"parameters\": [\n    {\n      \"type\": \"number\",\n      \"target\": [\"variable\", [\"template-tag\", \"brand\"]],\n      \"value\": {{ $json[\"Site Key\"] }}\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        816
+      ],
+      "id": "95895461-27b9-4023-a0ef-3cde8a9e0a6a",
+      "name": "HTTP Request1",
+      "credentials": {
+        "metabaseApi": {
+          "id": "dwSjIoOcie0zoBsn",
+          "name": "Metabase account - scaicedo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 537,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5197,
+                "operator": "not_empty",
+                "value": "True"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        816
+      ],
+      "id": "02f7c999-545f-4c33-9b36-180c405c2abf",
+      "name": "Get brand info8",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account - canjames"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{\n  $json.data.rows[0][1] <= $json.data.rows[0][0] - 30\n  &&\n  $json.data.rows[0][1] > 0\n}}",
+                    "rightValue": "=",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "7d676332-9744-40f8-aa7e-5d72c1658444"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "red"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "error"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        448,
+        816
+      ],
+      "id": "32c6eded-a417-4c81-8301-ca24ae3e1089",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "channelId": "={{ $('Get brand info8').item.json['Mattermost Channel'] }}",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "=Delivery Rate dropped from {{ $json.data.rows[0][0] }} to {{ $json.data.rows[0][1] }} on {{ $json.data.rows[0][2] }}.",
+            "footer": "=MarkOps to investigate Delivery Rate and provide reasons: @{{ $('Get brand info8').item.json['Supervisor Mattermost'] }}",
+            "title": "={{ $('Get brand info8').item.json.Name }} Delivery Rate Drop ",
+            "color": "#FF0000",
+            "pretext": "=@{{ $('Get brand info8').item.json['Supervisor Mattermost'] }}"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        720,
+        816
+      ],
+      "id": "f4ea3f1a-de1a-4822-9982-fed29c48a708",
+      "name": "Share Alert Red3",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "databaseId": 105,
+        "tableId": 538,
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5131,
+              "fieldValue": "={{ $('Get brand info8').item.json.Name }}"
+            },
+            {
+              "fieldId": 5141,
+              "fieldValue": "={{ $json.message }}"
+            },
+            {
+              "fieldId": 5146,
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldId": 5147,
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": 5140,
+              "fieldValue": "Delivery Rate Drop"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        992,
+        816
+      ],
+      "id": "d998af50-f575-4f42-86c8-6764a55075a1",
+      "name": "Create Alert Record2",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account - canjames"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        816
+      ],
+      "id": "ef8e615c-acc2-4bc3-849d-3291bbbdf9c0",
+      "name": "9:00am Daily"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5df4dba7-74e7-496c-88fd-21bb82b883d6",
+              "name": "tabla_markdown",
+              "value": "={{\n(() => {\n  const rows = $json.data.rows;\n\n  const headers = [\"Date\", \"Campaign Name\", \"Error Description\"];\n\n  const escape = (v) => v === null || v === undefined ? \"\" : String(v).replace(/\\|/g, \"\\\\|\").replace(/\\n/g, \" \");\n\n  const headerRow = \"| \" + headers.join(\" | \") + \" |\";\n  const separator = \"| \" + headers.map(() => \"---\").join(\" | \") + \" |\";\n  const dataRows = rows.map(row => \"| \" + row.map(v => escape(v)).join(\" | \") + \" |\").join(\"\\n\");\n\n  return [headerRow, separator, dataRows].join(\"\\n\");\n})()\n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        640,
+        1216
+      ],
+      "id": "8ad8457c-5c2e-4392-91ed-496695bdf9e7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "channelId": "={{ $('Get brand info10').item.json['Mattermost Channel'] }}",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "={{ $json.tabla_markdown }}",
+            "title": "={{ $('Get brand info10').item.json.Name }} Failed One-Off Email Campaigns Last Week"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        864,
+        1216
+      ],
+      "id": "5269e83f-7eb9-4b26-8aa6-cc778b0ad2cc",
+      "name": "Share Alert1",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "165f65c2-5ceb-4127-acd7-9862a0848c3f",
+              "leftValue": "={{ $json.data.rows }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        368,
+        1232
+      ],
+      "id": "463157e9-9fac-45bc-999e-60284602fbf2",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -416,
+        1232
+      ],
+      "id": "98c66643-1df3-42cd-b61c-681b23960f3a",
+      "name": "10:00am Weekly"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5df4dba7-74e7-496c-88fd-21bb82b883d6",
+              "name": "tabla_markdown",
+              "value": "={{\n(() => {\n  const rows = $json.data.rows;\n\n  const headers = [\"Date\", \"Campaign Name\", \"Error Description\"];\n\n  const escape = (v) => v === null || v === undefined ? \"\" : String(v).replace(/\\|/g, \"\\\\|\").replace(/\\n/g, \" \");\n\n  const headerRow = \"| \" + headers.join(\" | \") + \" |\";\n  const separator = \"| \" + headers.map(() => \"---\").join(\" | \") + \" |\";\n  const dataRows = rows.map(row => \"| \" + row.map(v => escape(v)).join(\" | \") + \" |\").join(\"\\n\");\n\n  return [headerRow, separator, dataRows].join(\"\\n\");\n})()\n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        640,
+        1504
+      ],
+      "id": "8fa36378-08fa-4275-81f0-67bef7128b82",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "165f65c2-5ceb-4127-acd7-9862a0848c3f",
+              "leftValue": "={{ $json.data.rows }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        368,
+        1520
+      ],
+      "id": "9867aee9-5c5a-42f5-9abd-cab07ec179d6",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -416,
+        1520
+      ],
+      "id": "159bd37d-2eff-45a7-bd86-1f16addb3e3c",
+      "name": "10:00am Daily"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://metabase.10.161.101.24.nip.io/api/card/194/query",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "metabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"parameters\": [\n    {\n      \"type\": \"number\",\n      \"target\": [\"variable\", [\"template-tag\", \"brand\"]],\n      \"value\": {{ $json[\"Site Key\"] }}\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        128,
+        1232
+      ],
+      "id": "fb174ac1-d593-4e30-945f-49bcd711a501",
+      "name": "HTTP Request2",
+      "credentials": {
+        "metabaseApi": {
+          "id": "dwSjIoOcie0zoBsn",
+          "name": "Metabase account - scaicedo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 537,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5197,
+                "operator": "not_empty",
+                "value": "True"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        1232
+      ],
+      "id": "a0476d6d-55e6-4211-8307-d0a0af9d61d3",
+      "name": "Get brand info10",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account - canjames"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## ONE OFF CAMPAIGN",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -784,
+        1232
+      ],
+      "typeVersion": 1,
+      "id": "153cdae4-2921-4631-8e80-d9f942120276",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://metabase.10.161.101.24.nip.io/api/card/195/query",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "metabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"parameters\": [\n    {\n      \"type\": \"number\",\n      \"target\": [\"variable\", [\"template-tag\", \"brand\"]],\n      \"value\": {{ $json[\"Site Key\"] }}\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        128,
+        1520
+      ],
+      "id": "f797ef4c-b117-46f7-99c9-38da250c4993",
+      "name": "HTTP Request3",
+      "credentials": {
+        "metabaseApi": {
+          "id": "dwSjIoOcie0zoBsn",
+          "name": "Metabase account - scaicedo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 537,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5197,
+                "operator": "not_empty",
+                "value": "True"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        1520
+      ],
+      "id": "1ebc4cd7-97b3-475a-8373-6e4fc912c99c",
+      "name": "Get brand info11",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account - canjames"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "={{ $('Get brand info11').item.json['Mattermost Channel'] }}",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://www.freeiconspng.com/uploads/email-icon--clipart-best-22.png",
+            "text": "={{ $json.tabla_markdown }}",
+            "footer": "=Notifies @{{ $('Get brand info11').item.json['Supervisor Mattermost'] }}",
+            "title": "={{ $('Get brand info11').item.json.Name }} Failed One-Off Email Campaigns Yesterday",
+            "color": "#ff0000",
+            "pretext": "=@{{ $('Get brand info11').item.json['Supervisor Mattermost'] }}"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        864,
+        1504
+      ],
+      "id": "43f6f617-d245-4552-abf1-8668eaf01f92",
+      "name": "Share Alert2",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "databaseId": 105,
+        "tableId": 538,
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5131,
+              "fieldValue": "={{ $('Get brand info10').item.json.Name }}"
+            },
+            {
+              "fieldId": 5141,
+              "fieldValue": "={{ $json.message }}"
+            },
+            {
+              "fieldId": 5146,
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldId": 5147,
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": 5140,
+              "fieldValue": "One Off Campaign"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        1216
+      ],
+      "id": "021dce10-4265-4301-84b0-a34d483e860a",
+      "name": "Create Alert Record5",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account - canjames"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "databaseId": 105,
+        "tableId": 538,
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": 5131,
+              "fieldValue": "={{ $('Get brand info11').item.json.Name }}"
+            },
+            {
+              "fieldId": 5141,
+              "fieldValue": "={{ $json.message }}"
+            },
+            {
+              "fieldId": 5146,
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldId": 5147,
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": 5140,
+              "fieldValue": "One Off Campaign"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        1504
+      ],
+      "id": "f710babb-971e-4681-879b-7c4c3c52a47a",
+      "name": "Create Alert Record6",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account - canjames"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -4853,10 +5643,42 @@
       "recurrenceRuleSignatures": [
         null
       ]
+    },
+    "node:8:30am Daily": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    },
+    "node:9:00am Daily": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    },
+    "node:10:00am Weekly": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    },
+    "node:10:00am Daily": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
     }
   },
   "tags": [],
-  "triggerCount": 5,
-  "updatedAt": "2026-08-25T20:31:44.169Z",
-  "versionId": "d4e7391c-f6ee-416b-8866-fe375df173b3"
+  "triggerCount": 7,
+  "updatedAt": "2026-10-01T20:04:47.395Z",
+  "versionId": "ebc7ba0d-e897-44f6-9739-3c6c4ef8fcb9"
 }
