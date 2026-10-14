@@ -1,0 +1,121 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2026-09-16T19:22:20.640Z",
+  "id": "3t9sSTfmY2pu2dCm",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Test scaicedo",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "767ec130-1b5b-4668-a41a-b2854a82f025",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "update"
+      },
+      "type": "n8n-nodes-base.erpNext",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "30eda119-fc7e-454c-aa46-d79f2d661008",
+      "name": "Update a document",
+      "alwaysOutputData": true,
+      "credentials": {
+        "erpNextApi": {
+          "id": "gM5LrXNEJxHkh01n",
+          "name": "ERPNext account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "http://martech-desk.corp-apps.com/api/method/frappe.auth.get_logged_user",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "erpNextApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        464,
+        0
+      ],
+      "id": "8ea0b888-25d6-4785-934e-191c6e515773",
+      "name": "HTTP Request",
+      "credentials": {
+        "erpNextApi": {
+          "id": "gM5LrXNEJxHkh01n",
+          "name": "ERPNext account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-09-16T19:22:20.640Z",
+      "createdAt": "2026-09-16T19:22:20.640Z",
+      "role": "workflow:owner",
+      "workflowId": "3t9sSTfmY2pu2dCm",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-16T19:50:37.622Z",
+  "versionId": "8cc9fe35-82fe-40d7-925a-141d8a7b1438"
+}
