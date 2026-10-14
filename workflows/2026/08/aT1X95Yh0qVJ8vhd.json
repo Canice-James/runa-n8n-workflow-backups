@@ -1,30 +1,2367 @@
 {
-  "active": false,
-  "activeVersion": null,
-  "activeVersionId": null,
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-10-08T16:52:09.514Z",
+    "createdAt": "2026-10-08T16:52:09.514Z",
+    "versionId": "d4a28c5a-d7a0-4e6e-b677-86c28b3732da",
+    "workflowId": "aT1X95Yh0qVJ8vhd",
+    "nodes": [
+      {
+        "parameters": {
+          "jiraVersion": "server",
+          "operation": "get",
+          "issueKey": "={{ $('Normalize Webhook Input').item.json.mapTicket }}",
+          "additionalFields": {}
+        },
+        "id": "8711fd1d-a638-4f77-9840-38bc6321a206",
+        "name": "Jira > Get Issue",
+        "type": "n8n-nodes-base.jira",
+        "typeVersion": 1,
+        "position": [
+          -28064,
+          192
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "jiraSoftwareServerApi": {
+            "id": "oAKRcX61sJaARIzC",
+            "name": "Jira SW Server account - scaicedo"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://naming-conventions.10.161.101.24.nip.io/api/generate",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"issueKey\": \"{{ $('Jira > Get Issue').item.json.key }}\"\n}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "28f42323-6ed9-454f-a297-3f2a7821dbad",
+        "name": "Naming Conventions API",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          -27616,
+          0
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "eqoJ4C4FBGVFgO7t",
+            "name": "Naming Conventions - api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://portal.intra-apps.com/api/v1/session",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpCustomAuth",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "e84f5504-7efc-4a17-abe0-49e6fa99138d",
+        "name": "CMS & MM Login",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          -27392,
+          0
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "httpCustomAuth": {
+            "id": "Veg9O8F0gD2olQSG",
+            "name": "Intra-apps - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "databaseId": 106,
+          "tableId": 541,
+          "limit": 1,
+          "additionalOptions": {
+            "filters": {
+              "fields": [
+                {
+                  "field": 5176,
+                  "value": "={{ $('Jira > Get Issue').item.json.fields?.customfield_11504?.[0]?.value }}"
+                },
+                {
+                  "field": 5177,
+                  "value": "={{ $('Jira > Get Issue').item.json.fields?.customfield_11507?.[0]?.value }}"
+                }
+              ]
+            },
+            "filterType": "AND"
+          }
+        },
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1.1,
+        "position": [
+          -27168,
+          0
+        ],
+        "id": "f3f62cad-b47c-4f1a-9174-311a22526785",
+        "name": "Get Row from Baserow",
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000,
+        "alwaysOutputData": true,
+        "credentials": {
+          "baserowApi": {
+            "id": "MK0sZSY5DZaYOoTr",
+            "name": "Baserow account - canjames"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const jiraFields = $('Jira > Get Issue').item.json.fields || {};\nconst jiraBrand = jiraFields.customfield_11504?.[0]?.value;\nconst jiraRegion = jiraFields.customfield_11507?.[0]?.value;\n\nconst rowData = $('Get Row from Baserow').item;\nconst row = rowData?.json || {};\n\nif (!rowData || Object.keys(row).length === 0) {\n  throw new Error(\n    `[Baserow Query Error] No row found in table 541 for Jira_Brand_Code=\"${jiraBrand}\" and Jira_Region=\"${jiraRegion}\".`\n  );\n}\n\nconst brandCode = row.CMS_Brand_Code;\nconst brandName = row.CMS_Brand;\nconst bucket = row.CMS_Bucket;\nconst territory = row.MM_Territory;\nconst region = row.Jira_Region || jiraRegion;\nconst regionId = row.Region_ID;\n\nconst domain = row.Domain;\nconst bareDomain = domain\n  ? String(domain).trim().replace(/^https?:\\/\\//, '').replace(/^www\\./, '').replace(/\\/$/, '')\n  : undefined;\n\nconst pageUrl = bareDomain ? `https://www.${bareDomain}/` : undefined;\nconst loginUrl = bareDomain ? `https://services.${bareDomain}/services/login-service/v1/login` : undefined;\nconst cookieDomain = bareDomain ? `.${bareDomain}` : undefined;\nconst previewUrl = pageUrl ? `${pageUrl}account/messages` : undefined;\n\nconst casinoUsername = row.Email_Account;\nconst casinoPassword = row.Password;\nconst playerId = row.PLAYER_ID;\nconst audienceCode = row.AUDIENCE_CODE;\n\nconst missingFields = [];\nif (!brandCode) missingFields.push('CMS_Brand_Code');\nif (!brandName) missingFields.push('CMS_Brand');\nif (!bucket) missingFields.push('CMS_Bucket');\nif (!territory) missingFields.push('MM_Territory');\nif (!regionId) missingFields.push('Region_ID');\nif (!domain) missingFields.push('Domain');\nif (!playerId) missingFields.push('PLAYER_ID');\nif (!audienceCode) missingFields.push('AUDIENCE_CODE');\nif (!casinoUsername) missingFields.push('Email_Account');\nif (!casinoPassword) missingFields.push('Password');\n\nif (missingFields.length > 0) {\n  throw new Error(\n    `[Baserow Mapping Error] Missing required fields (${missingFields.join(', ')}) for Jira_Brand_Code=\"${jiraBrand}\", Jira_Region=\"${jiraRegion}\".`\n  );\n}\n\nconst name = $('Naming Conventions API').item.json.name;\nconst slug = $('Naming Conventions API').item.json.slug;\n\nconst asCmsText = (raw) => String(raw ?? '').replace(/\\u00a0/g, ' ').trim();\nconst readCmsTextField = (label, raw, { maxLen, required = false } = {}) => {\n  const source = String(raw ?? '');\n  const text = asCmsText(source);\n  if (/[\\r\\n]/.test(source)) {\n    throw new Error(\n      maxLen != null\n        ? `${label} must be plain text on one line, max ${maxLen} characters.`\n        : `${label} must be plain text on one line.`\n    );\n  }\n  if (/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]/.test(source)) {\n    throw new Error(`${label} must be plain text (no control characters).`);\n  }\n  if (required && !text) {\n    throw new Error(`${label} is required.`);\n  }\n  if (maxLen != null && text.length > maxLen) {\n    throw new Error(`${label} must be at most ${maxLen} characters (got ${text.length}).`);\n  }\n  return text;\n};\n\nconst subject = readCmsTextField('Subject', jiraFields.customfield_26526, { maxLen: 50, required: true });\nconst notificationBody = readCmsTextField('Short copy', jiraFields.customfield_14907);\nconst notificationUrl = readCmsTextField('Notification URL', jiraFields.customfield_12423, { maxLen: 500 });\nconst notificationUrlLabel = readCmsTextField('CTA label', jiraFields.customfield_26527, { maxLen: 25 });\n\nconst wikiToHtml = (raw) => {\n  const escapeHtml = (value) => String(value)\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;');\n\n  const applyWiki = (text) => {\n    let s = text;\n    s = s.replace(/\\{color:[^}]+\\}([\\s\\S]*?)\\{color\\}/gi, (_, inner) => {\n      return `<span class=\"ol-Text--color_primary\">${applyWiki(inner)}</span>`;\n    });\n    s = s.replace(/\\{\\*\\}([\\s\\S]*?)\\{\\*\\}/g, (_, inner) => `<strong>${applyWiki(inner)}</strong>`);\n    s = s.replace(/\\{_\\}([\\s\\S]*?)\\{_\\}/g, (_, inner) => `<em>${applyWiki(inner)}</em>`);\n    s = s.replace(/\\{\\^\\}([\\s\\S]*?)\\{\\^\\}/g, (_, inner) => `<sup>${applyWiki(inner)}</sup>`);\n    s = s.replace(/\\{\\~\\}([\\s\\S]*?)\\{\\~\\}/g, (_, inner) => `<sub>${applyWiki(inner)}</sub>`);\n    s = s.replace(/\\[([^\\]\\n|]+)\\|([^\\]\\n|]+)(?:\\|[^\\]]+)?\\]/g, '<a href=\"$2\">$1</a>');\n    s = s.replace(/\\[(https?:\\/\\/[^\\]\\n]+)\\]/g, '<a href=\"$1\">$1</a>');\n    s = s.replace(/\\*([^*\\n]+)\\*/g, '<strong>$1</strong>');\n    s = s.replace(/_([^_\\n]+)_/g, '<em>$1</em>');\n    s = s.replace(/\\^([^\\^\\n]+)\\^/g, '<sup>$1</sup>');\n    s = s.replace(/~([^~\\n]+)~/g, '<sub>$1</sub>');\n    s = s.replace(/\\n/g, '<br>');\n    return s;\n  };\n\n  const source = String(raw ?? '').replace(/\\r\\n/g, '\\n').replace(/\\r/g, '\\n');\n  return applyWiki(escapeHtml(source));\n};\n\nconst messageBodyHtml = wikiToHtml(jiraFields.customfield_26522);\n\nconst IMAGE_EXT = /\\.(webp|png|jpe?g|gif|bmp|svg|avif|tiff?|heic|heif|ico|jfif|pjpeg|pjp|apng|jxl)$/i;\nconst isImageAttachment = (a) => {\n  const mime = String(a?.mimeType || '').toLowerCase();\n  const filename = String(a?.filename || '');\n  return mime.startsWith('image/') || IMAGE_EXT.test(filename);\n};\nconst isWebpAttachment = (a) => {\n  const mime = String(a?.mimeType || '').toLowerCase();\n  const filename = String(a?.filename || '').toLowerCase();\n  return mime === 'image/webp' || filename.endsWith('.webp');\n};\nconst attachments = Array.isArray(jiraFields.attachment) ? jiraFields.attachment : [];\nconst imageAttachments = attachments.filter(isImageAttachment);\nconst webpAttachments = imageAttachments.filter(isWebpAttachment);\n// Jira lists newest first; last image is the original creative. Prefer webp over later comment screenshots.\nconst preferredImages = webpAttachments.length ? webpAttachments : imageAttachments;\nconst imageAttachment = preferredImages.length ? preferredImages[preferredImages.length - 1] : null;\nconst imageAttachmentId = imageAttachment?.id ? String(imageAttachment.id) : '';\n\nreturn {\n  sessionId: $('CMS & MM Login').item.json.sessionId,\n  name,\n  slug,\n  region,\n  regionId,\n  brandName,\n  brandCode,\n  bucket,\n  territory,\n  pageUrl,\n  loginUrl,\n  cookieDomain,\n  previewUrl,\n  playerId,\n  audienceCode,\n  subject,\n  notificationBody,\n  notificationUrl,\n  notificationUrlLabel,\n  imageAttachmentId,\n  messageBodyHtml,\n};\n"
+        },
+        "id": "206008e9-ffe3-4008-876a-f8f725972f5f",
+        "name": "OSN Static Fields Mapping",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -26704,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "jiraVersion": "server",
+          "resource": "issueAttachment",
+          "operation": "get",
+          "attachmentId": "={{ $('OSN Static Fields Mapping').item.json.imageAttachmentId }}",
+          "download": true,
+          "binaryProperty": "notification_image"
+        },
+        "id": "33083942-317c-4d09-ab19-be7e25b9492b",
+        "name": "Jira > Download Image",
+        "type": "n8n-nodes-base.jira",
+        "typeVersion": 1,
+        "position": [
+          -25808,
+          0
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "jiraSoftwareServerApi": {
+            "id": "oAKRcX61sJaARIzC",
+            "name": "Jira SW Server account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://contentmanager.intra-apps.com/services/resource/v1/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/files",
+          "sendHeaders": true,
+          "specifyHeaders": "json",
+          "jsonHeaders": "={\n  \"Authorization\": \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n}",
+          "sendBody": true,
+          "contentType": "multipart-form-data",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "parameterType": "formBinaryData",
+                "name": "files",
+                "inputDataFieldName": "notification_image"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "0e62972b-532b-4119-83d7-7c9587fbba2c",
+        "name": "CMS > Upload Image",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          -25584,
+          0
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://contentmanager.intra-apps.com/services/content/v4/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/buckets/{{ $('OSN Static Fields Mapping').item.json.bucket.toLowerCase() }}/contents",
+          "sendHeaders": true,
+          "specifyHeaders": "json",
+          "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "= {\n  \"status\": \"published\",\n  \"contentType\": \"notification\",\n  \"publishAll\": false,\n  \"languages\": [\"en\"],\n  \"name\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.name || '') }},\n  \"fields\": {\n    \"nonLocalised\": {\n      \"internal_name\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.name || '') }},\n      \"slugname\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.slug || '') }},\n      \"tags\": \"\"\n    },\n    \"localised\": {\n      \"en\": [\n        {\n          \"subject\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.subject || '') }},\n          \"notification_body\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.notificationBody || '') }},\n          \"notification_url\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.notificationUrl || '') }},\n          \"notification_url_label\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.notificationUrlLabel || '') }},\n          \"message_url\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.notificationUrl || '') }},\n          \"message_url_label\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.notificationUrlLabel || '') }},\n          \"notification_image\": {\n            \"url\": {{ JSON.stringify('/cms' + ($('CMS > Upload Image').item.json[0]?.fileLocation || $('CMS > Upload Image').item.json.fileLocation || '') + ($('CMS > Upload Image').item.json[0]?.fileName || $('CMS > Upload Image').item.json.fileName || '')) }},\n            \"alt\": \"Notification Image\"\n          },\n          \"message_body\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.messageBodyHtml || '') }},\n          \"version\": \"control\"\n        }\n      ]\n    },\n    \"review\": {}\n  },\n  \"actionType\": \"Publish\"\n}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "5128d832-ad21-4b79-b12d-62c65aecbd57",
+        "name": "CMS > Create Notification",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          -25360,
+          0
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000
+      },
+      {
+        "parameters": {
+          "url": "=https://contentmanager.intra-apps.com/services/content/v4/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/buckets/{{ $('OSN Static Fields Mapping').item.json.bucket.toLowerCase() }}/contents?status=published&category=content&size=10&slugname={{ $('OSN Static Fields Mapping').item.json.slug }}",
+          "sendHeaders": true,
+          "specifyHeaders": "json",
+          "jsonHeaders": "={\n  \"Authorization\": \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "d93fb616-f2da-4f3f-9df7-4bccfe8fa742",
+        "name": "CMS > Get ContentId By Slug",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          -24912,
+          -64
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const brand = $('OSN Static Fields Mapping').item.json.brandCode;\nconst region = $('OSN Static Fields Mapping').item.json.region;\nconst playerId = $('OSN Static Fields Mapping').item.json.playerId;\nconst audienceCode = $('OSN Static Fields Mapping').item.json.audienceCode;\n\nif (!playerId || !audienceCode) {\n  throw new Error(`PLAYER_ID or AUDIENCE_CODE missing for ${brand}-${region}`);\n}\n\nconst csvContent = `AUDIENCE_CODE,PLAYER_ID\\n${audienceCode},${playerId}`;\n\nreturn {\n  json: {\n    fileName: `${brand}-${region}.csv`\n  },\n  binary: {\n    audience_csv: {\n      data: btoa(csvContent),\n      mimeType: 'text/csv',\n      fileName: `${brand}-${region}.csv`\n    }\n  }\n};"
+        },
+        "id": "25b514d9-2c25-4d36-a7a9-eaaa9a543138",
+        "name": "MM > Generate Audience CSV",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -24464,
+          -112
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v3/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/audience/upload",
+          "sendHeaders": true,
+          "specifyHeaders": "json",
+          "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
+          "sendBody": true,
+          "contentType": "multipart-form-data",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "parameterType": "formBinaryData",
+                "name": "file",
+                "inputDataFieldName": "audience_csv"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "aa4ee07d-628b-4e19-8f35-05a84668e5ac",
+        "name": "MM > Upload Audience",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          -24240,
+          -112
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000
+      },
+      {
+        "parameters": {
+          "amount": 5,
+          "unit": "seconds"
+        },
+        "id": "21fe8360-e8e7-485a-94b5-c19b247b35aa",
+        "name": "Wait 5s",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1,
+        "position": [
+          -24016,
+          -112
+        ],
+        "webhookId": "701809de-bf23-4e25-9b98-c4d0a9780cb9"
+      },
+      {
+        "parameters": {
+          "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v3/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/audience/upload/{{ $('MM > Upload Audience').item.json.jobId }}",
+          "sendHeaders": true,
+          "specifyHeaders": "json",
+          "jsonHeaders": "={\n  \"Authorization\": \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "2820b6af-ebdc-4dae-8c2d-8422f9ee0271",
+        "name": "MM > Check Status",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          -23792,
+          -192
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000
+      },
+      {
+        "parameters": {},
+        "id": "5f3fc248-9e9d-44b5-9464-0f1413e61076",
+        "name": "Is SUCCESS?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [
+          -23568,
+          -192
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v2/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/campaigns",
+          "sendHeaders": true,
+          "specifyHeaders": "json",
+          "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"brandCode\": \"{{ $('OSN Static Fields Mapping').item.json.brandCode }}\",\n  \"territory\": \"{{ $('OSN Static Fields Mapping').item.json.territory }}\",\n  \"name\": \"INTERNALONLY {{ $('OSN Static Fields Mapping').item.json.name }}\",\n  \"campaignStatus\": \"FINAL\",\n  \"campaignType\": \"REGULAR\",\n  \"jobStatus\": \"PENDING\",\n  \"divide\": {\n    \"type\": null,\n    \"splitNumbers\": null,\n    \"splitCriteria\": [],\n    \"filter\": null,\n    \"sampling\": 0\n  },\n  \"exclusions\": {\n    \"items\": [],\n    \"excludeOperator\": \"OR\"\n  },\n  \"segments\": [\n    {\n      \"name\": \"{{ $('MM > Check Status').item.json.audienceName }}\",\n      \"splitCriteria\": null,\n      \"activities\": [\n        {\n          \"type\": \"NOTIFICATION\",\n          \"notificationContentId\": \"{{ $('OSN Static Fields Mapping').item.json.slug }}\",\n          \"expirationAmount\": \"1\",\n          \"expirationUnit\": \"HOURS\"\n        }\n      ]\n    }\n  ],\n  \"regionIds\": [\"{{ $('OSN Static Fields Mapping').item.json.regionId.trim() }}\"],\n  \"audience\": \"{{ $('MM > Check Status').item.json.audienceId }}\",\n  \"audienceName\": \"{{ $('MM > Check Status').item.json.audienceName }}\",\n  \"uploadedAudience\": true,\n  \"scheduleConfiguration\": {\n    \"type\": \"ONE_TIME_NOW\"\n  },\n  \"createdBy\": \"{{ $('CMS & MM Login').item.json.userName || 'scaicedo' }}\",\n  \"wizardSteps\": [\n    \"ADD_REGION\",\n    \"ADD_AUDIENCE\",\n    \"DIVIDE\",\n    \"ACTIVITIES\",\n    \"SCHEDULE\",\n    \"NAME_AND_SAVE\"\n  ]\n}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "eaba0ca5-7419-4a4c-9146-77afa5ed08c4",
+        "name": "MM > Create Campaign",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          -23344,
+          -240
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000
+      },
+      {
+        "parameters": {
+          "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v2/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/campaigns?searchQuery=INTERNALONLY {{ encodeURIComponent($('OSN Static Fields Mapping').item.json.name) }}&campaignStatus=FINAL&sortBy=MOST_RECENT&campaignType=REGULAR",
+          "sendHeaders": true,
+          "specifyHeaders": "json",
+          "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "8865bdf4-ba17-4ba8-861a-bac20645f6ce",
+        "name": "MM > Search Campaign",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          -23120,
+          -240
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v2/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/campaigns/{{ $('MM > Pick Campaign').item.json.campaignId }}/activate",
+          "sendHeaders": true,
+          "specifyHeaders": "json",
+          "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "93e97553-e29d-4bc1-b7a8-922289cf7246",
+        "name": "MM > Activate Campaign",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          -22672,
+          -240
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000
+      },
+      {
+        "parameters": {
+          "operation": "runFunction",
+          "code": "={{ (() => {\n  const sessionId = $('Casino > Login').item.json.sessionId;\n  const domain = $('OSN Static Fields Mapping').item.json.cookieDomain;\n  const url = $('OSN Static Fields Mapping').item.json.previewUrl;\n  if (!sessionId || !domain || !url) {\n    throw new Error('Browserless missing sessionId, cookieDomain, or previewUrl');\n  }\n  return `const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\\n\\nexport default async ({ page }) => {\\n  const sessionId = ${JSON.stringify(sessionId)};\\n  const domain = ${JSON.stringify(domain)};\\n  const url = ${JSON.stringify(url)};\\n\\n  await page.setViewport({ width: 1440, height: 750 });\\n  await page.setCookie(\\n    { name: 'sessionId', value: sessionId, domain, path: '/' },\\n    { name: 'sid', value: sessionId, domain, path: '/' }\\n  );\\n  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 25000 });\\n  await page.waitForSelector('div.ol-notification__root', { timeout: 30000 });\\n  await sleep(3000);\\n  await page.evaluate(() => {\\n    const overlay = document.querySelector('#coiOverlay');\\n    if (!overlay) return;\\n    overlay.style.setProperty('display', 'none', 'important');\\n    overlay.style.setProperty('visibility', 'hidden', 'important');\\n  });\\n  const screenshot = await page.screenshot({ encoding: 'base64' });\\n  return { data: { screenshot }, type: 'application/json' };\\n};`;\n})() }}"
+        },
+        "type": "n8n-nodes-browserless-api.browserless",
+        "typeVersion": 1,
+        "position": [
+          -20960,
+          -240
+        ],
+        "id": "c4639a41-08eb-4618-bc99-451b68c8561c",
+        "name": "Screenshot > Short Copy",
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "browserlessApi": {
+            "id": "HvkzyW0Ix8JjViPw",
+            "name": "Browserless - api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "runFunction",
+          "code": "={{ (() => {\n  const sessionId = $('Casino > Login').item.json.sessionId;\n  const domain = $('OSN Static Fields Mapping').item.json.cookieDomain;\n  const url = $('OSN Static Fields Mapping').item.json.previewUrl;\n  if (!sessionId || !domain || !url) {\n    throw new Error('Browserless missing sessionId, cookieDomain, or previewUrl');\n  }\n  return `const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\\n\\nexport default async ({ page }) => {\\n  const sessionId = ${JSON.stringify(sessionId)};\\n  const domain = ${JSON.stringify(domain)};\\n  const url = ${JSON.stringify(url)};\\n\\n  await page.setViewport({ width: 1440, height: 750 });\\n  await page.setCookie(\\n    { name: 'sessionId', value: sessionId, domain, path: '/' },\\n    { name: 'sid', value: sessionId, domain, path: '/' }\\n  );\\n  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });\\n  await page.waitForFunction(() => {\\n    return !!(\\n      document.querySelector('a.ol-responsive-button[href*=\\\"account/cashier/deposit\\\"]')\\n      || document.querySelector('a[href*=\\\"/account/cashier/deposit\\\"]')\\n      || document.querySelector('[data-surface=\\\"accountPanelSection\\\"]')\\n      || document.querySelector('[data-surface=\\\"accountPanelSubContent\\\"]')\\n    );\\n  }, { timeout: 20000 });\\n\\n  await page.waitForFunction(() => {\\n    const tabs = [...document.querySelectorAll('button.ol-tab_item')]\\n      .filter((button) => /notif/i.test(button.textContent || ''));\\n    const visible = tabs.filter((button) => button.getBoundingClientRect().width > 0);\\n    const empty = /No messages found/i.test(document.body.innerText || '');\\n    const counted = tabs.some((button) => (button.textContent || '').includes('('));\\n    return visible.length === 1 && (empty || counted);\\n  }, { timeout: 20000 });\\n\\n  const accept = await page.evaluate(() => {\\n    const button = document.querySelector('.coi-banner__accept, button.coi-banner__accept');\\n    if (!button) return false;\\n    button.click();\\n    return true;\\n  });\\n  if (accept) await sleep(800);\\n\\n  await page.evaluate(() => {\\n    const target = [...document.querySelectorAll('button.ol-tab_item')]\\n      .filter((button) => /notif/i.test(button.textContent || ''))\\n      .find((button) => button.getBoundingClientRect().width > 0);\\n    if (!target) throw new Error('Notifications tab was not found');\\n    target.click();\\n  });\\n\\n  await page.waitForSelector('tr.ol-table__row[data-index=\\\"0\\\"]', { timeout: 15000 });\\n  await sleep(2000);\\n\\n  await page.evaluate(() => {\\n    const row = document.querySelector('tr.ol-table__row[data-index=\\\"0\\\"]');\\n    if (row) {\\n      row.scrollIntoView({ block: 'center' });\\n      row.click();\\n    } else {\\n      throw new Error('First notification row was not found');\\n    }\\n  });\\n\\n  await sleep(3000);\\n  await page.evaluate(() => {\\n    const overlay = document.querySelector('#coiOverlay');\\n    if (!overlay) return;\\n    overlay.style.setProperty('display', 'none', 'important');\\n    overlay.style.setProperty('visibility', 'hidden', 'important');\\n  });\\n  const screenshot = await page.screenshot({ encoding: 'base64' });\\n  return { data: { screenshot }, type: 'application/json' };\\n};`;\n})() }}"
+        },
+        "type": "n8n-nodes-browserless-api.browserless",
+        "typeVersion": 1,
+        "position": [
+          -20736,
+          -144
+        ],
+        "id": "1fe3e2ae-feab-4994-a29a-1ee9a3b05f9b",
+        "name": "Screenshot > Long Copy",
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "browserlessApi": {
+            "id": "HvkzyW0Ix8JjViPw",
+            "name": "Browserless - api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const screenshot = $json.data?.screenshot;\n\nif (!screenshot) {\n  throw new Error('Browserless response does not contain data.screenshot');\n}\n\nconst data = await this.helpers.prepareBinaryData(\n  Buffer.from(screenshot, 'base64'),\n  'notification-short.png',\n  'image/png'\n);\n\nreturn {\n  json: {\n    ...$json,\n    screenshotFileName: 'notification-short.png',\n  },\n  binary: {\n    data,\n  },\n};"
+        },
+        "id": "335d81f7-53a3-4663-a7b2-ca9892b924b3",
+        "name": "Screenshot > Short File",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -20512,
+          -336
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const screenshot = $json.data?.screenshot;\n\nif (!screenshot) {\n  throw new Error('Browserless response does not contain data.screenshot');\n}\n\nconst data = await this.helpers.prepareBinaryData(\n  Buffer.from(screenshot, 'base64'),\n  'notification-long.png',\n  'image/png'\n);\n\nreturn {\n  json: {\n    ...$json,\n    screenshotFileName: 'notification-long.png',\n  },\n  binary: {\n    data,\n  },\n};"
+        },
+        "id": "69783fb4-07be-4619-a546-44b9b6342a9d",
+        "name": "Screenshot > Long File",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -20512,
+          -144
+        ]
+      },
+      {
+        "parameters": {
+          "jiraVersion": "server",
+          "resource": "issueAttachment",
+          "issueKey": "={{ $('Jira > Get Issue').item.json.key }}"
+        },
+        "id": "9163fe98-f4f9-4a30-b59b-3b7fb341130b",
+        "name": "Jira > Attach Short",
+        "type": "n8n-nodes-base.jira",
+        "typeVersion": 1,
+        "position": [
+          -20288,
+          -336
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "jiraSoftwareServerApi": {
+            "id": "oAKRcX61sJaARIzC",
+            "name": "Jira SW Server account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jiraVersion": "server",
+          "resource": "issueAttachment",
+          "issueKey": "={{ $('Jira > Get Issue').item.json.key }}"
+        },
+        "id": "f8021df0-7fed-40c9-b6b2-d7cfc5ee49ce",
+        "name": "Jira > Attach Long",
+        "type": "n8n-nodes-base.jira",
+        "typeVersion": 1,
+        "position": [
+          -20288,
+          -144
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "jiraSoftwareServerApi": {
+            "id": "oAKRcX61sJaARIzC",
+            "name": "Jira SW Server account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "combineBy": "combineByPosition",
+          "options": {}
+        },
+        "id": "12bf8d79-e67f-4602-b8e2-a3c63c8ca145",
+        "name": "Wait for Both Attachments",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          -20064,
+          -240
+        ]
+      },
+      {
+        "parameters": {
+          "jiraVersion": "server",
+          "resource": "issueComment",
+          "issueKey": "={{ $('Jira > Get Issue').item.json.key }}",
+          "comment": "=Hi team [~{{ $('Jira > Get Issue').item.json.fields.assignee.name }}], notification ready.\n\n*Run by:* {{ $('Normalize Webhook Input').item.json.erpnextUser }}\n*Slug:* {{ $('OSN Static Fields Mapping').item.json.slug }}\n*CMS:* https://contentmanager.intra-apps.com/content/edit/notification/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/{{ $('OSN Static Fields Mapping').item.json.bucket.toLowerCase() }}/{{ $('CMS > Get ContentId By Slug').item.json.items[0].contentId }}\n*Short Copy:*\n!{{ $('Screenshot > Short File').item.json.screenshotFileName }}|thumbnail!\n*Long Copy:*\n!{{ $('Screenshot > Long File').item.json.screenshotFileName }}|thumbnail!\n\n----\n\nCheers!",
+          "options": {}
+        },
+        "id": "f02c06a8-7c70-4a02-a5e6-a78d6c26f994",
+        "name": "Jira > Post Evidence Comment",
+        "type": "n8n-nodes-base.jira",
+        "typeVersion": 1,
+        "position": [
+          -19840,
+          -240
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "jiraSoftwareServerApi": {
+            "id": "oAKRcX61sJaARIzC",
+            "name": "Jira SW Server account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "has-image",
+                "leftValue": "={{ $('OSN Static Fields Mapping').item.json.imageAttachmentId }}",
+                "operator": {
+                  "operation": "notEmpty",
+                  "type": "string"
+                },
+                "rightValue": ""
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            }
+          },
+          "options": {}
+        },
+        "id": "c90caa82-e2a4-40cf-9399-2a46f7efa28c",
+        "name": "Has image?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -26032,
+          96
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "throw new Error(`Jira ticket ${$('Jira > Get Issue').item.json.key} has no image attachment. Upload a notification image (webp, png, jpg, gif, or similar) before running.`);"
+        },
+        "id": "d99315cd-e5d8-4d7d-b170-492675bd62da",
+        "name": "Ticket has no image",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -25808,
+          208
+        ],
+        "notes": "Fails loudly when the MAP ticket has no attachment."
+      },
+      {
+        "parameters": {
+          "amount": 2
+        },
+        "id": "8c24300b-7cc6-42d9-a090-3d4f0b2dfced",
+        "name": "Wait 2s for CMS index",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -25136,
+          0
+        ],
+        "webhookId": "d6541d94-e211-4e33-9615-3f3fa5a0c9b9"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "has-content-id",
+                "leftValue": "={{ $('CMS > Get ContentId By Slug').item.json.items?.[0]?.contentId }}",
+                "operator": {
+                  "operation": "notEmpty",
+                  "type": "string"
+                },
+                "rightValue": ""
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            }
+          },
+          "options": {}
+        },
+        "id": "2f78a6c5-a704-4881-86eb-3dac2631b730",
+        "name": "Content found?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -24688,
+          -64
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "cid-ceiling",
+                "leftValue": "={{ $('CMS > Get ContentId By Slug').runIndex }}",
+                "operator": {
+                  "operation": "lt",
+                  "type": "number"
+                },
+                "rightValue": 5
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            }
+          },
+          "options": {}
+        },
+        "id": "2a53ea45-0c30-498b-8909-82e3847f4f9f",
+        "name": "ContentId retries left?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -24464,
+          96
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "throw new Error(`CMS contentId not found for slug ${$('OSN Static Fields Mapping').item.json.slug} after polling.`);"
+        },
+        "id": "597b8588-b685-4515-9ffb-3c749111c6c4",
+        "name": "ContentId poll exceeded",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -24256,
+          192
+        ],
+        "notes": "Stops after 6 CMS slug lookups so an empty items[] cannot continue silently."
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const expectedName = `INTERNALONLY ${$('OSN Static Fields Mapping').item.json.name}`;\nconst items = $json.items || [];\nconst match = items.find((item) => item.name === expectedName);\nif (!match?.campaignId) {\n  throw new Error(`No FINAL campaign named \"${expectedName}\". Search returned: ${items.map((item) => item.name).join(', ') || '(none)'}`);\n}\nreturn { campaignId: match.campaignId, name: match.name };"
+        },
+        "id": "427d5a46-3c5c-4262-a5f2-21251a3d587a",
+        "name": "MM > Pick Campaign",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -22896,
+          -240
+        ],
+        "notes": "Requires an exact campaign name match so Activate does not pick a sibling INTERNALONLY row."
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "aud-ceiling",
+                "leftValue": "={{ $('MM > Check Status').runIndex }}",
+                "operator": {
+                  "operation": "lt",
+                  "type": "number"
+                },
+                "rightValue": 11
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "bc3e2e53-2222-468e-9ce7-22abf69f4a3d",
+        "name": "Audience retries left?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -23344,
+          -32
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "throw new Error(`Audience upload did not reach SUCCESS within 12 polls (~60s). Last status: ${$json.status}`);"
+        },
+        "id": "ca8baa5e-7704-46e2-a29f-a1cfabc4128f",
+        "name": "Audience poll exceeded",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -23120,
+          -32
+        ],
+        "notes": "Caps audience status polling at 12 checks (~60s)."
+      },
+      {
+        "parameters": {},
+        "id": "3937bc52-63fc-4df5-9c07-ec476d0c80c9",
+        "name": "Wait 5s for Campaign",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -22448,
+          -240
+        ],
+        "webhookId": "cf669181-c564-4859-a373-608d05a53262"
+      },
+      {
+        "parameters": {
+          "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v2/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/campaigns/{{ $('MM > Pick Campaign').item.json.campaignId }}",
+          "sendHeaders": true,
+          "specifyHeaders": "json",
+          "jsonHeaders": "={\n  \"Authorization\": \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "0b3e4d7e-595e-41dd-91c2-f7cb779ab1c8",
+        "name": "MM > Get Campaign",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          -22224,
+          -304
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "job-completed",
+                      "leftValue": "={{ $json.jobStatus }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "COMPLETED"
+                    },
+                    {
+                      "id": "exec-success",
+                      "leftValue": "={{ $json.lastExecution?.success }}",
+                      "operator": {
+                        "operation": "true",
+                        "singleValue": true,
+                        "type": "boolean"
+                      },
+                      "rightValue": ""
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Completed"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "camp-ceiling",
+                      "leftValue": "={{ $('MM > Get Campaign').runIndex }}",
+                      "operator": {
+                        "operation": "gte",
+                        "type": "number"
+                      },
+                      "rightValue": 11
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Poll exceeded"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra",
+            "renameFallbackOutput": "Keep polling"
+          }
+        },
+        "id": "3f07f95b-4558-403f-9586-2afb459fef13",
+        "name": "Campaign completed?",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          -22000,
+          -256
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "throw new Error(`Campaign ${$('MM > Pick Campaign').item.json.campaignId} did not complete. jobStatus=${$json.jobStatus} lastExecution.success=${$json.lastExecution?.success}`);"
+        },
+        "id": "858e3704-040b-4fe4-b378-805b076046e5",
+        "name": "Campaign poll exceeded",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -21776,
+          -144
+        ],
+        "notes": "Caps campaign completion polling at 12 checks (~60s)."
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "37acb555-9ed8-4884-9c0a-cc5b8e3d641e",
+        "name": "Wait 3s before Proof",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -21776,
+          -336
+        ],
+        "webhookId": "c8c6f6ec-df1d-49c4-a45b-1de1eb227366"
+      },
+      {
+        "parameters": {
+          "url": "=https://contentmanager.intra-apps.com/services/content/v4/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/buckets/{{ $('OSN Static Fields Mapping').item.json.bucket.toLowerCase() }}/contents?status=published&category=content&size=10&slugname={{ $('Naming Conventions API').item.json.slug }}",
+          "sendHeaders": true,
+          "specifyHeaders": "json",
+          "jsonHeaders": "={\n  \"Authorization\": \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "d578c4ff-318d-45e5-8fb4-f5b71b4f312b",
+        "name": "CMS > Check Existing Slug",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          -26480,
+          0
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000,
+        "notes": "Looks up the Naming Conventions slug in CMS before create. A hit means this ticket was already built."
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "slug-exists",
+                "leftValue": "={{ (() => {\n  const wanted = $('Naming Conventions API').item.json.slug;\n  const items = $('CMS > Check Existing Slug').item.json.items || [];\n  const hit = items.find((item) => {\n    const slug = item.fields?.nonLocalised?.slugname || item.indexed?.slugname;\n    return slug === wanted;\n  });\n  return hit?.contentId || '';\n})() }}",
+                "operator": {
+                  "operation": "notEmpty",
+                  "type": "string"
+                },
+                "rightValue": ""
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "712d0667-8319-4eb4-9734-f39b8533de6e",
+        "name": "Slug already used?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -26256,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const wanted = $('Naming Conventions API').item.json.slug;\nconst items = $('CMS > Check Existing Slug').item.json.items || [];\nconst hit = items.find((item) => {\n  const slug = item.fields?.nonLocalised?.slugname || item.indexed?.slugname;\n  return slug === wanted;\n});\nconst slug = hit?.fields?.nonLocalised?.slugname || hit?.indexed?.slugname || wanted;\nconst contentId = hit?.contentId;\nconst brand = $('OSN Static Fields Mapping').item.json.brandCode;\nconst bucket = $('OSN Static Fields Mapping').item.json.bucket.toLowerCase();\nthrow new Error('Notification already exists');\n"
+        },
+        "id": "42f01723-78a7-4f64-84fb-5e4551794138",
+        "name": "Notification already exists",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -26032,
+          -96
+        ],
+        "notes": "Stops a re-run from publishing a second notification for the same Naming Conventions slug."
+      },
+      {
+        "parameters": {
+          "operation": "runFunction",
+          "code": "={{ (() => {\n  const username = $('Get Row from Baserow').item.json.Email_Account;\n  const password = $('Get Row from Baserow').item.json.Password;\n  const pageUrl = $('OSN Static Fields Mapping').item.json.pageUrl;\n  if (!username || !password || !pageUrl) {\n    throw new Error('Casino browser login missing username, password, or pageUrl');\n  }\n  const base = String(pageUrl).replace(/\\/?$/, '/');\n  const loginPage = base.includes('ignitionpoker.com') ? base + 'en/login' : base + 'login';\n  return `export default async ({ page }) => {\\n  const username = ${JSON.stringify(username)};\\n  const password = ${JSON.stringify(password)};\\n  const loginPage = ${JSON.stringify(loginPage)};\\n  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\\n\\n  const acceptCookies = async () => page.evaluate(() => {\\n    const accept = document.querySelector('.coi-banner__accept, button[class*=\\\"coi-banner__accept\\\"]');\\n    if (!accept) return false;\\n    accept.click();\\n    return true;\\n  });\\n\\n  const fillReactInput = async (selector, value) => page.evaluate((sel, val) => {\\n    const el = [...document.querySelectorAll(sel)].find((n) => n.offsetWidth > 0 && n.offsetHeight > 0) || document.querySelector(sel);\\n    if (!el) throw new Error('Missing login field ' + sel);\\n    el.focus();\\n    const proto = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value');\\n    const last = el.value;\\n    proto.set.call(el, '');\\n    if (el._valueTracker) el._valueTracker.setValue(last);\\n    el.dispatchEvent(new Event('input', { bubbles: true }));\\n    proto.set.call(el, val);\\n    if (el._valueTracker) el._valueTracker.setValue('');\\n    el.dispatchEvent(new InputEvent('input', { bubbles: true, data: val, inputType: 'insertText' }));\\n    el.dispatchEvent(new Event('change', { bubbles: true }));\\n    el.blur();\\n  }, selector, value);\\n\\n  const fieldsMatch = async () => page.evaluate((user, pass) => {\\n    const u = document.querySelector('#username');\\n    const p = document.querySelector('#password');\\n    const btn = document.querySelector('#loginSubmit');\\n    return !!(u && p && btn && u.value === user && p.value === pass && !btn.disabled);\\n  }, username, password);\\n\\n  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36');\\n  await page.evaluateOnNewDocument(() => {\\n    Object.defineProperty(navigator, 'webdriver', { get: () => undefined });\\n  });\\n  await page.setViewport({ width: 1440, height: 900 });\\n  await page.goto(loginPage, { waitUntil: 'domcontentloaded', timeout: 20000 });\\n  await page.waitForSelector('#username', { visible: true, timeout: 15000 });\\n\\n  try {\\n    await page.waitForFunction(() => {\\n      const btn = document.querySelector('#loginSubmit');\\n      return !!(btn && !btn.disabled);\\n    }, { timeout: 12000 });\\n  } catch (err) {\\n    void err;\\n  }\\n\\n  try {\\n    await page.waitForFunction(() => window.grecaptcha && typeof window.grecaptcha.execute === 'function', { timeout: 12000 });\\n  } catch (err) {\\n    void err;\\n  }\\n\\n  try {\\n    await page.waitForSelector('.coi-banner__accept', { timeout: 12000 });\\n    await acceptCookies();\\n    await sleep(800);\\n  } catch (err) {\\n    void err;\\n  }\\n\\n  await fillReactInput('#username', username);\\n  await fillReactInput('#password', password);\\n  await sleep(200);\\n  if (!(await fieldsMatch())) {\\n    await fillReactInput('#username', username);\\n    await fillReactInput('#password', password);\\n    await sleep(200);\\n  }\\n  if (!(await fieldsMatch())) {\\n    throw new Error('Casino login fields did not keep the Baserow credentials after fill');\\n  }\\n\\n  const loginWait = page.waitForResponse(\\n    (response) => response.url().includes('/login-service/v1/login') && response.request().method() === 'POST',\\n    { timeout: 20000 }\\n  );\\n  await page.click('#loginSubmit');\\n\\n  let response;\\n  try {\\n    response = await loginWait;\\n  } catch (err) {\\n    throw new Error('Casino login POST never fired');\\n  }\\n\\n  const body = await response.json().catch(() => null);\\n  if (!body || !body.sessionId) {\\n    throw new Error('Casino browser login did not return sessionId: ' + JSON.stringify({ status: response.status(), errorCode: body && body.errorCode }));\\n  }\\n  return { data: { sessionId: body.sessionId }, type: 'application/json' };\\n};`;\n})() }}"
+        },
+        "id": "0ea60a3c-d635-4ea7-aa1a-b1f285d8d4a8",
+        "name": "Casino > Browser Login",
+        "type": "n8n-nodes-browserless-api.browserless",
+        "typeVersion": 1,
+        "position": [
+          -21360,
+          -144
+        ],
+        "retryOnFail": true,
+        "maxTries": 2,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "browserlessApi": {
+            "id": "HvkzyW0Ix8JjViPw",
+            "name": "Browserless - api"
+          }
+        },
+        "notes": "Submits the OL /login form so site JS attaches a live captcha token."
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const item = $input.item.json;\nconst sessionId = item.sessionId || item.data?.sessionId;\nif (!sessionId) {\n  throw new Error('Casino browser login output missing sessionId');\n}\nreturn { sessionId };\n"
+        },
+        "id": "fddfaa72-3050-4904-b50d-620dffad6491",
+        "name": "Casino > Login",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -21152,
+          -240
+        ],
+        "notes": "Normalizes Browserless login output to { sessionId } for screenshot nodes."
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('OSN Static Fields Mapping').item.json.loginUrl }}",
+          "sendHeaders": true,
+          "specifyHeaders": "json",
+          "jsonHeaders": "={\n  \"Accept\": \"application/json\",\n  \"Origin\": \"{{ $('OSN Static Fields Mapping').item.json.loginUrl.split('/services/')[0] }}\",\n  \"Referer\": \"{{ $('OSN Static Fields Mapping').item.json.loginUrl.split('/services/')[0] }}/\"\n}",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"username\": \"{{ $('Get Row from Baserow').item.json.Email_Account }}\",\n  \"password\": \"{{ $('Get Row from Baserow').item.json.Password }}\",\n  \"remember_me\": false\n}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "5c1d6967-3c65-4167-8430-35433d7be41e",
+        "name": "Casino > Login HTTP",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          -21552,
+          -336
+        ],
+        "retryOnFail": false,
+        "onError": "continueErrorOutput",
+        "notes": "Primary casino login. Brands that do not require captcha succeed here. 401/captcha brands fall through to Browserless."
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "osn-notification-run",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "39032632-d839-4bc5-a6c5-2f8545dd8aa5",
+        "name": "Receive ERPNext Dispatch",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -28736,
+          288
+        ],
+        "webhookId": "a803dc45-05ab-495a-b706-770caf38252d",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "auGyM3zSkXTvrnWY",
+            "name": "N8N Webhook - ERPNext"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "map-ticket",
+                "name": "mapTicket",
+                "type": "string",
+                "value": "={{ ($json.body.mapTicket || $json.mapTicket || '').toString().trim().toUpperCase() }}"
+              },
+              {
+                "id": "erpnext-user",
+                "name": "erpnextUser",
+                "type": "string",
+                "value": "={{ ($json.body.erpnextUser || $json.erpnextUser || '').toString().trim() }}"
+              },
+              {
+                "id": "erpnext-docname",
+                "name": "erpnextDocname",
+                "type": "string",
+                "value": "={{ ($json.body.erpnextDocname || $json.erpnextDocname || '').toString().trim() }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "3568629a-198a-4a61-8b65-b6527e110c57",
+        "name": "Normalize Webhook Input",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          -28512,
+          288
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "map-ticket-regex",
+                "leftValue": "={{ $('Normalize Webhook Input').item.json.mapTicket }}",
+                "rightValue": "^MAP-[0-9]+$",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "b0462581-87c3-4d37-80d8-bf0054bc6bf0",
+        "name": "MAP Ticket Valid",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -28288,
+          288
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": {
+            "ok": true,
+            "mapTicket": "={{ $('Normalize Webhook Input').item.json.mapTicket }}",
+            "erpnextDocname": "={{ $('Normalize Webhook Input').item.json.erpnextDocname }}",
+            "executionId": "={{ $execution.id }}"
+          },
+          "options": {
+            "responseCode": 202
+          }
+        },
+        "id": "eb798fb8-5b3e-4e68-bca7-d21a5645ba9b",
+        "name": "Respond Accepted 202",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          -27616,
+          -192
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": {
+            "error": "invalid_input",
+            "message": "MAP Ticket must match MAP-123"
+          },
+          "options": {
+            "responseCode": 400
+          }
+        },
+        "id": "ee4e8f84-685f-42be-ac1e-8ff7e254726f",
+        "name": "Respond Invalid Ticket 400",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          -28064,
+          624
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "docType": "n8n Workflow Run",
+          "documentName": "={{ $json.name }}",
+          "properties": {
+            "customProperty": [
+              {
+                "field": "status",
+                "value": "Failed in n8n"
+              },
+              {
+                "field": "dispatch_error",
+                "value": "={{ ('n8n failed at ' + $('On Workflow Error').item.json.execution.lastNodeExecuted + ': ' + $('On Workflow Error').item.json.execution.error.message).slice(0, 200) }}"
+              }
+            ]
+          }
+        },
+        "id": "b912c775-2273-4670-9280-86d75d32af6c",
+        "name": "Mark Run Failed in n8n",
+        "type": "n8n-nodes-base.erpNext",
+        "typeVersion": 1,
+        "position": [
+          -27616,
+          944
+        ],
+        "credentials": {
+          "erpNextApi": {
+            "id": "gM5LrXNEJxHkh01n",
+            "name": "ERPNext account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "combinator": "or",
+            "conditions": [
+              {
+                "id": "issuetype-name",
+                "leftValue": "={{ $('Jira > Get Issue').item.json.fields.issuetype.name }}",
+                "operator": {
+                  "operation": "equals",
+                  "type": "string"
+                },
+                "rightValue": "Notification Build"
+              },
+              {
+                "id": "issuetype-id",
+                "leftValue": "={{ $('Jira > Get Issue').item.json.fields.issuetype.id }}",
+                "operator": {
+                  "operation": "equals",
+                  "type": "string"
+                },
+                "rightValue": "21702"
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            }
+          },
+          "options": {}
+        },
+        "id": "7998d700-4181-49b4-9c42-55c8ee5be8bb",
+        "name": "Issue Type Is Notification Build",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -27840,
+          0
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "a06cdce6-a562-4b52-a640-c67c485c7d15",
+        "name": "On Workflow Error",
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          -28736,
+          1040
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": {
+            "error": "jira_issue_error",
+            "message": "={{ $json.message || 'Jira Get Issue failed' }}"
+          },
+          "options": {
+            "responseCode": 400
+          }
+        },
+        "id": "35bb97e7-4b8e-499e-8951-2ab0170aabf3",
+        "name": "Respond Jira Get Failed 400",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          -27840,
+          432
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": {
+            "error": "wrong_issue_type",
+            "message": "={{ 'Issue type must be Notification Build, got: ' + ($('Jira > Get Issue').item.json.fields.issuetype.name || 'unknown') }}"
+          },
+          "options": {
+            "responseCode": 400
+          }
+        },
+        "id": "479789a4-0eaf-4f91-9c6e-12e60e152313",
+        "name": "Respond Wrong Issue Type 400",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          -27616,
+          240
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "docType": "n8n Workflow Run",
+          "limit": 1,
+          "options": {
+            "fields": [
+              "name"
+            ],
+            "filters": {
+              "customProperty": [
+                {
+                  "field": "n8n_execution_id",
+                  "value": "={{ $('On Workflow Error').item.json.execution.id }}"
+                }
+              ]
+            }
+          }
+        },
+        "id": "826ea26e-b183-4d27-bc02-051dc188cda0",
+        "name": "Find Run by Execution Id",
+        "type": "n8n-nodes-base.erpNext",
+        "typeVersion": 1,
+        "position": [
+          -28064,
+          1040
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "erpNextApi": {
+            "id": "gM5LrXNEJxHkh01n",
+            "name": "ERPNext account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "docType": "n8n Workflow Run",
+          "documentName": "={{ $('Normalize Webhook Input').item.json.erpnextDocname }}",
+          "properties": {
+            "customProperty": [
+              {
+                "field": "dispatch_error"
+              },
+              {
+                "field": "status",
+                "value": "Completed"
+              }
+            ]
+          }
+        },
+        "id": "72195f0f-b9b8-43d7-a3ba-93658b808222",
+        "name": "Mark Run Completed",
+        "type": "n8n-nodes-base.erpNext",
+        "typeVersion": 1,
+        "position": [
+          -19616,
+          -240
+        ],
+        "credentials": {
+          "erpNextApi": {
+            "id": "gM5LrXNEJxHkh01n",
+            "name": "ERPNext account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "amount": 2
+        },
+        "id": "f4c07b16-abb0-4791-bfd3-6f429d5dbf56",
+        "name": "Wait 2s for Run save",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          -28512,
+          1040
+        ],
+        "webhookId": "e40268fd-0503-4864-8af8-a80b48c659e3"
+      },
+      {
+        "parameters": {
+          "errorMessage": "MAP Ticket must match MAP-123"
+        },
+        "id": "cf94b9a5-13e1-4e76-b723-0967c39bbce6",
+        "name": "Fail Invalid Ticket",
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          -27840,
+          624
+        ]
+      },
+      {
+        "parameters": {
+          "errorMessage": "={{ $('Jira > Get Issue').item.json.message || 'Jira Get Issue failed' }}"
+        },
+        "id": "cb053aa6-8621-4205-8d5a-54504236dced",
+        "name": "Fail Jira Get Failed",
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          -27616,
+          432
+        ]
+      },
+      {
+        "parameters": {
+          "errorMessage": "={{ 'Issue type must be Notification Build, got: ' + ($('Jira > Get Issue').item.json.fields.issuetype.name || 'unknown') }}"
+        },
+        "id": "99b1de4c-7413-4aac-aa0a-bb539d796072",
+        "name": "Fail Wrong Issue Type",
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          -27392,
+          240
+        ]
+      },
+      {
+        "parameters": {
+          "resource": "execution",
+          "operation": "get",
+          "executionId": "={{ $('On Workflow Error').item.json.execution.id }}",
+          "options": {
+            "activeWorkflows": true
+          },
+          "requestOptions": {}
+        },
+        "id": "e1067172-6415-4e99-a7a9-76f229d63c2f",
+        "name": "Get Failed Execution",
+        "type": "n8n-nodes-base.n8n",
+        "typeVersion": 1,
+        "position": [
+          -28288,
+          1040
+        ],
+        "credentials": {
+          "n8nApi": {
+            "id": "mkIknOTSq3DOp5UH",
+            "name": "N8N - api"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "docType": "n8n Workflow Run",
+          "documentName": "={{ $json.data.resultData.runData['Normalize Webhook Input'][0].data.main[0][0].json.erpnextDocname }}",
+          "properties": {
+            "customProperty": [
+              {
+                "field": "dispatch_error",
+                "value": "={{ ('n8n failed at ' + $('On Workflow Error').item.json.execution.lastNodeExecuted + ': ' + $('On Workflow Error').item.json.execution.error.message).slice(0, 200) }}"
+              },
+              {
+                "field": "status",
+                "value": "Failed in n8n"
+              }
+            ]
+          }
+        },
+        "id": "e98614b4-d00e-4ddd-a5c1-24d515074c9e",
+        "name": "Mark Run Failed from Execution",
+        "type": "n8n-nodes-base.erpNext",
+        "typeVersion": 1,
+        "position": [
+          -27616,
+          1136
+        ],
+        "credentials": {
+          "erpNextApi": {
+            "id": "gM5LrXNEJxHkh01n",
+            "name": "ERPNext account - scaicedo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "has-name",
+                "leftValue": "={{ $json.name }}",
+                "operator": {
+                  "operation": "notEmpty",
+                  "type": "string"
+                }
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            }
+          },
+          "options": {}
+        },
+        "id": "7e03bcac-74c9-4938-a529-5fcda5fb1ace",
+        "name": "Run Found?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -27840,
+          1040
+        ]
+      },
+      {
+        "parameters": {
+          "channelId": "w4otsgqigtbou8q856x5zycemh",
+          "attachments": [
+            {
+              "color": "#55FF00",
+              "fallback": "OSN Notification Completed",
+              "footer": "",
+              "text": "={{ (() => {\n  const a = $('Jira > Get Issue').item.json.fields?.assignee?.name;\n  const b = (s) => String.fromCharCode(42, 42) + s + String.fromCharCode(42, 42);\n  const tag = a ? b('Assignee:') + ' @' + a + '\\n' : '';\n  const mapTicket = $('Normalize Webhook Input').item.json.mapTicket;\n  const docname = $('Normalize Webhook Input').item.json.erpnextDocname;\n  const jiraMd = '[' + mapTicket + '](https://jiraops.corp-apps.com/browse/' + mapTicket + ')';\n  const deskMd = '[' + docname + '](https://martech-desk.corp-apps.com/app/n8n-workflow-run/' + docname + ')';\n  return tag + b('MAP:') + ' ' + jiraMd + '\\n' + b('MarDesk:') + ' ' + deskMd;\n})() }}",
+              "thumb_url": "https://www.freeiconspng.com/uploads/black-technorati-icon-8.png",
+              "title": ":white_check_mark: OSN Notification Completed"
+            }
+          ],
+          "otherOptions": {}
+        },
+        "id": "668ce8ac-1a1c-49ac-acc5-06000422cec8",
+        "name": "Mattermost Completed",
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          -19392,
+          -240
+        ],
+        "retryOnFail": true,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "attachments": [
+            {
+              "color": "={{ (() => {\n  let runData = {};\n  try { runData = $('Get Failed Execution').item.json.data.resultData.runData || {}; } catch (e) {}\n  const cmsCreated = (runData['CMS > Create Notification'] || []).some((r) => r.executionStatus === 'success');\n  return cmsCreated ? '#FFCC00' : '#FF0000';\n})() }}",
+              "fallback": "={{ (() => {\n  let runData = {};\n  try { runData = $('Get Failed Execution').item.json.data.resultData.runData || {}; } catch (e) {}\n  const cmsCreated = (runData['CMS > Create Notification'] || []).some((r) => r.executionStatus === 'success');\n  return cmsCreated ? 'OSN Notification Proof Missing' : 'OSN Notification Failed';\n})() }}",
+              "footer": "",
+              "text": "={{ (() => {\n  const b = (s) => String.fromCharCode(42, 42) + s + String.fromCharCode(42, 42);\n  let runData = {};\n  try { runData = $('Get Failed Execution').item.json.data.resultData.runData || {}; } catch (e) {}\n  const firstJson = (name) => (runData[name] || [])[0]?.data?.main?.[0]?.[0]?.json;\n  const cmsCreated = (runData['CMS > Create Notification'] || []).some((r) => r.executionStatus === 'success');\n  const assignee = (firstJson('Jira > Get Issue') || {}).fields?.assignee?.name;\n  const norm = firstJson('Normalize Webhook Input') || {};\n  const jira = firstJson('Jira > Get Issue') || {};\n  const mapTicket = norm.mapTicket || jira.key || '';\n  const docname = norm.erpnextDocname || '';\n  const mapping = firstJson('OSN Static Fields Mapping') || {};\n  const check = firstJson('CMS > Check Existing Slug') || {};\n  const created = firstJson('CMS > Get ContentId By Slug') || {};\n  const createJson = firstJson('CMS > Create Notification') || {};\n  const wanted = (firstJson('Naming Conventions API') || {}).slug;\n  const checkItems = check.items || [];\n  const checkHit = checkItems.find((item) => {\n    const slug = item.fields?.nonLocalised?.slugname || item.indexed?.slugname;\n    return wanted && slug === wanted;\n  }) || checkItems[0] || {};\n  const createdHit = (created.items || [])[0] || {};\n  const cmsHref = (contentId, bucket) => {\n    if (!mapping.brandCode || !contentId) return '';\n    return 'https://contentmanager.intra-apps.com/content/edit/notification/' + mapping.brandCode + '/' + String(bucket || mapping.bucket || '').toLowerCase() + '/' + contentId;\n  };\n  const err = $('On Workflow Error').item.json.execution || {};\n  const errObj = err.error || {};\n  let reason = String(errObj.stack || '').split('\\n')[0].replace(/^Error:\\s*/i, '').trim();\n  reason = reason.replace(/\\[line \\d+\\]/gi, '').replace(/\\s+/g, ' ').trim();\n  if (!reason || reason.startsWith('//') || reason === 'https') {\n    reason = String(errObj.message || 'n8n workflow failed').replace(/\\[line \\d+\\]/gi, '').trim();\n  }\n  const duplicate = /already exists/i.test(reason) || err.lastNodeExecuted === 'Notification already exists';\n  if (cmsCreated) {\n    reason = 'Automation not able to get the proof';\n    const contentId = createdHit.contentId || createJson.contentId || createJson.id;\n    const cmsUrl = cmsHref(contentId, createdHit.bucket || mapping.bucket);\n    if (cmsUrl) reason += ' - [Open in CMS](' + cmsUrl + ')';\n  } else if (duplicate) {\n    reason = 'Notification already exists';\n    const cmsUrl = cmsHref(checkHit.contentId, mapping.bucket);\n    if (cmsUrl) reason += ' - [Open in CMS](' + cmsUrl + ')';\n  }\n  const lines = [];\n  if (assignee) lines.push(b('Assignee:') + ' @' + assignee);\n  if (mapTicket) {\n    lines.push(b('MAP:') + ' [' + mapTicket + '](https://jiraops.corp-apps.com/browse/' + mapTicket + ')');\n  }\n  if (docname) {\n    lines.push(b('MarDesk:') + ' [' + docname + '](https://martech-desk.corp-apps.com/app/n8n-workflow-run/' + docname + ')');\n  }\n  lines.push(b('Reason:') + ' ' + reason);\n  return lines.join('\\n');\n})() }}",
+              "thumb_url": "https://www.freeiconspng.com/uploads/black-technorati-icon-8.png",
+              "title": "={{ (() => {\n  let runData = {};\n  try { runData = $('Get Failed Execution').item.json.data.resultData.runData || {}; } catch (e) {}\n  const cmsCreated = (runData['CMS > Create Notification'] || []).some((r) => r.executionStatus === 'success');\n  return cmsCreated ? ':large_yellow_circle: OSN Notification Proof Missing' : ':x: OSN Notification Failed';\n})() }}"
+            }
+          ],
+          "otherOptions": {},
+          "channelId": "w4otsgqigtbou8q856x5zycemh",
+          "operation": "post",
+          "resource": "message"
+        },
+        "id": "991c689f-c300-4495-861d-c38e6e705e47",
+        "name": "Mattermost Error",
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          -27392,
+          1040
+        ],
+        "retryOnFail": true,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        },
+        "onError": "continueRegularOutput"
+      }
+    ],
+    "connections": {
+      "Naming Conventions API": {
+        "main": [
+          [
+            {
+              "node": "CMS & MM Login",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Row from Baserow": {
+        "main": [
+          [
+            {
+              "node": "OSN Static Fields Mapping",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Jira > Download Image": {
+        "main": [
+          [
+            {
+              "node": "CMS > Upload Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "CMS > Upload Image": {
+        "main": [
+          [
+            {
+              "node": "CMS > Create Notification",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MM > Generate Audience CSV": {
+        "main": [
+          [
+            {
+              "node": "MM > Upload Audience",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MM > Upload Audience": {
+        "main": [
+          [
+            {
+              "node": "Wait 5s",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait 5s": {
+        "main": [
+          [
+            {
+              "node": "MM > Check Status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MM > Check Status": {
+        "main": [
+          [
+            {
+              "node": "Is SUCCESS?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Is SUCCESS?": {
+        "main": [
+          [
+            {
+              "node": "MM > Create Campaign",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Audience retries left?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MM > Create Campaign": {
+        "main": [
+          [
+            {
+              "node": "MM > Search Campaign",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Screenshot > Short Copy": {
+        "main": [
+          [
+            {
+              "node": "Screenshot > Long Copy",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Screenshot > Short File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Screenshot > Long Copy": {
+        "main": [
+          [
+            {
+              "node": "Screenshot > Long File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Screenshot > Short File": {
+        "main": [
+          [
+            {
+              "node": "Jira > Attach Short",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Screenshot > Long File": {
+        "main": [
+          [
+            {
+              "node": "Jira > Attach Long",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Jira > Attach Short": {
+        "main": [
+          [
+            {
+              "node": "Wait for Both Attachments",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Jira > Attach Long": {
+        "main": [
+          [
+            {
+              "node": "Wait for Both Attachments",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Wait for Both Attachments": {
+        "main": [
+          [
+            {
+              "node": "Jira > Post Evidence Comment",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has image?": {
+        "main": [
+          [
+            {
+              "node": "Jira > Download Image",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Ticket has no image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "CMS > Create Notification": {
+        "main": [
+          [
+            {
+              "node": "Wait 2s for CMS index",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait 2s for CMS index": {
+        "main": [
+          [
+            {
+              "node": "CMS > Get ContentId By Slug",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "CMS > Get ContentId By Slug": {
+        "main": [
+          [
+            {
+              "node": "Content found?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Content found?": {
+        "main": [
+          [
+            {
+              "node": "MM > Generate Audience CSV",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "ContentId retries left?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ContentId retries left?": {
+        "main": [
+          [
+            {
+              "node": "Wait 2s for CMS index",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "ContentId poll exceeded",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MM > Search Campaign": {
+        "main": [
+          [
+            {
+              "node": "MM > Pick Campaign",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MM > Pick Campaign": {
+        "main": [
+          [
+            {
+              "node": "MM > Activate Campaign",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Audience retries left?": {
+        "main": [
+          [
+            {
+              "node": "Wait 5s",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Audience poll exceeded",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MM > Activate Campaign": {
+        "main": [
+          [
+            {
+              "node": "Wait 5s for Campaign",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait 5s for Campaign": {
+        "main": [
+          [
+            {
+              "node": "MM > Get Campaign",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MM > Get Campaign": {
+        "main": [
+          [
+            {
+              "node": "Campaign completed?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Campaign completed?": {
+        "main": [
+          [
+            {
+              "node": "Wait 3s before Proof",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Campaign poll exceeded",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait 5s for Campaign",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OSN Static Fields Mapping": {
+        "main": [
+          [
+            {
+              "node": "CMS > Check Existing Slug",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "CMS > Check Existing Slug": {
+        "main": [
+          [
+            {
+              "node": "Slug already used?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Slug already used?": {
+        "main": [
+          [
+            {
+              "node": "Notification already exists",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Has image?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "CMS & MM Login": {
+        "main": [
+          [
+            {
+              "node": "Get Row from Baserow",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Casino > Browser Login": {
+        "main": [
+          [
+            {
+              "node": "Casino > Login",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Casino > Login": {
+        "main": [
+          [
+            {
+              "node": "Screenshot > Short Copy",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait 3s before Proof": {
+        "main": [
+          [
+            {
+              "node": "Casino > Login HTTP",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Casino > Login HTTP": {
+        "main": [
+          [
+            {
+              "node": "Casino > Login",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Casino > Browser Login",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Receive ERPNext Dispatch": {
+        "main": [
+          [
+            {
+              "node": "Normalize Webhook Input",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalize Webhook Input": {
+        "main": [
+          [
+            {
+              "node": "MAP Ticket Valid",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MAP Ticket Valid": {
+        "main": [
+          [
+            {
+              "node": "Jira > Get Issue",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond Invalid Ticket 400",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Jira > Get Issue": {
+        "main": [
+          [
+            {
+              "node": "Issue Type Is Notification Build",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond Jira Get Failed 400",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Issue Type Is Notification Build": {
+        "main": [
+          [
+            {
+              "node": "Respond Accepted 202",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Naming Conventions API",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond Wrong Issue Type 400",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "On Workflow Error": {
+        "main": [
+          [
+            {
+              "node": "Wait 2s for Run save",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Jira > Post Evidence Comment": {
+        "main": [
+          [
+            {
+              "node": "Mark Run Completed",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond Invalid Ticket 400": {
+        "main": [
+          [
+            {
+              "node": "Fail Invalid Ticket",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond Wrong Issue Type 400": {
+        "main": [
+          [
+            {
+              "node": "Fail Wrong Issue Type",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond Jira Get Failed 400": {
+        "main": [
+          [
+            {
+              "node": "Fail Jira Get Failed",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Find Run by Execution Id": {
+        "main": [
+          [
+            {
+              "node": "Run Found?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Run Found?": {
+        "main": [
+          [
+            {
+              "node": "Mark Run Failed in n8n",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Mark Run Failed from Execution",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait 2s for Run save": {
+        "main": [
+          [
+            {
+              "node": "Get Failed Execution",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Failed Execution": {
+        "main": [
+          [
+            {
+              "node": "Find Run by Execution Id",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark Run Failed in n8n": {
+        "main": [
+          [
+            {
+              "node": "Mattermost Error",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark Run Failed from Execution": {
+        "main": [
+          [
+            {
+              "node": "Mattermost Error",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark Run Completed": {
+        "main": [
+          [
+            {
+              "node": "Mattermost Completed",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [
+      {
+        "id": "29413f76-8c72-4a2c-ba0b-27b535fc9947",
+        "name": "MM campaign",
+        "nodeIds": [
+          "eaba0ca5-7419-4a4c-9146-77afa5ed08c4",
+          "8865bdf4-ba17-4ba8-861a-bac20645f6ce",
+          "427d5a46-3c5c-4262-a5f2-21251a3d587a",
+          "93e97553-e29d-4bc1-b7a8-922289cf7246"
+        ],
+        "description": "Create, exact-match search, and activate the INTERNALONLY campaign."
+      },
+      {
+        "id": "edaee2e4-d634-4d42-a28e-68a0753444ed",
+        "name": "CMS create",
+        "nodeIds": [
+          "33083942-317c-4d09-ab19-be7e25b9492b",
+          "0e62972b-532b-4119-83d7-7c9587fbba2c",
+          "5128d832-ad21-4b79-b12d-62c65aecbd57"
+        ],
+        "description": "Upload the Jira image and publish the notification."
+      },
+      {
+        "id": "20d107f3-1f88-40f0-a46c-2cd90433aac7",
+        "name": "MM audience upload",
+        "nodeIds": [
+          "25b514d9-2c25-4d36-a7a9-eaaa9a543138",
+          "aa4ee07d-628b-4e19-8f35-05a84668e5ac"
+        ],
+        "description": "Build the test-player CSV and start the audience upload job."
+      },
+      {
+        "id": "30878a82-a529-4141-a512-9092455527bf",
+        "name": "Auth and mapping",
+        "nodeIds": [
+          "e84f5504-7efc-4a17-abe0-49e6fa99138d",
+          "f3f62cad-b47c-4f1a-9174-311a22526785",
+          "206008e9-ffe3-4008-876a-f8f725972f5f"
+        ],
+        "description": "Portal session plus Baserow brand/region/player/login. Empty Baserow rows fail the run."
+      }
+    ],
+    "authors": "Canice James (via MCP)",
+    "name": "Convert Jira wiki superscript in Message Body",
+    "description": "MAP-5262 / exec 82084 left {^}th{^} literal in CMS HTML. wikiToHtml now converts {^} / ^ ^ to <sup> and {~} / ~ ~ to <sub>, nested inside {*}bold{*}.",
+    "autosaved": false
+  },
+  "activeVersionId": "d4a28c5a-d7a0-4e6e-b677-86c28b3732da",
   "connections": {
-    "On form submission": {
-      "main": [
-        [
-          {
-            "node": "Jira > Get Issue",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Jira > Get Issue": {
-      "main": [
-        [
-          {
-            "node": "Naming Conventions API",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Naming Conventions API": {
       "main": [
         [
@@ -36,33 +2373,11 @@
         ]
       ]
     },
-    "CMS & MM Login": {
-      "main": [
-        [
-          {
-            "node": "Get Row from Baserow",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Get Row from Baserow": {
       "main": [
         [
           {
             "node": "OSN Static Fields Mapping",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OSN Static Fields Mapping": {
-      "main": [
-        [
-          {
-            "node": "Jira > Download Image",
             "type": "main",
             "index": 0
           }
@@ -85,28 +2400,6 @@
         [
           {
             "node": "CMS > Create Notification",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "CMS > Create Notification": {
-      "main": [
-        [
-          {
-            "node": "CMS > Get ContentId By Slug",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "CMS > Get ContentId By Slug": {
-      "main": [
-        [
-          {
-            "node": "MM > Generate Audience CSV",
             "type": "main",
             "index": 0
           }
@@ -168,7 +2461,7 @@
         ],
         [
           {
-            "node": "Wait 5s",
+            "node": "Audience retries left?",
             "type": "main",
             "index": 0
           }
@@ -180,39 +2473,6 @@
         [
           {
             "node": "MM > Search Campaign",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "MM > Search Campaign": {
-      "main": [
-        [
-          {
-            "node": "MM > Activate Campaign",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "MM > Activate Campaign": {
-      "main": [
-        [
-          {
-            "node": "Casino > Login",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Casino > Login": {
-      "main": [
-        [
-          {
-            "node": "Screenshot > Short Copy",
             "type": "main",
             "index": 0
           }
@@ -300,6 +2560,513 @@
           }
         ]
       ]
+    },
+    "Has image?": {
+      "main": [
+        [
+          {
+            "node": "Jira > Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ticket has no image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CMS > Create Notification": {
+      "main": [
+        [
+          {
+            "node": "Wait 2s for CMS index",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2s for CMS index": {
+      "main": [
+        [
+          {
+            "node": "CMS > Get ContentId By Slug",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CMS > Get ContentId By Slug": {
+      "main": [
+        [
+          {
+            "node": "Content found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content found?": {
+      "main": [
+        [
+          {
+            "node": "MM > Generate Audience CSV",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ContentId retries left?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ContentId retries left?": {
+      "main": [
+        [
+          {
+            "node": "Wait 2s for CMS index",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ContentId poll exceeded",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MM > Search Campaign": {
+      "main": [
+        [
+          {
+            "node": "MM > Pick Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MM > Pick Campaign": {
+      "main": [
+        [
+          {
+            "node": "MM > Activate Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audience retries left?": {
+      "main": [
+        [
+          {
+            "node": "Wait 5s",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Audience poll exceeded",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MM > Activate Campaign": {
+      "main": [
+        [
+          {
+            "node": "Wait 5s for Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5s for Campaign": {
+      "main": [
+        [
+          {
+            "node": "MM > Get Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MM > Get Campaign": {
+      "main": [
+        [
+          {
+            "node": "Campaign completed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Campaign completed?": {
+      "main": [
+        [
+          {
+            "node": "Wait 3s before Proof",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Campaign poll exceeded",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 5s for Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OSN Static Fields Mapping": {
+      "main": [
+        [
+          {
+            "node": "CMS > Check Existing Slug",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CMS > Check Existing Slug": {
+      "main": [
+        [
+          {
+            "node": "Slug already used?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slug already used?": {
+      "main": [
+        [
+          {
+            "node": "Notification already exists",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Has image?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CMS & MM Login": {
+      "main": [
+        [
+          {
+            "node": "Get Row from Baserow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Casino > Browser Login": {
+      "main": [
+        [
+          {
+            "node": "Casino > Login",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Casino > Login": {
+      "main": [
+        [
+          {
+            "node": "Screenshot > Short Copy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 3s before Proof": {
+      "main": [
+        [
+          {
+            "node": "Casino > Login HTTP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Casino > Login HTTP": {
+      "main": [
+        [
+          {
+            "node": "Casino > Login",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Casino > Browser Login",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive ERPNext Dispatch": {
+      "main": [
+        [
+          {
+            "node": "Normalize Webhook Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Webhook Input": {
+      "main": [
+        [
+          {
+            "node": "MAP Ticket Valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MAP Ticket Valid": {
+      "main": [
+        [
+          {
+            "node": "Jira > Get Issue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid Ticket 400",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira > Get Issue": {
+      "main": [
+        [
+          {
+            "node": "Issue Type Is Notification Build",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Jira Get Failed 400",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Issue Type Is Notification Build": {
+      "main": [
+        [
+          {
+            "node": "Respond Accepted 202",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Naming Conventions API",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Wrong Issue Type 400",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Wait 2s for Run save",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira > Post Evidence Comment": {
+      "main": [
+        [
+          {
+            "node": "Mark Run Completed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond Invalid Ticket 400": {
+      "main": [
+        [
+          {
+            "node": "Fail Invalid Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond Wrong Issue Type 400": {
+      "main": [
+        [
+          {
+            "node": "Fail Wrong Issue Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond Jira Get Failed 400": {
+      "main": [
+        [
+          {
+            "node": "Fail Jira Get Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Run by Execution Id": {
+      "main": [
+        [
+          {
+            "node": "Run Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Found?": {
+      "main": [
+        [
+          {
+            "node": "Mark Run Failed in n8n",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Run Failed from Execution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2s for Run save": {
+      "main": [
+        [
+          {
+            "node": "Get Failed Execution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Failed Execution": {
+      "main": [
+        [
+          {
+            "node": "Find Run by Execution Id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Run Failed in n8n": {
+      "main": [
+        [
+          {
+            "node": "Mattermost Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Run Failed from Execution": {
+      "main": [
+        [
+          {
+            "node": "Mattermost Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Run Completed": {
+      "main": [
+        [
+          {
+            "node": "Mattermost Completed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2026-08-14T13:36:18.052Z",
@@ -311,37 +3078,54 @@
     "builderVariant": "mcp"
   },
   "name": "OSN Notification Automation (Complete Working)",
-  "nodeGroups": [],
-  "nodes": [
+  "nodeGroups": [
     {
-      "parameters": {
-        "formTitle": "Notification Automation",
-        "formDescription": "This tool automates notifications",
-        "formFields": {
-          "values": [
-            {
-              "fieldLabel": "MAP Ticket",
-              "placeholder": "MAP-123"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.formTrigger",
-      "typeVersion": 2.6,
-      "position": [
-        -28048,
-        320
+      "id": "29413f76-8c72-4a2c-ba0b-27b535fc9947",
+      "name": "MM campaign",
+      "nodeIds": [
+        "eaba0ca5-7419-4a4c-9146-77afa5ed08c4",
+        "8865bdf4-ba17-4ba8-861a-bac20645f6ce",
+        "427d5a46-3c5c-4262-a5f2-21251a3d587a",
+        "93e97553-e29d-4bc1-b7a8-922289cf7246"
       ],
-      "id": "0d6140bb-cb2c-47e7-b8f4-72f7dbb29747",
-      "name": "On form submission",
-      "webhookId": "1c415dc6-2445-433a-82f2-783ac8a7cda4"
+      "description": "Create, exact-match search, and activate the INTERNALONLY campaign."
     },
+    {
+      "id": "edaee2e4-d634-4d42-a28e-68a0753444ed",
+      "name": "CMS create",
+      "nodeIds": [
+        "33083942-317c-4d09-ab19-be7e25b9492b",
+        "0e62972b-532b-4119-83d7-7c9587fbba2c",
+        "5128d832-ad21-4b79-b12d-62c65aecbd57"
+      ],
+      "description": "Upload the Jira image and publish the notification."
+    },
+    {
+      "id": "20d107f3-1f88-40f0-a46c-2cd90433aac7",
+      "name": "MM audience upload",
+      "nodeIds": [
+        "25b514d9-2c25-4d36-a7a9-eaaa9a543138",
+        "aa4ee07d-628b-4e19-8f35-05a84668e5ac"
+      ],
+      "description": "Build the test-player CSV and start the audience upload job."
+    },
+    {
+      "id": "30878a82-a529-4141-a512-9092455527bf",
+      "name": "Auth and mapping",
+      "nodeIds": [
+        "e84f5504-7efc-4a17-abe0-49e6fa99138d",
+        "f3f62cad-b47c-4f1a-9174-311a22526785",
+        "206008e9-ffe3-4008-876a-f8f725972f5f"
+      ],
+      "description": "Portal session plus Baserow brand/region/player/login. Empty Baserow rows fail the run."
+    }
+  ],
+  "nodes": [
     {
       "parameters": {
         "jiraVersion": "server",
         "operation": "get",
-        "issueKey": "={{ $json['MAP Ticket'] }}",
+        "issueKey": "={{ $('Normalize Webhook Input').item.json.mapTicket }}",
         "additionalFields": {}
       },
       "id": "8711fd1d-a638-4f77-9840-38bc6321a206",
@@ -349,15 +3133,19 @@
       "type": "n8n-nodes-base.jira",
       "typeVersion": 1,
       "position": [
-        -27824,
-        320
+        -28064,
+        192
       ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
       "credentials": {
         "jiraSoftwareServerApi": {
-          "id": "7MgXJNgpxtJeD70Z",
-          "name": "Jira SW Server account - canjames"
+          "id": "oAKRcX61sJaARIzC",
+          "name": "Jira SW Server account - scaicedo"
         }
-      }
+      },
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -368,16 +3156,21 @@
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"issueKey\": \"{{ $('Jira > Get Issue').item.json.key }}\"\n}",
-        "options": {}
+        "options": {
+          "timeout": 30000
+        }
       },
       "id": "28f42323-6ed9-454f-a297-3f2a7821dbad",
       "name": "Naming Conventions API",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -27600,
-        320
+        -27616,
+        0
       ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
       "credentials": {
         "httpBearerAuth": {
           "id": "eqoJ4C4FBGVFgO7t",
@@ -391,16 +3184,21 @@
         "url": "https://portal.intra-apps.com/api/v1/session",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpCustomAuth",
-        "options": {}
+        "options": {
+          "timeout": 30000
+        }
       },
       "id": "e84f5504-7efc-4a17-abe0-49e6fa99138d",
       "name": "CMS & MM Login",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -27376,
-        320
+        -27392,
+        0
       ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
       "credentials": {
         "httpCustomAuth": {
           "id": "Veg9O8F0gD2olQSG",
@@ -425,17 +3223,22 @@
                 "value": "={{ $('Jira > Get Issue').item.json.fields?.customfield_11507?.[0]?.value }}"
               }
             ]
-          }
+          },
+          "filterType": "AND"
         }
       },
       "type": "n8n-nodes-base.baserow",
       "typeVersion": 1.1,
       "position": [
         -27168,
-        320
+        0
       ],
       "id": "f3f62cad-b47c-4f1a-9174-311a22526785",
       "name": "Get Row from Baserow",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
       "credentials": {
         "baserowApi": {
           "id": "MK0sZSY5DZaYOoTr",
@@ -446,15 +3249,15 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const jiraBrand = $('Jira > Get Issue').item.json.fields?.customfield_11504?.[0]?.value;\nconst jiraRegion = $('Jira > Get Issue').item.json.fields?.customfield_11507?.[0]?.value;\n\nconst row = $('Get Row from Baserow').item.json;\n\nif (!row || !row.brandCode) {\n  throw new Error(`No Baserow configuration found for Brand: ${jiraBrand}, Region: ${jiraRegion}`);\n}\n\nconst baseName = $('Naming Conventions API').item.json.name;\nconst baseSlug = $('Naming Conventions API').item.json.slug;\nconst runSuffix = Date.now().toString().slice(-4);\n\nreturn {\n  sessionId: $('CMS & MM Login').item.json.sessionId,\n  name: `${baseName} ${runSuffix}`,\n  slug: `${baseSlug}-${runSuffix}`,\n  region: row.region || jiraRegion,\n  regionId: row.regionId,\n  brandName: row.brandName,\n  brandCode: row.brandCode,\n  bucket: row.bucket,\n  territory: row.territory,\n  pageUrl: row.pageUrl\n};"
+        "jsCode": "const jiraFields = $('Jira > Get Issue').item.json.fields || {};\nconst jiraBrand = jiraFields.customfield_11504?.[0]?.value;\nconst jiraRegion = jiraFields.customfield_11507?.[0]?.value;\n\nconst rowData = $('Get Row from Baserow').item;\nconst row = rowData?.json || {};\n\nif (!rowData || Object.keys(row).length === 0) {\n  throw new Error(\n    `[Baserow Query Error] No row found in table 541 for Jira_Brand_Code=\"${jiraBrand}\" and Jira_Region=\"${jiraRegion}\".`\n  );\n}\n\nconst brandCode = row.CMS_Brand_Code;\nconst brandName = row.CMS_Brand;\nconst bucket = row.CMS_Bucket;\nconst territory = row.MM_Territory;\nconst region = row.Jira_Region || jiraRegion;\nconst regionId = row.Region_ID;\n\nconst domain = row.Domain;\nconst bareDomain = domain\n  ? String(domain).trim().replace(/^https?:\\/\\//, '').replace(/^www\\./, '').replace(/\\/$/, '')\n  : undefined;\n\nconst pageUrl = bareDomain ? `https://www.${bareDomain}/` : undefined;\nconst loginUrl = bareDomain ? `https://services.${bareDomain}/services/login-service/v1/login` : undefined;\nconst cookieDomain = bareDomain ? `.${bareDomain}` : undefined;\nconst previewUrl = pageUrl ? `${pageUrl}account/messages` : undefined;\n\nconst casinoUsername = row.Email_Account;\nconst casinoPassword = row.Password;\nconst playerId = row.PLAYER_ID;\nconst audienceCode = row.AUDIENCE_CODE;\n\nconst missingFields = [];\nif (!brandCode) missingFields.push('CMS_Brand_Code');\nif (!brandName) missingFields.push('CMS_Brand');\nif (!bucket) missingFields.push('CMS_Bucket');\nif (!territory) missingFields.push('MM_Territory');\nif (!regionId) missingFields.push('Region_ID');\nif (!domain) missingFields.push('Domain');\nif (!playerId) missingFields.push('PLAYER_ID');\nif (!audienceCode) missingFields.push('AUDIENCE_CODE');\nif (!casinoUsername) missingFields.push('Email_Account');\nif (!casinoPassword) missingFields.push('Password');\n\nif (missingFields.length > 0) {\n  throw new Error(\n    `[Baserow Mapping Error] Missing required fields (${missingFields.join(', ')}) for Jira_Brand_Code=\"${jiraBrand}\", Jira_Region=\"${jiraRegion}\".`\n  );\n}\n\nconst name = $('Naming Conventions API').item.json.name;\nconst slug = $('Naming Conventions API').item.json.slug;\n\nconst asCmsText = (raw) => String(raw ?? '').replace(/\\u00a0/g, ' ').trim();\nconst readCmsTextField = (label, raw, { maxLen, required = false } = {}) => {\n  const source = String(raw ?? '');\n  const text = asCmsText(source);\n  if (/[\\r\\n]/.test(source)) {\n    throw new Error(\n      maxLen != null\n        ? `${label} must be plain text on one line, max ${maxLen} characters.`\n        : `${label} must be plain text on one line.`\n    );\n  }\n  if (/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]/.test(source)) {\n    throw new Error(`${label} must be plain text (no control characters).`);\n  }\n  if (required && !text) {\n    throw new Error(`${label} is required.`);\n  }\n  if (maxLen != null && text.length > maxLen) {\n    throw new Error(`${label} must be at most ${maxLen} characters (got ${text.length}).`);\n  }\n  return text;\n};\n\nconst subject = readCmsTextField('Subject', jiraFields.customfield_26526, { maxLen: 50, required: true });\nconst notificationBody = readCmsTextField('Short copy', jiraFields.customfield_14907);\nconst notificationUrl = readCmsTextField('Notification URL', jiraFields.customfield_12423, { maxLen: 500 });\nconst notificationUrlLabel = readCmsTextField('CTA label', jiraFields.customfield_26527, { maxLen: 25 });\n\nconst wikiToHtml = (raw) => {\n  const escapeHtml = (value) => String(value)\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;');\n\n  const applyWiki = (text) => {\n    let s = text;\n    s = s.replace(/\\{color:[^}]+\\}([\\s\\S]*?)\\{color\\}/gi, (_, inner) => {\n      return `<span class=\"ol-Text--color_primary\">${applyWiki(inner)}</span>`;\n    });\n    s = s.replace(/\\{\\*\\}([\\s\\S]*?)\\{\\*\\}/g, (_, inner) => `<strong>${applyWiki(inner)}</strong>`);\n    s = s.replace(/\\{_\\}([\\s\\S]*?)\\{_\\}/g, (_, inner) => `<em>${applyWiki(inner)}</em>`);\n    s = s.replace(/\\{\\^\\}([\\s\\S]*?)\\{\\^\\}/g, (_, inner) => `<sup>${applyWiki(inner)}</sup>`);\n    s = s.replace(/\\{\\~\\}([\\s\\S]*?)\\{\\~\\}/g, (_, inner) => `<sub>${applyWiki(inner)}</sub>`);\n    s = s.replace(/\\[([^\\]\\n|]+)\\|([^\\]\\n|]+)(?:\\|[^\\]]+)?\\]/g, '<a href=\"$2\">$1</a>');\n    s = s.replace(/\\[(https?:\\/\\/[^\\]\\n]+)\\]/g, '<a href=\"$1\">$1</a>');\n    s = s.replace(/\\*([^*\\n]+)\\*/g, '<strong>$1</strong>');\n    s = s.replace(/_([^_\\n]+)_/g, '<em>$1</em>');\n    s = s.replace(/\\^([^\\^\\n]+)\\^/g, '<sup>$1</sup>');\n    s = s.replace(/~([^~\\n]+)~/g, '<sub>$1</sub>');\n    s = s.replace(/\\n/g, '<br>');\n    return s;\n  };\n\n  const source = String(raw ?? '').replace(/\\r\\n/g, '\\n').replace(/\\r/g, '\\n');\n  return applyWiki(escapeHtml(source));\n};\n\nconst messageBodyHtml = wikiToHtml(jiraFields.customfield_26522);\n\nconst IMAGE_EXT = /\\.(webp|png|jpe?g|gif|bmp|svg|avif|tiff?|heic|heif|ico|jfif|pjpeg|pjp|apng|jxl)$/i;\nconst isImageAttachment = (a) => {\n  const mime = String(a?.mimeType || '').toLowerCase();\n  const filename = String(a?.filename || '');\n  return mime.startsWith('image/') || IMAGE_EXT.test(filename);\n};\nconst isWebpAttachment = (a) => {\n  const mime = String(a?.mimeType || '').toLowerCase();\n  const filename = String(a?.filename || '').toLowerCase();\n  return mime === 'image/webp' || filename.endsWith('.webp');\n};\nconst attachments = Array.isArray(jiraFields.attachment) ? jiraFields.attachment : [];\nconst imageAttachments = attachments.filter(isImageAttachment);\nconst webpAttachments = imageAttachments.filter(isWebpAttachment);\n// Jira lists newest first; last image is the original creative. Prefer webp over later comment screenshots.\nconst preferredImages = webpAttachments.length ? webpAttachments : imageAttachments;\nconst imageAttachment = preferredImages.length ? preferredImages[preferredImages.length - 1] : null;\nconst imageAttachmentId = imageAttachment?.id ? String(imageAttachment.id) : '';\n\nreturn {\n  sessionId: $('CMS & MM Login').item.json.sessionId,\n  name,\n  slug,\n  region,\n  regionId,\n  brandName,\n  brandCode,\n  bucket,\n  territory,\n  pageUrl,\n  loginUrl,\n  cookieDomain,\n  previewUrl,\n  playerId,\n  audienceCode,\n  subject,\n  notificationBody,\n  notificationUrl,\n  notificationUrlLabel,\n  imageAttachmentId,\n  messageBodyHtml,\n};\n"
       },
       "id": "206008e9-ffe3-4008-876a-f8f725972f5f",
       "name": "OSN Static Fields Mapping",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -26928,
-        320
+        -26704,
+        0
       ]
     },
     {
@@ -462,7 +3265,7 @@
         "jiraVersion": "server",
         "resource": "issueAttachment",
         "operation": "get",
-        "attachmentId": "={{ $('Jira > Get Issue').item.json.fields.attachment[0].id }}",
+        "attachmentId": "={{ $('OSN Static Fields Mapping').item.json.imageAttachmentId }}",
         "download": true,
         "binaryProperty": "notification_image"
       },
@@ -471,13 +3274,16 @@
       "type": "n8n-nodes-base.jira",
       "typeVersion": 1,
       "position": [
-        -26704,
-        320
+        -25808,
+        0
       ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
       "credentials": {
         "jiraSoftwareServerApi": {
-          "id": "7MgXJNgpxtJeD70Z",
-          "name": "Jira SW Server account - canjames"
+          "id": "oAKRcX61sJaARIzC",
+          "name": "Jira SW Server account - scaicedo"
         }
       }
     },
@@ -485,8 +3291,9 @@
       "parameters": {
         "method": "POST",
         "url": "=https://contentmanager.intra-apps.com/services/resource/v1/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/files",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "={\n  \"Authorization\": \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n}",
         "sendBody": true,
         "contentType": "multipart-form-data",
         "bodyParameters": {
@@ -498,16 +3305,21 @@
             }
           ]
         },
-        "options": {}
+        "options": {
+          "timeout": 30000
+        }
       },
       "id": "0e62972b-532b-4119-83d7-7c9587fbba2c",
       "name": "CMS > Upload Image",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -26480,
-        320
-      ]
+        -25584,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
     },
     {
       "parameters": {
@@ -518,46 +3330,57 @@
         "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "= {\n  \"status\": \"published\",\n  \"contentType\": \"notification\",\n  \"publishAll\": false,\n  \"languages\": [\"en\"],\n  \"name\": \"{{ $('OSN Static Fields Mapping').item.json.name }}\",\n  \"fields\": {\n    \"nonLocalised\": {\n      \"internal_name\": \"{{ $('OSN Static Fields Mapping').item.json.name }}\",\n      \"slugname\": \"{{ $('OSN Static Fields Mapping').item.json.slug }}\",\n      \"tags\": \"\"\n    },\n    \"localised\": {\n      \"en\": [\n        {\n          \"subject\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_26526 }}\",\n          \"notification_body\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_14907 }}\",\n          \"notification_url\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_12423 }}\",\n          \"notification_url_label\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_26527 }}\",\n          \"message_url\": \"/\",\n          \"message_url_label\": \"DEPOSIT NOW\",\n          \"notification_image\": {\n            \"url\": \"{{ '/cms' + ($('CMS > Upload Image').item.json[0]?.fileLocation || $('CMS > Upload Image').item.json.fileLocation) + ($('CMS > Upload Image').item.json[0]?.fileName || $('CMS > Upload Image').item.json.fileName) }}\",\n            \"alt\": \"Notification Image\"\n          },\n          \"message_body\": \"{{ $('Jira > Get Issue').item.json.fields.customfield_26522 }}\",\n          \"version\": \"control\"\n        }\n      ]\n    },\n    \"review\": {}\n  },\n  \"actionType\": \"Publish\"\n}",
-        "options": {}
+        "jsonBody": "= {\n  \"status\": \"published\",\n  \"contentType\": \"notification\",\n  \"publishAll\": false,\n  \"languages\": [\"en\"],\n  \"name\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.name || '') }},\n  \"fields\": {\n    \"nonLocalised\": {\n      \"internal_name\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.name || '') }},\n      \"slugname\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.slug || '') }},\n      \"tags\": \"\"\n    },\n    \"localised\": {\n      \"en\": [\n        {\n          \"subject\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.subject || '') }},\n          \"notification_body\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.notificationBody || '') }},\n          \"notification_url\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.notificationUrl || '') }},\n          \"notification_url_label\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.notificationUrlLabel || '') }},\n          \"message_url\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.notificationUrl || '') }},\n          \"message_url_label\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.notificationUrlLabel || '') }},\n          \"notification_image\": {\n            \"url\": {{ JSON.stringify('/cms' + ($('CMS > Upload Image').item.json[0]?.fileLocation || $('CMS > Upload Image').item.json.fileLocation || '') + ($('CMS > Upload Image').item.json[0]?.fileName || $('CMS > Upload Image').item.json.fileName || '')) }},\n            \"alt\": \"Notification Image\"\n          },\n          \"message_body\": {{ JSON.stringify($('OSN Static Fields Mapping').item.json.messageBodyHtml || '') }},\n          \"version\": \"control\"\n        }\n      ]\n    },\n    \"review\": {}\n  },\n  \"actionType\": \"Publish\"\n}",
+        "options": {
+          "timeout": 30000
+        }
       },
       "id": "5128d832-ad21-4b79-b12d-62c65aecbd57",
       "name": "CMS > Create Notification",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -26256,
-        320
-      ]
+        -25360,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
     },
     {
       "parameters": {
         "url": "=https://contentmanager.intra-apps.com/services/content/v4/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/buckets/{{ $('OSN Static Fields Mapping').item.json.bucket.toLowerCase() }}/contents?status=published&category=content&size=10&slugname={{ $('OSN Static Fields Mapping').item.json.slug }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
-        "options": {}
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "={\n  \"Authorization\": \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n}",
+        "options": {
+          "timeout": 30000
+        }
       },
       "id": "d93fb616-f2da-4f3f-9df7-4bccfe8fa742",
       "name": "CMS > Get ContentId By Slug",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -26032,
-        320
-      ]
+        -24912,
+        -64
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
     },
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const brand = $('OSN Static Fields Mapping').item.json.brandCode;\nconst region = $('OSN Static Fields Mapping').item.json.region;\nconst row = $('Get Row from Baserow').item.json;\n\nconst playerId = row.PLAYER_ID;\nconst audienceCode = row.AUDIENCE_CODE;\n\nif (!playerId || !audienceCode) {\n  throw new Error(`PLAYER_ID or AUDIENCE_CODE missing in Baserow for ${brand}-${region}`);\n}\n\nconst csvContent = `AUDIENCE_CODE,PLAYER_ID\\n${audienceCode},${playerId}`;\n\nreturn {\n  json: {\n    fileName: `${brand}-${region}.csv`\n  },\n  binary: {\n    audience_csv: {\n      data: btoa(csvContent),\n      mimeType: 'text/csv',\n      fileName: `${brand}-${region}.csv`\n    }\n  }\n};"
+        "jsCode": "const brand = $('OSN Static Fields Mapping').item.json.brandCode;\nconst region = $('OSN Static Fields Mapping').item.json.region;\nconst playerId = $('OSN Static Fields Mapping').item.json.playerId;\nconst audienceCode = $('OSN Static Fields Mapping').item.json.audienceCode;\n\nif (!playerId || !audienceCode) {\n  throw new Error(`PLAYER_ID or AUDIENCE_CODE missing for ${brand}-${region}`);\n}\n\nconst csvContent = `AUDIENCE_CODE,PLAYER_ID\\n${audienceCode},${playerId}`;\n\nreturn {\n  json: {\n    fileName: `${brand}-${region}.csv`\n  },\n  binary: {\n    audience_csv: {\n      data: btoa(csvContent),\n      mimeType: 'text/csv',\n      fileName: `${brand}-${region}.csv`\n    }\n  }\n};"
       },
       "id": "25b514d9-2c25-4d36-a7a9-eaaa9a543138",
       "name": "MM > Generate Audience CSV",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -25808,
-        320
+        -24464,
+        -112
       ]
     },
     {
@@ -578,16 +3401,21 @@
             }
           ]
         },
-        "options": {}
+        "options": {
+          "timeout": 30000
+        }
       },
       "id": "aa4ee07d-628b-4e19-8f35-05a84668e5ac",
       "name": "MM > Upload Audience",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -25584,
-        320
-      ]
+        -24240,
+        -112
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
     },
     {
       "parameters": {
@@ -599,8 +3427,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1,
       "position": [
-        -25360,
-        320
+        -24016,
+        -112
       ],
       "webhookId": "701809de-bf23-4e25-9b98-c4d0a9780cb9"
     },
@@ -608,42 +3436,33 @@
       "parameters": {
         "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v3/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/audience/upload/{{ $('MM > Upload Audience').item.json.jobId }}",
         "sendHeaders": true,
-        "specifyHeaders": "=json",
-        "headerParameters": {
-          "parameters": [
-            {}
-          ]
-        },
-        "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
-        "options": {}
+        "specifyHeaders": "json",
+        "jsonHeaders": "={\n  \"Authorization\": \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n}",
+        "options": {
+          "timeout": 30000
+        }
       },
       "id": "2820b6af-ebdc-4dae-8c2d-8422f9ee0271",
       "name": "MM > Check Status",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -25136,
-        256
-      ]
+        -23792,
+        -192
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
     },
     {
-      "parameters": {
-        "conditions": {
-          "string": [
-            {
-              "value1": "={{ $json.status }}",
-              "value2": "SUCCESS"
-            }
-          ]
-        }
-      },
+      "parameters": {},
       "id": "5f3fc248-9e9d-44b5-9464-0f1413e61076",
       "name": "Is SUCCESS?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [
-        -24912,
-        320
+        -23568,
+        -192
       ]
     },
     {
@@ -655,17 +3474,22 @@
         "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "= {\n  \"brandCode\": \"{{ $('OSN Static Fields Mapping').item.json.brandCode }}\",\n  \"territory\": \"{{ $('OSN Static Fields Mapping').item.json.territory }}\",\n  \"name\": \"INTERNALONLY {{ $('OSN Static Fields Mapping').item.json.name }}\",\n  \"campaignStatus\": \"FINAL\",\n  \"campaignType\": \"REGULAR\",\n  \"jobStatus\": \"PENDING\",\n  \"divide\":{\n    \"type\": null,\n    \"splitNumbers\": null,\n    \"splitCriteria\": [],\n    \"filter\": null,\n    \"sampling\": 0\n},\n  \"exclusions\":{\n    \"items\": [],\n    \"excludeOperator\": \"OR\"\n},\n  \"segments\": [\n    {\n      \"name\": \"{{ $('MM > Check Status').item.json.audienceName }}\",\n      \"splitCriteria\":null,\n      \"activities\": [\n        {\n          \"type\": \"NOTIFICATION\",\n          \"notificationContentId\": \"{{ $('OSN Static Fields Mapping').item.json.slug }}\",\n          \"expirationAmount\": \"30\",\n          \"expirationUnit\": \"DAYS\"\n        }\n      ]\n    }\n  ],\n  \"regionIds\": [\"{{ $('OSN Static Fields Mapping').item.json.regionId }}\"],\n  \"audience\": \"{{ $('MM > Check Status').item.json.audienceId }}\",\n  \"audienceName\": \"{{ $('MM > Check Status').item.json.audienceName }}\",\n  \"uploadedAudience\": true,\n  \"scheduleConfiguration\": {\n    \"type\": \"ONE_TIME_NOW\"\n  },\n  \"createdBy\":\"{{ $('CMS & MM Login').item.json.userName }}\",\n\"wizardSteps\":[\n    \"ADD_REGION\",\n    \"ADD_AUDIENCE\",\n    \"DIVIDE\",\n    \"ACTIVITIES\",\n    \"SCHEDULE\",\n    \"NAME_AND_SAVE\"\n]\n}",
-        "options": {}
+        "jsonBody": "={\n  \"brandCode\": \"{{ $('OSN Static Fields Mapping').item.json.brandCode }}\",\n  \"territory\": \"{{ $('OSN Static Fields Mapping').item.json.territory }}\",\n  \"name\": \"INTERNALONLY {{ $('OSN Static Fields Mapping').item.json.name }}\",\n  \"campaignStatus\": \"FINAL\",\n  \"campaignType\": \"REGULAR\",\n  \"jobStatus\": \"PENDING\",\n  \"divide\": {\n    \"type\": null,\n    \"splitNumbers\": null,\n    \"splitCriteria\": [],\n    \"filter\": null,\n    \"sampling\": 0\n  },\n  \"exclusions\": {\n    \"items\": [],\n    \"excludeOperator\": \"OR\"\n  },\n  \"segments\": [\n    {\n      \"name\": \"{{ $('MM > Check Status').item.json.audienceName }}\",\n      \"splitCriteria\": null,\n      \"activities\": [\n        {\n          \"type\": \"NOTIFICATION\",\n          \"notificationContentId\": \"{{ $('OSN Static Fields Mapping').item.json.slug }}\",\n          \"expirationAmount\": \"1\",\n          \"expirationUnit\": \"HOURS\"\n        }\n      ]\n    }\n  ],\n  \"regionIds\": [\"{{ $('OSN Static Fields Mapping').item.json.regionId.trim() }}\"],\n  \"audience\": \"{{ $('MM > Check Status').item.json.audienceId }}\",\n  \"audienceName\": \"{{ $('MM > Check Status').item.json.audienceName }}\",\n  \"uploadedAudience\": true,\n  \"scheduleConfiguration\": {\n    \"type\": \"ONE_TIME_NOW\"\n  },\n  \"createdBy\": \"{{ $('CMS & MM Login').item.json.userName || 'scaicedo' }}\",\n  \"wizardSteps\": [\n    \"ADD_REGION\",\n    \"ADD_AUDIENCE\",\n    \"DIVIDE\",\n    \"ACTIVITIES\",\n    \"SCHEDULE\",\n    \"NAME_AND_SAVE\"\n  ]\n}",
+        "options": {
+          "timeout": 30000
+        }
       },
       "id": "eaba0ca5-7419-4a4c-9146-77afa5ed08c4",
       "name": "MM > Create Campaign",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -24688,
-        320
-      ]
+        -23344,
+        -240
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
     },
     {
       "parameters": {
@@ -673,72 +3497,61 @@
         "sendHeaders": true,
         "specifyHeaders": "json",
         "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
-        "options": {}
+        "options": {
+          "timeout": 30000
+        }
       },
       "id": "8865bdf4-ba17-4ba8-861a-bac20645f6ce",
       "name": "MM > Search Campaign",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -24464,
-        320
-      ]
+        -23120,
+        -240
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
     },
     {
       "parameters": {
         "method": "PATCH",
-        "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v2/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/campaigns/{{ $json.items[0].campaignId }}/activate",
+        "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v2/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/campaigns/{{ $('MM > Pick Campaign').item.json.campaignId }}/activate",
         "sendHeaders": true,
         "specifyHeaders": "json",
         "jsonHeaders": "={\n  \"Authorization\" : \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n} ",
-        "options": {}
+        "options": {
+          "timeout": 30000
+        }
       },
       "id": "93e97553-e29d-4bc1-b7a8-922289cf7246",
       "name": "MM > Activate Campaign",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        -24240,
-        320
-      ]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $('OSN Static Fields Mapping').item.json.pageUrl.replace(/\\/$/, '') }}/services/login-service/v1/login",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpCustomAuth",
-        "options": {}
-      },
-      "id": "ef18a2c0-3e5c-40fe-b253-6280878a9d93",
-      "name": "Casino > Login",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4,
-      "position": [
-        -24016,
-        320
+        -22672,
+        -240
       ],
-      "credentials": {
-        "httpCustomAuth": {
-          "id": "FWhNWpA76Kbx8daU",
-          "name": "Casino - scaicedo"
-        }
-      }
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
     },
     {
       "parameters": {
         "operation": "runFunction",
-        "code": "const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n\nexport default async ({ page, context }) => {\n  await page.setViewport({ width: 1440, height: 750 });\n  const screenshots = [];\n\n  const takeScreenshot = async (stepName) => {\n    const base64 = await page.screenshot({ encoding: 'base64' });\n    screenshots.push({\n      step: stepName,\n      url: page.url(),\n      image: base64\n    });\n  };\n\n  const domain = context.domain;\n\n  // Step 1: Initial state before injecting cookies or navigating\n  await takeScreenshot('1_initial_state');\n\n  // Step 2: Set session cookies\n  await page.setCookie(\n    { name: 'sessionId', value: context.sessionId, domain: domain, path: '/' },\n    { name: 'sid', value: context.sessionId, domain: domain, path: '/' }\n  );\n\n  // Step 3: Fast navigation with DOM Content Loaded and 15s timeout\n  try {\n    await page.goto(context.url, { waitUntil: 'domcontentloaded', timeout: 18000 });\n  } catch (err) {\n    console.log('Navigation timeout or error:', err.message);\n  }\n  await takeScreenshot('2_after_goto');\n\n  // Step 4: Force active tab visibility and window focus\n  await page.bringToFront();\n  await page.evaluate(() => {\n    Object.defineProperty(document, 'hidden', { value: false, writable: true });\n    Object.defineProperty(document, 'visibilityState', { value: 'visible', writable: true });\n    document.dispatchEvent(new Event('visibilitychange'));\n    window.dispatchEvent(new Event('focus'));\n  });\n\n  // Step 5: Simulate physical user interaction (mouse move and scroll)\n  await page.mouse.move(500, 300);\n  await page.mouse.wheel({ deltaY: 100 });\n  await sleep(300);\n  await page.mouse.wheel({ deltaY: -100 });\n  await takeScreenshot('3_after_user_interaction');\n\n  // Step 6: Non-blocking check for notification selector with 5s timeout\n  try {\n    await page.waitForSelector(\n      'div.ol-notification__root, .ol-toast, [role=\"alert\"], .ol-modal, div.ol-z_docked',\n      { visible: true, timeout: 7000 }\n    );\n    await takeScreenshot('4_popup_detected');\n  } catch (err) {\n    console.log('Popup selector not detected within timeout');\n    await takeScreenshot('4_popup_timeout');\n  }\n\n  // Step 7: Final settling pause before final screenshot\n  await sleep(1500);\n  await takeScreenshot('5_final_capture');\n\n  return {\n    data: {\n      totalSteps: screenshots.length,\n      stepsSummary: screenshots.map(s => ({ step: s.step, url: s.url })),\n      screenshot: screenshots[screenshots.length - 1].image,\n      allScreenshots: screenshots\n    },\n    type: 'application/json'\n  };\n};",
-        "context": "={{ (() => { const rawUrl = $('OSN Static Fields Mapping').item.json.pageUrl; const urlObj = new URL(rawUrl); const host = urlObj.hostname; const parts = host.split('.'); const domain = '.' + parts.slice(-2).join('.'); const previewUrl = 'https://preview.' + host.replace(/^www\\./, '') + '/account/messages'; return JSON.stringify({ sessionId: $('Casino > Login').item.json.sessionId, domain: domain, url: previewUrl }); })() }}"
+        "code": "={{ (() => {\n  const sessionId = $('Casino > Login').item.json.sessionId;\n  const domain = $('OSN Static Fields Mapping').item.json.cookieDomain;\n  const url = $('OSN Static Fields Mapping').item.json.previewUrl;\n  if (!sessionId || !domain || !url) {\n    throw new Error('Browserless missing sessionId, cookieDomain, or previewUrl');\n  }\n  return `const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\\n\\nexport default async ({ page }) => {\\n  const sessionId = ${JSON.stringify(sessionId)};\\n  const domain = ${JSON.stringify(domain)};\\n  const url = ${JSON.stringify(url)};\\n\\n  await page.setViewport({ width: 1440, height: 750 });\\n  await page.setCookie(\\n    { name: 'sessionId', value: sessionId, domain, path: '/' },\\n    { name: 'sid', value: sessionId, domain, path: '/' }\\n  );\\n  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 25000 });\\n  await page.waitForSelector('div.ol-notification__root', { timeout: 30000 });\\n  await sleep(3000);\\n  await page.evaluate(() => {\\n    const overlay = document.querySelector('#coiOverlay');\\n    if (!overlay) return;\\n    overlay.style.setProperty('display', 'none', 'important');\\n    overlay.style.setProperty('visibility', 'hidden', 'important');\\n  });\\n  const screenshot = await page.screenshot({ encoding: 'base64' });\\n  return { data: { screenshot }, type: 'application/json' };\\n};`;\n})() }}"
       },
       "type": "n8n-nodes-browserless-api.browserless",
       "typeVersion": 1,
       "position": [
-        -23776,
-        320
+        -20960,
+        -240
       ],
       "id": "c4639a41-08eb-4618-bc99-451b68c8561c",
       "name": "Screenshot > Short Copy",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
       "credentials": {
         "browserlessApi": {
           "id": "HvkzyW0Ix8JjViPw",
@@ -749,17 +3562,19 @@
     {
       "parameters": {
         "operation": "runFunction",
-        "code": "const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n\nexport default async ({ page, context }) => {\n  await page.setViewport({ width: 1440, height: 750 });\n\n  const domain = context.domain;\n\n  await page.setCookie(\n    { name: 'sessionId', value: context.sessionId, domain: domain, path: '/' },\n    { name: 'sid', value: context.sessionId, domain: domain, path: '/' }\n  );\n\n  await page.goto(context.url, { waitUntil: 'domcontentloaded', timeout: 30000 });\n\n  await page.waitForSelector('a.ol-responsive-button[href=\"/account/cashier/deposit\"]', { timeout: 15000 });\n  await sleep(2000);\n\n  await page.evaluate(() => {\n    const container = document.querySelector('[data-surface=\"accountPanelSection\"]')\n      || document.querySelector('[data-surface=\"accountPanelSubContent\"]');\n    const target = [...container.querySelectorAll('button.ol-tab_item')]\n      .find((button) => button.textContent.includes('Notifications'));\n    if (!target) throw new Error('Notifications tab was not found');\n    target.click();\n  });\n\n  await page.waitForSelector('tr.ol-table__row[data-index=\"0\"]', { timeout: 15000 });\n  await sleep(2000);\n\n  await page.evaluate(() => {\n    const row = document.querySelector('tr.ol-table__row[data-index=\"0\"]');\n    if (row) {\n      row.scrollIntoView({ block: 'center' });\n      row.click();\n    } else {\n      throw new Error('First notification row was not found');\n    }\n  });\n\n  await sleep(3000);\n\n  const screenshot = await page.screenshot({ encoding: 'base64' });\n  return { data: { screenshot }, type: 'application/json' };\n};",
-        "context": "={{ (() => { const rawUrl = $('OSN Static Fields Mapping').item.json.pageUrl; const urlObj = new URL(rawUrl); const host = urlObj.hostname; const parts = host.split('.'); const domain = '.' + parts.slice(-2).join('.'); const previewUrl = 'https://preview.' + host.replace(/^www\\./, '') + '/account/messages'; return JSON.stringify({ sessionId: $('Casino > Login').item.json.sessionId, domain: domain, url: previewUrl }); })() }}"
+        "code": "={{ (() => {\n  const sessionId = $('Casino > Login').item.json.sessionId;\n  const domain = $('OSN Static Fields Mapping').item.json.cookieDomain;\n  const url = $('OSN Static Fields Mapping').item.json.previewUrl;\n  if (!sessionId || !domain || !url) {\n    throw new Error('Browserless missing sessionId, cookieDomain, or previewUrl');\n  }\n  return `const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\\n\\nexport default async ({ page }) => {\\n  const sessionId = ${JSON.stringify(sessionId)};\\n  const domain = ${JSON.stringify(domain)};\\n  const url = ${JSON.stringify(url)};\\n\\n  await page.setViewport({ width: 1440, height: 750 });\\n  await page.setCookie(\\n    { name: 'sessionId', value: sessionId, domain, path: '/' },\\n    { name: 'sid', value: sessionId, domain, path: '/' }\\n  );\\n  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });\\n  await page.waitForFunction(() => {\\n    return !!(\\n      document.querySelector('a.ol-responsive-button[href*=\\\"account/cashier/deposit\\\"]')\\n      || document.querySelector('a[href*=\\\"/account/cashier/deposit\\\"]')\\n      || document.querySelector('[data-surface=\\\"accountPanelSection\\\"]')\\n      || document.querySelector('[data-surface=\\\"accountPanelSubContent\\\"]')\\n    );\\n  }, { timeout: 20000 });\\n\\n  await page.waitForFunction(() => {\\n    const tabs = [...document.querySelectorAll('button.ol-tab_item')]\\n      .filter((button) => /notif/i.test(button.textContent || ''));\\n    const visible = tabs.filter((button) => button.getBoundingClientRect().width > 0);\\n    const empty = /No messages found/i.test(document.body.innerText || '');\\n    const counted = tabs.some((button) => (button.textContent || '').includes('('));\\n    return visible.length === 1 && (empty || counted);\\n  }, { timeout: 20000 });\\n\\n  const accept = await page.evaluate(() => {\\n    const button = document.querySelector('.coi-banner__accept, button.coi-banner__accept');\\n    if (!button) return false;\\n    button.click();\\n    return true;\\n  });\\n  if (accept) await sleep(800);\\n\\n  await page.evaluate(() => {\\n    const target = [...document.querySelectorAll('button.ol-tab_item')]\\n      .filter((button) => /notif/i.test(button.textContent || ''))\\n      .find((button) => button.getBoundingClientRect().width > 0);\\n    if (!target) throw new Error('Notifications tab was not found');\\n    target.click();\\n  });\\n\\n  await page.waitForSelector('tr.ol-table__row[data-index=\\\"0\\\"]', { timeout: 15000 });\\n  await sleep(2000);\\n\\n  await page.evaluate(() => {\\n    const row = document.querySelector('tr.ol-table__row[data-index=\\\"0\\\"]');\\n    if (row) {\\n      row.scrollIntoView({ block: 'center' });\\n      row.click();\\n    } else {\\n      throw new Error('First notification row was not found');\\n    }\\n  });\\n\\n  await sleep(3000);\\n  await page.evaluate(() => {\\n    const overlay = document.querySelector('#coiOverlay');\\n    if (!overlay) return;\\n    overlay.style.setProperty('display', 'none', 'important');\\n    overlay.style.setProperty('visibility', 'hidden', 'important');\\n  });\\n  const screenshot = await page.screenshot({ encoding: 'base64' });\\n  return { data: { screenshot }, type: 'application/json' };\\n};`;\n})() }}"
       },
       "type": "n8n-nodes-browserless-api.browserless",
       "typeVersion": 1,
       "position": [
-        -23568,
-        416
+        -20736,
+        -144
       ],
       "id": "1fe3e2ae-feab-4994-a29a-1ee9a3b05f9b",
       "name": "Screenshot > Long Copy",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
       "credentials": {
         "browserlessApi": {
           "id": "HvkzyW0Ix8JjViPw",
@@ -777,8 +3592,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -23456,
-        256
+        -20512,
+        -336
       ]
     },
     {
@@ -791,8 +3606,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -23344,
-        416
+        -20512,
+        -144
       ]
     },
     {
@@ -806,13 +3621,16 @@
       "type": "n8n-nodes-base.jira",
       "typeVersion": 1,
       "position": [
-        -23120,
-        224
+        -20288,
+        -336
       ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
       "credentials": {
         "jiraSoftwareServerApi": {
-          "id": "7MgXJNgpxtJeD70Z",
-          "name": "Jira SW Server account - canjames"
+          "id": "oAKRcX61sJaARIzC",
+          "name": "Jira SW Server account - scaicedo"
         }
       }
     },
@@ -827,13 +3645,16 @@
       "type": "n8n-nodes-base.jira",
       "typeVersion": 1,
       "position": [
-        -23120,
-        416
+        -20288,
+        -144
       ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
       "credentials": {
         "jiraSoftwareServerApi": {
-          "id": "7MgXJNgpxtJeD70Z",
-          "name": "Jira SW Server account - canjames"
+          "id": "oAKRcX61sJaARIzC",
+          "name": "Jira SW Server account - scaicedo"
         }
       }
     },
@@ -848,8 +3669,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -22896,
-        320
+        -20064,
+        -240
       ]
     },
     {
@@ -857,7 +3678,7 @@
         "jiraVersion": "server",
         "resource": "issueComment",
         "issueKey": "={{ $('Jira > Get Issue').item.json.key }}",
-        "comment": "=Hi team [~{{ $('Jira > Get Issue').item.json.fields.assignee.name }}], notification ready.\n\n*Slug:* {{ $('Naming Conventions API').item.json.slug }}\n*Short Copy:*\n!{{ $('Screenshot > Short File').item.json.screenshotFileName }}|thumbnail! \n*Long Copy:*\n!{{ $('Screenshot > Long File').item.json.screenshotFileName }}|thumbnail! \n\n----\n\nCheers!",
+        "comment": "=Hi team [~{{ $('Jira > Get Issue').item.json.fields.assignee.name }}], notification ready.\n\n*Run by:* {{ $('Normalize Webhook Input').item.json.erpnextUser }}\n*Slug:* {{ $('OSN Static Fields Mapping').item.json.slug }}\n*CMS:* https://contentmanager.intra-apps.com/content/edit/notification/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/{{ $('OSN Static Fields Mapping').item.json.bucket.toLowerCase() }}/{{ $('CMS > Get ContentId By Slug').item.json.items[0].contentId }}\n*Short Copy:*\n!{{ $('Screenshot > Short File').item.json.screenshotFileName }}|thumbnail!\n*Long Copy:*\n!{{ $('Screenshot > Long File').item.json.screenshotFileName }}|thumbnail!\n\n----\n\nCheers!",
         "options": {}
       },
       "id": "f02c06a8-7c70-4a02-a5e6-a78d6c26f994",
@@ -865,15 +3686,1038 @@
       "type": "n8n-nodes-base.jira",
       "typeVersion": 1,
       "position": [
-        -22672,
-        320
+        -19840,
+        -240
       ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
       "credentials": {
         "jiraSoftwareServerApi": {
-          "id": "7MgXJNgpxtJeD70Z",
-          "name": "Jira SW Server account - canjames"
+          "id": "oAKRcX61sJaARIzC",
+          "name": "Jira SW Server account - scaicedo"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "has-image",
+              "leftValue": "={{ $('OSN Static Fields Mapping').item.json.imageAttachmentId }}",
+              "operator": {
+                "operation": "notEmpty",
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "id": "c90caa82-e2a4-40cf-9399-2a46f7efa28c",
+      "name": "Has image?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -26032,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "throw new Error(`Jira ticket ${$('Jira > Get Issue').item.json.key} has no image attachment. Upload a notification image (webp, png, jpg, gif, or similar) before running.`);"
+      },
+      "id": "d99315cd-e5d8-4d7d-b170-492675bd62da",
+      "name": "Ticket has no image",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -25808,
+        208
+      ],
+      "notes": "Fails loudly when the MAP ticket has no attachment."
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "8c24300b-7cc6-42d9-a090-3d4f0b2dfced",
+      "name": "Wait 2s for CMS index",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -25136,
+        0
+      ],
+      "webhookId": "d6541d94-e211-4e33-9615-3f3fa5a0c9b9"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "has-content-id",
+              "leftValue": "={{ $('CMS > Get ContentId By Slug').item.json.items?.[0]?.contentId }}",
+              "operator": {
+                "operation": "notEmpty",
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "id": "2f78a6c5-a704-4881-86eb-3dac2631b730",
+      "name": "Content found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -24688,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "cid-ceiling",
+              "leftValue": "={{ $('CMS > Get ContentId By Slug').runIndex }}",
+              "operator": {
+                "operation": "lt",
+                "type": "number"
+              },
+              "rightValue": 5
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "id": "2a53ea45-0c30-498b-8909-82e3847f4f9f",
+      "name": "ContentId retries left?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -24464,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "throw new Error(`CMS contentId not found for slug ${$('OSN Static Fields Mapping').item.json.slug} after polling.`);"
+      },
+      "id": "597b8588-b685-4515-9ffb-3c749111c6c4",
+      "name": "ContentId poll exceeded",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -24256,
+        192
+      ],
+      "notes": "Stops after 6 CMS slug lookups so an empty items[] cannot continue silently."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const expectedName = `INTERNALONLY ${$('OSN Static Fields Mapping').item.json.name}`;\nconst items = $json.items || [];\nconst match = items.find((item) => item.name === expectedName);\nif (!match?.campaignId) {\n  throw new Error(`No FINAL campaign named \"${expectedName}\". Search returned: ${items.map((item) => item.name).join(', ') || '(none)'}`);\n}\nreturn { campaignId: match.campaignId, name: match.name };"
+      },
+      "id": "427d5a46-3c5c-4262-a5f2-21251a3d587a",
+      "name": "MM > Pick Campaign",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -22896,
+        -240
+      ],
+      "notes": "Requires an exact campaign name match so Activate does not pick a sibling INTERNALONLY row."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "aud-ceiling",
+              "leftValue": "={{ $('MM > Check Status').runIndex }}",
+              "operator": {
+                "operation": "lt",
+                "type": "number"
+              },
+              "rightValue": 11
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "bc3e2e53-2222-468e-9ce7-22abf69f4a3d",
+      "name": "Audience retries left?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -23344,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "throw new Error(`Audience upload did not reach SUCCESS within 12 polls (~60s). Last status: ${$json.status}`);"
+      },
+      "id": "ca8baa5e-7704-46e2-a29f-a1cfabc4128f",
+      "name": "Audience poll exceeded",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -23120,
+        -32
+      ],
+      "notes": "Caps audience status polling at 12 checks (~60s)."
+    },
+    {
+      "parameters": {},
+      "id": "3937bc52-63fc-4df5-9c07-ec476d0c80c9",
+      "name": "Wait 5s for Campaign",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -22448,
+        -240
+      ],
+      "webhookId": "cf669181-c564-4859-a373-608d05a53262"
+    },
+    {
+      "parameters": {
+        "url": "=https://marketingmanager.intra-apps.com/services/campaign-manager/v2/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/territories/{{ $('OSN Static Fields Mapping').item.json.territory }}/campaigns/{{ $('MM > Pick Campaign').item.json.campaignId }}",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "={\n  \"Authorization\": \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "0b3e4d7e-595e-41dd-91c2-f7cb779ab1c8",
+      "name": "MM > Get Campaign",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -22224,
+        -304
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "job-completed",
+                    "leftValue": "={{ $json.jobStatus }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "COMPLETED"
+                  },
+                  {
+                    "id": "exec-success",
+                    "leftValue": "={{ $json.lastExecution?.success }}",
+                    "operator": {
+                      "operation": "true",
+                      "singleValue": true,
+                      "type": "boolean"
+                    },
+                    "rightValue": ""
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Completed"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "camp-ceiling",
+                    "leftValue": "={{ $('MM > Get Campaign').runIndex }}",
+                    "operator": {
+                      "operation": "gte",
+                      "type": "number"
+                    },
+                    "rightValue": 11
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Poll exceeded"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Keep polling"
+        }
+      },
+      "id": "3f07f95b-4558-403f-9586-2afb459fef13",
+      "name": "Campaign completed?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -22000,
+        -256
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "throw new Error(`Campaign ${$('MM > Pick Campaign').item.json.campaignId} did not complete. jobStatus=${$json.jobStatus} lastExecution.success=${$json.lastExecution?.success}`);"
+      },
+      "id": "858e3704-040b-4fe4-b378-805b076046e5",
+      "name": "Campaign poll exceeded",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -21776,
+        -144
+      ],
+      "notes": "Caps campaign completion polling at 12 checks (~60s)."
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "37acb555-9ed8-4884-9c0a-cc5b8e3d641e",
+      "name": "Wait 3s before Proof",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -21776,
+        -336
+      ],
+      "webhookId": "c8c6f6ec-df1d-49c4-a45b-1de1eb227366"
+    },
+    {
+      "parameters": {
+        "url": "=https://contentmanager.intra-apps.com/services/content/v4/brands/{{ $('OSN Static Fields Mapping').item.json.brandCode }}/buckets/{{ $('OSN Static Fields Mapping').item.json.bucket.toLowerCase() }}/contents?status=published&category=content&size=10&slugname={{ $('Naming Conventions API').item.json.slug }}",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "={\n  \"Authorization\": \"Bearer {{ $('CMS & MM Login').item.json.sessionId }}\"\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "d578c4ff-318d-45e5-8fb4-f5b71b4f312b",
+      "name": "CMS > Check Existing Slug",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -26480,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "notes": "Looks up the Naming Conventions slug in CMS before create. A hit means this ticket was already built."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "slug-exists",
+              "leftValue": "={{ (() => {\n  const wanted = $('Naming Conventions API').item.json.slug;\n  const items = $('CMS > Check Existing Slug').item.json.items || [];\n  const hit = items.find((item) => {\n    const slug = item.fields?.nonLocalised?.slugname || item.indexed?.slugname;\n    return slug === wanted;\n  });\n  return hit?.contentId || '';\n})() }}",
+              "operator": {
+                "operation": "notEmpty",
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "712d0667-8319-4eb4-9734-f39b8533de6e",
+      "name": "Slug already used?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -26256,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const wanted = $('Naming Conventions API').item.json.slug;\nconst items = $('CMS > Check Existing Slug').item.json.items || [];\nconst hit = items.find((item) => {\n  const slug = item.fields?.nonLocalised?.slugname || item.indexed?.slugname;\n  return slug === wanted;\n});\nconst slug = hit?.fields?.nonLocalised?.slugname || hit?.indexed?.slugname || wanted;\nconst contentId = hit?.contentId;\nconst brand = $('OSN Static Fields Mapping').item.json.brandCode;\nconst bucket = $('OSN Static Fields Mapping').item.json.bucket.toLowerCase();\nthrow new Error('Notification already exists');\n"
+      },
+      "id": "42f01723-78a7-4f64-84fb-5e4551794138",
+      "name": "Notification already exists",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -26032,
+        -96
+      ],
+      "notes": "Stops a re-run from publishing a second notification for the same Naming Conventions slug."
+    },
+    {
+      "parameters": {
+        "operation": "runFunction",
+        "code": "={{ (() => {\n  const username = $('Get Row from Baserow').item.json.Email_Account;\n  const password = $('Get Row from Baserow').item.json.Password;\n  const pageUrl = $('OSN Static Fields Mapping').item.json.pageUrl;\n  if (!username || !password || !pageUrl) {\n    throw new Error('Casino browser login missing username, password, or pageUrl');\n  }\n  const base = String(pageUrl).replace(/\\/?$/, '/');\n  const loginPage = base.includes('ignitionpoker.com') ? base + 'en/login' : base + 'login';\n  return `export default async ({ page }) => {\\n  const username = ${JSON.stringify(username)};\\n  const password = ${JSON.stringify(password)};\\n  const loginPage = ${JSON.stringify(loginPage)};\\n  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\\n\\n  const acceptCookies = async () => page.evaluate(() => {\\n    const accept = document.querySelector('.coi-banner__accept, button[class*=\\\"coi-banner__accept\\\"]');\\n    if (!accept) return false;\\n    accept.click();\\n    return true;\\n  });\\n\\n  const fillReactInput = async (selector, value) => page.evaluate((sel, val) => {\\n    const el = [...document.querySelectorAll(sel)].find((n) => n.offsetWidth > 0 && n.offsetHeight > 0) || document.querySelector(sel);\\n    if (!el) throw new Error('Missing login field ' + sel);\\n    el.focus();\\n    const proto = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value');\\n    const last = el.value;\\n    proto.set.call(el, '');\\n    if (el._valueTracker) el._valueTracker.setValue(last);\\n    el.dispatchEvent(new Event('input', { bubbles: true }));\\n    proto.set.call(el, val);\\n    if (el._valueTracker) el._valueTracker.setValue('');\\n    el.dispatchEvent(new InputEvent('input', { bubbles: true, data: val, inputType: 'insertText' }));\\n    el.dispatchEvent(new Event('change', { bubbles: true }));\\n    el.blur();\\n  }, selector, value);\\n\\n  const fieldsMatch = async () => page.evaluate((user, pass) => {\\n    const u = document.querySelector('#username');\\n    const p = document.querySelector('#password');\\n    const btn = document.querySelector('#loginSubmit');\\n    return !!(u && p && btn && u.value === user && p.value === pass && !btn.disabled);\\n  }, username, password);\\n\\n  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36');\\n  await page.evaluateOnNewDocument(() => {\\n    Object.defineProperty(navigator, 'webdriver', { get: () => undefined });\\n  });\\n  await page.setViewport({ width: 1440, height: 900 });\\n  await page.goto(loginPage, { waitUntil: 'domcontentloaded', timeout: 20000 });\\n  await page.waitForSelector('#username', { visible: true, timeout: 15000 });\\n\\n  try {\\n    await page.waitForFunction(() => {\\n      const btn = document.querySelector('#loginSubmit');\\n      return !!(btn && !btn.disabled);\\n    }, { timeout: 12000 });\\n  } catch (err) {\\n    void err;\\n  }\\n\\n  try {\\n    await page.waitForFunction(() => window.grecaptcha && typeof window.grecaptcha.execute === 'function', { timeout: 12000 });\\n  } catch (err) {\\n    void err;\\n  }\\n\\n  try {\\n    await page.waitForSelector('.coi-banner__accept', { timeout: 12000 });\\n    await acceptCookies();\\n    await sleep(800);\\n  } catch (err) {\\n    void err;\\n  }\\n\\n  await fillReactInput('#username', username);\\n  await fillReactInput('#password', password);\\n  await sleep(200);\\n  if (!(await fieldsMatch())) {\\n    await fillReactInput('#username', username);\\n    await fillReactInput('#password', password);\\n    await sleep(200);\\n  }\\n  if (!(await fieldsMatch())) {\\n    throw new Error('Casino login fields did not keep the Baserow credentials after fill');\\n  }\\n\\n  const loginWait = page.waitForResponse(\\n    (response) => response.url().includes('/login-service/v1/login') && response.request().method() === 'POST',\\n    { timeout: 20000 }\\n  );\\n  await page.click('#loginSubmit');\\n\\n  let response;\\n  try {\\n    response = await loginWait;\\n  } catch (err) {\\n    throw new Error('Casino login POST never fired');\\n  }\\n\\n  const body = await response.json().catch(() => null);\\n  if (!body || !body.sessionId) {\\n    throw new Error('Casino browser login did not return sessionId: ' + JSON.stringify({ status: response.status(), errorCode: body && body.errorCode }));\\n  }\\n  return { data: { sessionId: body.sessionId }, type: 'application/json' };\\n};`;\n})() }}"
+      },
+      "id": "0ea60a3c-d635-4ea7-aa1a-b1f285d8d4a8",
+      "name": "Casino > Browser Login",
+      "type": "n8n-nodes-browserless-api.browserless",
+      "typeVersion": 1,
+      "position": [
+        -21360,
+        -144
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "browserlessApi": {
+          "id": "HvkzyW0Ix8JjViPw",
+          "name": "Browserless - api"
+        }
+      },
+      "notes": "Submits the OL /login form so site JS attaches a live captcha token."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const item = $input.item.json;\nconst sessionId = item.sessionId || item.data?.sessionId;\nif (!sessionId) {\n  throw new Error('Casino browser login output missing sessionId');\n}\nreturn { sessionId };\n"
+      },
+      "id": "fddfaa72-3050-4904-b50d-620dffad6491",
+      "name": "Casino > Login",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -21152,
+        -240
+      ],
+      "notes": "Normalizes Browserless login output to { sessionId } for screenshot nodes."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('OSN Static Fields Mapping').item.json.loginUrl }}",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "={\n  \"Accept\": \"application/json\",\n  \"Origin\": \"{{ $('OSN Static Fields Mapping').item.json.loginUrl.split('/services/')[0] }}\",\n  \"Referer\": \"{{ $('OSN Static Fields Mapping').item.json.loginUrl.split('/services/')[0] }}/\"\n}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"username\": \"{{ $('Get Row from Baserow').item.json.Email_Account }}\",\n  \"password\": \"{{ $('Get Row from Baserow').item.json.Password }}\",\n  \"remember_me\": false\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "5c1d6967-3c65-4167-8430-35433d7be41e",
+      "name": "Casino > Login HTTP",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -21552,
+        -336
+      ],
+      "retryOnFail": false,
+      "onError": "continueErrorOutput",
+      "notes": "Primary casino login. Brands that do not require captcha succeed here. 401/captcha brands fall through to Browserless."
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "osn-notification-run",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "39032632-d839-4bc5-a6c5-2f8545dd8aa5",
+      "name": "Receive ERPNext Dispatch",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -28736,
+        288
+      ],
+      "webhookId": "a803dc45-05ab-495a-b706-770caf38252d",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "auGyM3zSkXTvrnWY",
+          "name": "N8N Webhook - ERPNext"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "map-ticket",
+              "name": "mapTicket",
+              "type": "string",
+              "value": "={{ ($json.body.mapTicket || $json.mapTicket || '').toString().trim().toUpperCase() }}"
+            },
+            {
+              "id": "erpnext-user",
+              "name": "erpnextUser",
+              "type": "string",
+              "value": "={{ ($json.body.erpnextUser || $json.erpnextUser || '').toString().trim() }}"
+            },
+            {
+              "id": "erpnext-docname",
+              "name": "erpnextDocname",
+              "type": "string",
+              "value": "={{ ($json.body.erpnextDocname || $json.erpnextDocname || '').toString().trim() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3568629a-198a-4a61-8b65-b6527e110c57",
+      "name": "Normalize Webhook Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -28512,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "map-ticket-regex",
+              "leftValue": "={{ $('Normalize Webhook Input').item.json.mapTicket }}",
+              "rightValue": "^MAP-[0-9]+$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b0462581-87c3-4d37-80d8-bf0054bc6bf0",
+      "name": "MAP Ticket Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -28288,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "ok": true,
+          "mapTicket": "={{ $('Normalize Webhook Input').item.json.mapTicket }}",
+          "erpnextDocname": "={{ $('Normalize Webhook Input').item.json.erpnextDocname }}",
+          "executionId": "={{ $execution.id }}"
+        },
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "id": "eb798fb8-5b3e-4e68-bca7-d21a5645ba9b",
+      "name": "Respond Accepted 202",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -27616,
+        -192
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "error": "invalid_input",
+          "message": "MAP Ticket must match MAP-123"
+        },
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "ee4e8f84-685f-42be-ac1e-8ff7e254726f",
+      "name": "Respond Invalid Ticket 400",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -28064,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "docType": "n8n Workflow Run",
+        "documentName": "={{ $json.name }}",
+        "properties": {
+          "customProperty": [
+            {
+              "field": "status",
+              "value": "Failed in n8n"
+            },
+            {
+              "field": "dispatch_error",
+              "value": "={{ ('n8n failed at ' + $('On Workflow Error').item.json.execution.lastNodeExecuted + ': ' + $('On Workflow Error').item.json.execution.error.message).slice(0, 200) }}"
+            }
+          ]
+        }
+      },
+      "id": "b912c775-2273-4670-9280-86d75d32af6c",
+      "name": "Mark Run Failed in n8n",
+      "type": "n8n-nodes-base.erpNext",
+      "typeVersion": 1,
+      "position": [
+        -27616,
+        944
+      ],
+      "credentials": {
+        "erpNextApi": {
+          "id": "gM5LrXNEJxHkh01n",
+          "name": "ERPNext account - scaicedo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "or",
+          "conditions": [
+            {
+              "id": "issuetype-name",
+              "leftValue": "={{ $('Jira > Get Issue').item.json.fields.issuetype.name }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "Notification Build"
+            },
+            {
+              "id": "issuetype-id",
+              "leftValue": "={{ $('Jira > Get Issue').item.json.fields.issuetype.id }}",
+              "operator": {
+                "operation": "equals",
+                "type": "string"
+              },
+              "rightValue": "21702"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "7998d700-4181-49b4-9c42-55c8ee5be8bb",
+      "name": "Issue Type Is Notification Build",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -27840,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "a06cdce6-a562-4b52-a640-c67c485c7d15",
+      "name": "On Workflow Error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -28736,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "error": "jira_issue_error",
+          "message": "={{ $json.message || 'Jira Get Issue failed' }}"
+        },
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "35bb97e7-4b8e-499e-8951-2ab0170aabf3",
+      "name": "Respond Jira Get Failed 400",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -27840,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "error": "wrong_issue_type",
+          "message": "={{ 'Issue type must be Notification Build, got: ' + ($('Jira > Get Issue').item.json.fields.issuetype.name || 'unknown') }}"
+        },
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "479789a4-0eaf-4f91-9c6e-12e60e152313",
+      "name": "Respond Wrong Issue Type 400",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -27616,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "docType": "n8n Workflow Run",
+        "limit": 1,
+        "options": {
+          "fields": [
+            "name"
+          ],
+          "filters": {
+            "customProperty": [
+              {
+                "field": "n8n_execution_id",
+                "value": "={{ $('On Workflow Error').item.json.execution.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "826ea26e-b183-4d27-bc02-051dc188cda0",
+      "name": "Find Run by Execution Id",
+      "type": "n8n-nodes-base.erpNext",
+      "typeVersion": 1,
+      "position": [
+        -28064,
+        1040
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "erpNextApi": {
+          "id": "gM5LrXNEJxHkh01n",
+          "name": "ERPNext account - scaicedo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "docType": "n8n Workflow Run",
+        "documentName": "={{ $('Normalize Webhook Input').item.json.erpnextDocname }}",
+        "properties": {
+          "customProperty": [
+            {
+              "field": "dispatch_error"
+            },
+            {
+              "field": "status",
+              "value": "Completed"
+            }
+          ]
+        }
+      },
+      "id": "72195f0f-b9b8-43d7-a3ba-93658b808222",
+      "name": "Mark Run Completed",
+      "type": "n8n-nodes-base.erpNext",
+      "typeVersion": 1,
+      "position": [
+        -19616,
+        -240
+      ],
+      "credentials": {
+        "erpNextApi": {
+          "id": "gM5LrXNEJxHkh01n",
+          "name": "ERPNext account - scaicedo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "f4c07b16-abb0-4791-bfd3-6f429d5dbf56",
+      "name": "Wait 2s for Run save",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -28512,
+        1040
+      ],
+      "webhookId": "e40268fd-0503-4864-8af8-a80b48c659e3"
+    },
+    {
+      "parameters": {
+        "errorMessage": "MAP Ticket must match MAP-123"
+      },
+      "id": "cf94b9a5-13e1-4e76-b723-0967c39bbce6",
+      "name": "Fail Invalid Ticket",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -27840,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ $('Jira > Get Issue').item.json.message || 'Jira Get Issue failed' }}"
+      },
+      "id": "cb053aa6-8621-4205-8d5a-54504236dced",
+      "name": "Fail Jira Get Failed",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -27616,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ 'Issue type must be Notification Build, got: ' + ($('Jira > Get Issue').item.json.fields.issuetype.name || 'unknown') }}"
+      },
+      "id": "99b1de4c-7413-4aac-aa0a-bb539d796072",
+      "name": "Fail Wrong Issue Type",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        -27392,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "execution",
+        "operation": "get",
+        "executionId": "={{ $('On Workflow Error').item.json.execution.id }}",
+        "options": {
+          "activeWorkflows": true
+        },
+        "requestOptions": {}
+      },
+      "id": "e1067172-6415-4e99-a7a9-76f229d63c2f",
+      "name": "Get Failed Execution",
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        -28288,
+        1040
+      ],
+      "credentials": {
+        "n8nApi": {
+          "id": "mkIknOTSq3DOp5UH",
+          "name": "N8N - api"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "docType": "n8n Workflow Run",
+        "documentName": "={{ $json.data.resultData.runData['Normalize Webhook Input'][0].data.main[0][0].json.erpnextDocname }}",
+        "properties": {
+          "customProperty": [
+            {
+              "field": "dispatch_error",
+              "value": "={{ ('n8n failed at ' + $('On Workflow Error').item.json.execution.lastNodeExecuted + ': ' + $('On Workflow Error').item.json.execution.error.message).slice(0, 200) }}"
+            },
+            {
+              "field": "status",
+              "value": "Failed in n8n"
+            }
+          ]
+        }
+      },
+      "id": "e98614b4-d00e-4ddd-a5c1-24d515074c9e",
+      "name": "Mark Run Failed from Execution",
+      "type": "n8n-nodes-base.erpNext",
+      "typeVersion": 1,
+      "position": [
+        -27616,
+        1136
+      ],
+      "credentials": {
+        "erpNextApi": {
+          "id": "gM5LrXNEJxHkh01n",
+          "name": "ERPNext account - scaicedo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "has-name",
+              "leftValue": "={{ $json.name }}",
+              "operator": {
+                "operation": "notEmpty",
+                "type": "string"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          }
+        },
+        "options": {}
+      },
+      "id": "7e03bcac-74c9-4938-a529-5fcda5fb1ace",
+      "name": "Run Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -27840,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "channelId": "w4otsgqigtbou8q856x5zycemh",
+        "attachments": [
+          {
+            "color": "#55FF00",
+            "fallback": "OSN Notification Completed",
+            "footer": "",
+            "text": "={{ (() => {\n  const a = $('Jira > Get Issue').item.json.fields?.assignee?.name;\n  const b = (s) => String.fromCharCode(42, 42) + s + String.fromCharCode(42, 42);\n  const tag = a ? b('Assignee:') + ' @' + a + '\\n' : '';\n  const mapTicket = $('Normalize Webhook Input').item.json.mapTicket;\n  const docname = $('Normalize Webhook Input').item.json.erpnextDocname;\n  const jiraMd = '[' + mapTicket + '](https://jiraops.corp-apps.com/browse/' + mapTicket + ')';\n  const deskMd = '[' + docname + '](https://martech-desk.corp-apps.com/app/n8n-workflow-run/' + docname + ')';\n  return tag + b('MAP:') + ' ' + jiraMd + '\\n' + b('MarDesk:') + ' ' + deskMd;\n})() }}",
+            "thumb_url": "https://www.freeiconspng.com/uploads/black-technorati-icon-8.png",
+            "title": ":white_check_mark: OSN Notification Completed"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "id": "668ce8ac-1a1c-49ac-acc5-06000422cec8",
+      "name": "Mattermost Completed",
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        -19392,
+        -240
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "attachments": [
+          {
+            "color": "={{ (() => {\n  let runData = {};\n  try { runData = $('Get Failed Execution').item.json.data.resultData.runData || {}; } catch (e) {}\n  const cmsCreated = (runData['CMS > Create Notification'] || []).some((r) => r.executionStatus === 'success');\n  return cmsCreated ? '#FFCC00' : '#FF0000';\n})() }}",
+            "fallback": "={{ (() => {\n  let runData = {};\n  try { runData = $('Get Failed Execution').item.json.data.resultData.runData || {}; } catch (e) {}\n  const cmsCreated = (runData['CMS > Create Notification'] || []).some((r) => r.executionStatus === 'success');\n  return cmsCreated ? 'OSN Notification Proof Missing' : 'OSN Notification Failed';\n})() }}",
+            "footer": "",
+            "text": "={{ (() => {\n  const b = (s) => String.fromCharCode(42, 42) + s + String.fromCharCode(42, 42);\n  let runData = {};\n  try { runData = $('Get Failed Execution').item.json.data.resultData.runData || {}; } catch (e) {}\n  const firstJson = (name) => (runData[name] || [])[0]?.data?.main?.[0]?.[0]?.json;\n  const cmsCreated = (runData['CMS > Create Notification'] || []).some((r) => r.executionStatus === 'success');\n  const assignee = (firstJson('Jira > Get Issue') || {}).fields?.assignee?.name;\n  const norm = firstJson('Normalize Webhook Input') || {};\n  const jira = firstJson('Jira > Get Issue') || {};\n  const mapTicket = norm.mapTicket || jira.key || '';\n  const docname = norm.erpnextDocname || '';\n  const mapping = firstJson('OSN Static Fields Mapping') || {};\n  const check = firstJson('CMS > Check Existing Slug') || {};\n  const created = firstJson('CMS > Get ContentId By Slug') || {};\n  const createJson = firstJson('CMS > Create Notification') || {};\n  const wanted = (firstJson('Naming Conventions API') || {}).slug;\n  const checkItems = check.items || [];\n  const checkHit = checkItems.find((item) => {\n    const slug = item.fields?.nonLocalised?.slugname || item.indexed?.slugname;\n    return wanted && slug === wanted;\n  }) || checkItems[0] || {};\n  const createdHit = (created.items || [])[0] || {};\n  const cmsHref = (contentId, bucket) => {\n    if (!mapping.brandCode || !contentId) return '';\n    return 'https://contentmanager.intra-apps.com/content/edit/notification/' + mapping.brandCode + '/' + String(bucket || mapping.bucket || '').toLowerCase() + '/' + contentId;\n  };\n  const err = $('On Workflow Error').item.json.execution || {};\n  const errObj = err.error || {};\n  let reason = String(errObj.stack || '').split('\\n')[0].replace(/^Error:\\s*/i, '').trim();\n  reason = reason.replace(/\\[line \\d+\\]/gi, '').replace(/\\s+/g, ' ').trim();\n  if (!reason || reason.startsWith('//') || reason === 'https') {\n    reason = String(errObj.message || 'n8n workflow failed').replace(/\\[line \\d+\\]/gi, '').trim();\n  }\n  const duplicate = /already exists/i.test(reason) || err.lastNodeExecuted === 'Notification already exists';\n  if (cmsCreated) {\n    reason = 'Automation not able to get the proof';\n    const contentId = createdHit.contentId || createJson.contentId || createJson.id;\n    const cmsUrl = cmsHref(contentId, createdHit.bucket || mapping.bucket);\n    if (cmsUrl) reason += ' - [Open in CMS](' + cmsUrl + ')';\n  } else if (duplicate) {\n    reason = 'Notification already exists';\n    const cmsUrl = cmsHref(checkHit.contentId, mapping.bucket);\n    if (cmsUrl) reason += ' - [Open in CMS](' + cmsUrl + ')';\n  }\n  const lines = [];\n  if (assignee) lines.push(b('Assignee:') + ' @' + assignee);\n  if (mapTicket) {\n    lines.push(b('MAP:') + ' [' + mapTicket + '](https://jiraops.corp-apps.com/browse/' + mapTicket + ')');\n  }\n  if (docname) {\n    lines.push(b('MarDesk:') + ' [' + docname + '](https://martech-desk.corp-apps.com/app/n8n-workflow-run/' + docname + ')');\n  }\n  lines.push(b('Reason:') + ' ' + reason);\n  return lines.join('\\n');\n})() }}",
+            "thumb_url": "https://www.freeiconspng.com/uploads/black-technorati-icon-8.png",
+            "title": "={{ (() => {\n  let runData = {};\n  try { runData = $('Get Failed Execution').item.json.data.resultData.runData || {}; } catch (e) {}\n  const cmsCreated = (runData['CMS > Create Notification'] || []).some((r) => r.executionStatus === 'success');\n  return cmsCreated ? ':large_yellow_circle: OSN Notification Proof Missing' : ':x: OSN Notification Failed';\n})() }}"
+          }
+        ],
+        "otherOptions": {},
+        "channelId": "w4otsgqigtbou8q856x5zycemh",
+        "operation": "post",
+        "resource": "message"
+      },
+      "id": "991c689f-c300-4495-861d-c38e6e705e47",
+      "name": "Mattermost Error",
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        -27392,
+        1040
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -897,19 +4741,19 @@
   "staticData": null,
   "tags": [
     {
-      "updatedAt": "2026-08-14T13:50:59.470Z",
-      "createdAt": "2026-08-14T13:50:59.470Z",
-      "id": "S8Bt1PAGpBKSiLIt",
-      "name": "REVO"
-    },
-    {
       "updatedAt": "2026-08-14T13:51:03.329Z",
       "createdAt": "2026-08-14T13:51:03.329Z",
       "id": "JWtVIjEu3si5Nrpx",
       "name": "Automation"
+    },
+    {
+      "updatedAt": "2026-08-14T13:50:59.470Z",
+      "createdAt": "2026-08-14T13:50:59.470Z",
+      "id": "S8Bt1PAGpBKSiLIt",
+      "name": "REVO"
     }
   ],
-  "triggerCount": 0,
-  "updatedAt": "2026-08-26T18:57:43.982Z",
-  "versionId": "4c778436-7450-47bb-9d53-38eca6c33e29"
+  "triggerCount": 1,
+  "updatedAt": "2026-10-08T16:52:09.487Z",
+  "versionId": "d4a28c5a-d7a0-4e6e-b677-86c28b3732da"
 }
