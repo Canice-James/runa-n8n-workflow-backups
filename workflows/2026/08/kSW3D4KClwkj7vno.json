@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-08-21T21:59:52.187Z",
-    "createdAt": "2026-08-21T19:26:37.297Z",
-    "versionId": "55a54d7e-9f9a-4fd1-89ae-87da8d03c5a5",
+    "updatedAt": "2026-09-17T17:04:20.558Z",
+    "createdAt": "2026-09-17T17:03:55.803Z",
+    "versionId": "91518787-cf00-4417-83db-6ddfba708436",
     "workflowId": "kSW3D4KClwkj7vno",
     "nodes": [
       {
@@ -533,6 +533,70 @@
         "id": "d7656379-8cc1-49cf-bf40-2a96ac5c6022",
         "name": "Issue Updated",
         "webhookId": "c26ebf1d-aae8-4f39-86b9-b1437a171703"
+      },
+      {
+        "parameters": {
+          "channelId": "=suomq4gjmbfr7n6jzktp7r5yba",
+          "message": "=",
+          "attachments": [
+            {
+              "thumb_url": "https://gitlab.com/uploads/-/system/user/avatar/21826781/duo-bot.png",
+              "text": "=Details: [martech-desk.corp-apps.com/requests/{{ $('Webhook').item.json.body.doc_id }}](http://martech-desk.corp-apps.com/requests/{{ $('Webhook').item.json.body.doc_id }})",
+              "footer": "=Raised by: **{{ $('Webhook').item.json.body.name }}** from **{{ $('Webhook').item.json.body.team }}** | Priority: **{{ $('Webhook').item.json.body.priority }}**",
+              "title": "=New request recieved: {{ $('Webhook').item.json.body.subject }}",
+              "color": "#0F2945"
+            }
+          ],
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          768,
+          -208
+        ],
+        "id": "de2eaad8-edfb-4a2a-92c6-ae5e2ddaa578",
+        "name": "Notify channel of new request",
+        "executeOnce": false,
+        "alwaysOutputData": false,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "channelId": "=suomq4gjmbfr7n6jzktp7r5yba",
+          "message": "=",
+          "attachments": [
+            {
+              "thumb_url": "https://gitlab.com/uploads/-/system/user/avatar/21826781/duo-bot.png",
+              "text": "=[View Public Ticket](http://martech-desk.corp-apps.com/requests/{{ $('Issue Updated').item.json.body.issue_name }}) | [View Desk Ticket](http://martech-desk.corp-apps.com/desk/issues/{{ $('Issue Updated').item.json.body.issue_name }} }})\n\nFields changed: {{ $('Issue Updated').item.json.body.changed_fields.map(item => item.label).join(\", \") }}",
+              "footer": "=Raised by: **{{ $('Issue Updated').item.json.body.name }}** from  **{{ $('Issue Updated').item.json.body.team }}** | Priority: **{{ $('Issue Updated').item.json.body.priority }}**",
+              "title": "=Request Updated: {{ $('Issue Updated').item.json.body.subject }} *({{ $('Issue Updated').item.json.body.stage }})*",
+              "color": "#0F2945"
+            }
+          ],
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          928,
+          496
+        ],
+        "id": "f92cccc0-d7c4-4189-9b83-0a1454315fc7",
+        "name": "Notify channel of update",
+        "executeOnce": false,
+        "alwaysOutputData": false,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
       }
     ],
     "connections": {
@@ -598,6 +662,11 @@
               "node": "Send message",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "Notify channel of new request",
+              "type": "main",
+              "index": 0
             }
           ]
         ]
@@ -653,6 +722,11 @@
               "node": "Respond to Webhook2",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "Notify channel of update",
+              "type": "main",
+              "index": 0
             }
           ]
         ]
@@ -687,11 +761,11 @@
     },
     "nodeGroups": [],
     "authors": "Canice James",
-    "name": "Complete request update notifier",
+    "name": "Version 91518787",
     "description": "",
     "autosaved": true
   },
-  "activeVersionId": "55a54d7e-9f9a-4fd1-89ae-87da8d03c5a5",
+  "activeVersionId": "91518787-cf00-4417-83db-6ddfba708436",
   "connections": {
     "Webhook": {
       "main": [
@@ -755,6 +829,11 @@
             "node": "Send message",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Notify channel of new request",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -808,6 +887,11 @@
         [
           {
             "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notify channel of update",
             "type": "main",
             "index": 0
           }
@@ -1294,7 +1378,7 @@
             "thumb_url": "https://gitlab.com/uploads/-/system/user/avatar/21826781/duo-bot.png",
             "text": "=[View Public Ticket](http://martech-desk.corp-apps.com/requests/{{ $('Issue Updated').item.json.body.issue_name }}) | [View Desk Ticket](http://martech-desk.corp-apps.com/desk/issues/{{ $('Issue Updated').item.json.body.issue_name }} }})\n\nFields changed: {{ $('Issue Updated').item.json.body.changed_fields.map(item => item.label).join(\", \") }}",
             "footer": "=Visit the ticket to see the changes.",
-            "title": "=MarTech Request Updated: {{ $('Issue Updated').item.json.body.subject }}",
+            "title": "=MarTech Request Updated: {{ $('Issue Updated').item.json.body.subject }} *({{ $('Issue Updated').item.json.body.stage }})*",
             "color": "#D07300"
           }
         ],
@@ -1376,6 +1460,70 @@
       "id": "d7656379-8cc1-49cf-bf40-2a96ac5c6022",
       "name": "Issue Updated",
       "webhookId": "c26ebf1d-aae8-4f39-86b9-b1437a171703"
+    },
+    {
+      "parameters": {
+        "channelId": "=suomq4gjmbfr7n6jzktp7r5yba",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://gitlab.com/uploads/-/system/user/avatar/21826781/duo-bot.png",
+            "text": "=Details: [martech-desk.corp-apps.com/requests/{{ $('Webhook').item.json.body.doc_id }}](http://martech-desk.corp-apps.com/requests/{{ $('Webhook').item.json.body.doc_id }})",
+            "footer": "=Raised by: **{{ $('Webhook').item.json.body.name }}** from **{{ $('Webhook').item.json.body.team }}** | Priority: **{{ $('Webhook').item.json.body.priority }}**",
+            "title": "=New request recieved: {{ $('Webhook').item.json.body.subject }}",
+            "color": "#0F2945"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        768,
+        -208
+      ],
+      "id": "de2eaad8-edfb-4a2a-92c6-ae5e2ddaa578",
+      "name": "Notify channel of new request",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channelId": "=suomq4gjmbfr7n6jzktp7r5yba",
+        "message": "=",
+        "attachments": [
+          {
+            "thumb_url": "https://gitlab.com/uploads/-/system/user/avatar/21826781/duo-bot.png",
+            "text": "=[View Public Ticket](http://martech-desk.corp-apps.com/requests/{{ $('Issue Updated').item.json.body.issue_name }}) | [View Desk Ticket](http://martech-desk.corp-apps.com/desk/issues/{{ $('Issue Updated').item.json.body.issue_name }} }})\n\nFields changed: {{ $('Issue Updated').item.json.body.changed_fields.map(item => item.label).join(\", \") }}",
+            "footer": "=Raised by: **{{ $('Issue Updated').item.json.body.name }}** from  **{{ $('Issue Updated').item.json.body.team }}** | Priority: **{{ $('Issue Updated').item.json.body.priority }}**",
+            "title": "=Request Updated: {{ $('Issue Updated').item.json.body.subject }} *({{ $('Issue Updated').item.json.body.stage }})*",
+            "color": "#0F2945"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [
+        928,
+        496
+      ],
+      "id": "f92cccc0-d7c4-4189-9b83-0a1454315fc7",
+      "name": "Notify channel of update",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "mattermostApi": {
+          "id": "1D4PtSqWCtdoPt4d",
+          "name": "CRM Bot"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -1399,6 +1547,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 3,
-  "updatedAt": "2026-08-26T22:34:15.122Z",
-  "versionId": "55a54d7e-9f9a-4fd1-89ae-87da8d03c5a5"
+  "updatedAt": "2026-09-17T17:06:31.284Z",
+  "versionId": "0918141e-024f-4565-a16c-690d5893e8c3"
 }
