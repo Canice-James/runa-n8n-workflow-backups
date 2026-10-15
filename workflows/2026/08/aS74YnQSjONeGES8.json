@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-10-01T20:05:34.826Z",
-    "createdAt": "2026-10-01T20:04:47.398Z",
-    "versionId": "ebc7ba0d-e897-44f6-9739-3c6c4ef8fcb9",
+    "updatedAt": "2026-10-14T22:48:33.012Z",
+    "createdAt": "2026-10-14T22:47:59.720Z",
+    "versionId": "718fe830-9c92-41f0-ae00-ac9084cb44c8",
     "workflowId": "aS74YnQSjONeGES8",
     "nodes": [
       {
@@ -2460,7 +2460,13 @@
       },
       "7:45am Weekly Monday": {
         "main": [
-          []
+          [
+            {
+              "node": "Get brand info9",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       },
       "Multiple IF1": {
@@ -2476,12 +2482,24 @@
       },
       "7am Daily3": {
         "main": [
-          []
+          [
+            {
+              "node": "Get brand info7",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       },
       "6:30am Daily": {
         "main": [
-          []
+          [
+            {
+              "node": "Get brand info",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       },
       "HTTP Request": {
@@ -2778,11 +2796,11 @@
     },
     "nodeGroups": [],
     "authors": "Canice James",
-    "name": "Version ebc7ba0d",
-    "description": "Adding Pretext to Mattermost Channel",
+    "name": "Everest Corrected | Sender Score Redeploy",
+    "description": "",
     "autosaved": true
   },
-  "activeVersionId": "ebc7ba0d-e897-44f6-9739-3c6c4ef8fcb9",
+  "activeVersionId": "718fe830-9c92-41f0-ae00-ac9084cb44c8",
   "connections": {
     "Get Sender Scores from Everest": {
       "main": [
@@ -3070,7 +3088,13 @@
     },
     "7:45am Weekly Monday": {
       "main": [
-        []
+        [
+          {
+            "node": "Get brand info9",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Multiple IF1": {
@@ -3086,12 +3110,24 @@
     },
     "7am Daily3": {
       "main": [
-        []
+        [
+          {
+            "node": "Get brand info7",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "6:30am Daily": {
       "main": [
-        []
+        [
+          {
+            "node": "Get brand info",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "HTTP Request": {
@@ -5679,6 +5715,6 @@
   },
   "tags": [],
   "triggerCount": 7,
-  "updatedAt": "2026-10-01T20:04:47.395Z",
-  "versionId": "ebc7ba0d-e897-44f6-9739-3c6c4ef8fcb9"
+  "updatedAt": "2026-10-14T22:47:59.716Z",
+  "versionId": "718fe830-9c92-41f0-ae00-ac9084cb44c8"
 }
