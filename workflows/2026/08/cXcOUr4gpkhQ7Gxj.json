@@ -94,6 +94,83 @@
           }
         ]
       ]
+    },
+    "Get Sender Scores from Everest": {
+      "main": [
+        [
+          {
+            "node": "Multiple IF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get brand info": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Sender Scores from Everest1": {
+      "main": [
+        [
+          {
+            "node": "Multiple IF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Multiple IF": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Get Sender Scores from Everest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Get Sender Scores from Everest1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6:30am Daily": {
+      "main": [
+        [
+          {
+            "node": "Get brand info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "createdAt": "2026-08-31T17:23:28.463Z",
@@ -432,6 +509,293 @@
           "name": "Baserow account - canjames"
         }
       }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.everest.validity.com/api/2.0/reputation/senderscore/{{$json[\"Mail1 IP Address\"].trim()}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-API-KEY",
+              "value": "4720e9dc8123ab35103d4f957f04a9b4a2072f6c"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2976,
+        2928
+      ],
+      "id": "f2fbff21-83a9-4596-a0c1-68683752e3b8",
+      "name": "Get Sender Scores from Everest",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Sender Score Daily\n\nRuns daily and sends a message to the MarkOps group with the Sender Score"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -4032,
+        3008
+      ],
+      "typeVersion": 1,
+      "id": "2fffc913-ebc6-4f70-85ba-7a43fa11e17e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 537,
+        "returnAll": true,
+        "additionalOptions": {
+          "filters": {
+            "fields": [
+              {
+                "field": 5127,
+                "operator": "boolean",
+                "value": "True"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        -3536,
+        3024
+      ],
+      "id": "99ad2e16-7e6c-40e6-a180-119d54b38331",
+      "name": "Get brand info",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account - canjames"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.everest.validity.com/api/2.0/reputation/senderscore/{{$json[\"Mail2 IP Address\"].trim()}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-API-KEY",
+              "value": "4720e9dc8123ab35103d4f957f04a9b4a2072f6c"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2976,
+        3104
+      ],
+      "id": "04a14913-b70d-43cd-b259-7587384c8c47",
+      "name": "Get Sender Scores from Everest1",
+      "executeOnce": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.results.sender_score.trend[89].value <= $json.results.sender_score.trend[88].value - 8 \n&&\n$json.results.sender_score.trend[89].value !== null \n&&\n$json.results.sender_score.trend[88].value !== null \n}}",
+                    "rightValue": "={{ $json.results.sender_score.trend[88].value - 8}}",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "7d676332-9744-40f8-aa7e-5d72c1658444"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "red"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1fd5cce0-33c5-4d32-89fa-6128d87334a2",
+                    "leftValue": "={{\n  $json.results.sender_score.trend[89].value > $json.results.sender_score.trend[88].value - 8\n  &&\n  $json.results.sender_score.trend[89].value <= $json.results.sender_score.trend[88].value - 4\n  &&\n$json.results.sender_score.trend[89].value !== null \n  &&\n$json.results.sender_score.trend[88].value !== null \n}}",
+                    "rightValue": "=",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "orange"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "088aecbf-e0b9-4e2a-9f9e-a28c5800a4b2",
+                    "leftValue": "={{ $json.results.sender_score.trend[89].value > $json.results.sender_score.trend[88].value - 4 \n&&\n$json.results.sender_score.trend[89].value !== null \n&&\n$json.results.sender_score.trend[88].value !== null \n}}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "green"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "blue"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -2688,
+        3008
+      ],
+      "id": "680aebe8-bbfb-48ce-88b2-f7e793e46795",
+      "name": "Multiple IF"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "71de3d5e-87b2-4959-93ef-d7b64ab1ebdb",
+              "leftValue": "={{ $json['Mail1 IP Address'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -3232,
+        2944
+      ],
+      "id": "68477e59-3135-4718-bff2-055826f9befe",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "71de3d5e-87b2-4959-93ef-d7b64ab1ebdb",
+              "leftValue": "={{ $json['Mail2 IP Address'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -3232,
+        3120
+      ],
+      "id": "0b921689-df25-47ae-8c77-3afa09c111e1",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -3712,
+        3024
+      ],
+      "id": "cf408bf4-1f45-46f5-92bb-e1fabb4b0748",
+      "name": "6:30am Daily"
     }
   ],
   "pinData": {},
@@ -455,6 +819,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-10-06T20:39:30.601Z",
-  "versionId": "8a0f57cb-7068-43ae-81fa-718828b77c13"
+  "updatedAt": "2026-10-14T22:46:34.440Z",
+  "versionId": "6e309eb0-3373-4531-97ec-7439b184a459"
 }
