@@ -752,6 +752,42 @@
   "nodes": [
     {
       "parameters": {
+        "protocol": "sftp",
+        "operation": "upload",
+        "path": "={{ '/' + $('Select Featured Game For Slot').item.json.name + '.tmp' }}",
+        "options": {}
+      },
+      "id": "a19dc913-8a65-450c-bbdd-43be4c78152e",
+      "name": "Upload to FTP (Temp)1",
+      "type": "n8n-nodes-base.ftp",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        -752
+      ],
+      "credentials": {
+        "sftp": {
+          "id": "q1WVpeQqdsHxu8Lq",
+          "name": "SFTP account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const ftp = require('basic-ftp');\nconst client = new ftp.Client();\ntry {\n  await client.access({\n    host: '10.165.128.20',\n    port: 21,\n    user: 'morrismo-ht-assetsbg',\n    password: 'i6e9mv',          // or pull from a credential/var\n    secure: true,                     // explicit FTPS (AUTH TLS)\n    secureOptions: { rejectUnauthorized: false } // internal IP / self-signed cert\n  });\n  const list = await client.list('/');\n  return list.map(f => ({ json: { name: f.name, size: f.size, type: f.type } }));\n} finally {\n  client.close();\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2336,
+        -784
+      ],
+      "id": "16234ca2-0321-40af-aae8-5313854cc9f7",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
         "rule": {
           "interval": [
             {
@@ -761,24 +797,24 @@
           ]
         }
       },
-      "id": "4533dd52-f713-4e6d-ae33-5c9ca6575ad1",
+      "id": "3783f23c-2440-4d0a-9851-8294d5f97807",
       "name": "Every 10 Minutes",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        608,
-        -480
+        1072,
+        -320
       ]
     },
     {
       "parameters": {},
-      "id": "83520501-9407-4399-bebf-de0c4c2d8505",
+      "id": "c4d38bbf-5cee-4413-9ae4-37cbbed49d9a",
       "name": "Manual Test",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        608,
-        -288
+        1072,
+        -128
       ]
     },
     {
@@ -813,13 +849,13 @@
         },
         "options": {}
       },
-      "id": "3918b4ff-0381-4aa6-96c3-c625a918501f",
+      "id": "81bc3361-4374-4030-993d-09b0efb37d73",
       "name": "Global Config",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        832,
-        -384
+        1296,
+        -224
       ]
     },
     {
@@ -844,13 +880,13 @@
           "timeout": 30000
         }
       },
-      "id": "9deef463-908d-4567-93e2-98e3d79db209",
+      "id": "bf751290-d09d-4480-a58c-9d989d4dd9e3",
       "name": "Get Live Content Templates",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1056,
-        -384
+        1520,
+        -224
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -889,13 +925,13 @@
           "timeout": 30000
         }
       },
-      "id": "ec56d4e3-11cc-4212-b798-5c57da1c512f",
+      "id": "06b365ae-d28d-4a5a-b0ac-9ec177b46cdf",
       "name": "Get Active Slots",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1280,
-        -384
+        1744,
+        -224
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -913,13 +949,13 @@
         "fieldToSplitOut": "data",
         "options": {}
       },
-      "id": "644f808a-1ee3-439e-93fe-32e2dc45f6ef",
+      "id": "155662e4-a8c3-4e39-a2ed-5107648bc3ca",
       "name": "Split Out Slots",
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        1488,
-        -384
+        1952,
+        -224
       ]
     },
     {
@@ -930,27 +966,27 @@
           "timeout": 30000
         }
       },
-      "id": "be47706f-c9d6-464e-bd9e-2051300ba777",
+      "id": "f5d92811-82ce-41dd-a046-9f3adb7bb45e",
       "name": "Get Odds Feed",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1712,
-        -384
+        2176,
+        -224
       ]
     },
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "// Runs once per active Live Content record.\n// slot = the ERPNext record for THIS item (paired via Split Out Slots).\n// feed = the odds feed response for THIS item (from Get Odds Feed).\nconst slot = $('Split Out Slots').item.json;\nconst feed = $json;\nconst templates = $('Get Live Content Templates').first().json.data || [];\n\nconst TEAMS = {\n  'Arizona Cardinals': 'ARI', 'Atlanta Falcons': 'ATL', 'Baltimore Ravens': 'BAL', 'Buffalo Bills': 'BUF',\n  'Carolina Panthers': 'CAR', 'Chicago Bears': 'CHI', 'Cincinnati Bengals': 'CIN', 'Cleveland Browns': 'CLE',\n  'Dallas Cowboys': 'DAL', 'Denver Broncos': 'DEN', 'Detroit Lions': 'DET', 'Green Bay Packers': 'GB',\n  'Houston Texans': 'HOU', 'Indianapolis Colts': 'IND', 'Jacksonville Jaguars': 'JAX', 'Kansas City Chiefs': 'KC',\n  'Las Vegas Raiders': 'LV', 'Los Angeles Chargers': 'LAC', 'Los Angeles Rams': 'LAR', 'Miami Dolphins': 'MIA',\n  'Minnesota Vikings': 'MIN', 'New England Patriots': 'NE', 'New Orleans Saints': 'NO', 'New York Giants': 'NYG',\n  'New York Jets': 'NYJ', 'Philadelphia Eagles': 'PHI', 'Pittsburgh Steelers': 'PIT', 'San Francisco 49ers': 'SF',\n  'Seattle Seahawks': 'SEA', 'Tampa Bay Buccaneers': 'TB', 'Tennessee Titans': 'TEN', 'Washington Commanders': 'WAS',\n};\n\nif (!slot.event_id) {\n  return { json: { ...slot, skip: true, skipReason: 'No Event ID set on this slot' } };\n}\n\nconst tpl = templates.find((t) => t.name === slot.template);\nif (!tpl || !tpl.url) {\n  return { json: { ...slot, skip: true, skipReason: `No render URL found for template \"${slot.template}\"` } };\n}\n\nconst game = (feed.events || []).find((e) => String(e.id) === String(slot.event_id));\nif (!game) {\n  return { json: { ...slot, skip: true, skipReason: `Event ${slot.event_id} not found in feed (may have started or expired)` } };\n}\n\nconst slug = String(slot.uri || '').replace(/^\\/+|\\/+$/g, '');\nif (!slug) {\n  return { json: { ...slot, skip: true, skipReason: 'No URI (slug) set on this slot' } };\n}\nconst base = $('Global Config').first().json.ftpBasePath.replace(/\\/+$/, '');\nconst ftpPath = `${base}/${slug}.png`;\nconst publicUrlBase = $('Global Config').first().json.publicUrlBase.replace(/\\/+$/, '');\nconst publicImageUrl = `${publicUrlBase}${ftpPath}`;\n\nconst away = game.competitors.find((c) => !c.home);\nconst home = game.competitors.find((c) => c.home);\nconst abbr = (c) => TEAMS[c.description] || c.description;\nconst market = (code) => game.markets.find((m) => m.code === code && m.status === 'OPEN');\nconst byTeam = (m, c) => m?.outcomes.find((o) => o.competitorId === c.id);\nconst byName = (m, n) => m?.outcomes.find((o) => o.description === n);\nconst line = (h) => { const n = Number(h); return n === 0 ? 'PK' : (n > 0 ? '+' : '') + n; };\nconst price = (o) => o.price.american;\n\nconst sp = market('2W-HCAP'), ml = market('2W-12'), tot = market('2W-OU');\nconst [spA, spH] = [byTeam(sp, away), byTeam(sp, home)];\nconst [mlA, mlH] = [byTeam(ml, away), byTeam(ml, home)];\nconst [ov, un] = [byName(tot, 'Over'), byName(tot, 'Under')];\n\nconst tz = 'America/New_York';\nconst fmtET = (d) => {\n  const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: '2-digit', hour12: true }).formatToParts(new Date(d)).map((x) => [x.type, x.value]));\n  return `${p.weekday} ${p.hour}:${p.minute} ${p.dayPeriod} ET`;\n};\n\n// Stable fields feed the change-detection hash. OddsAsOf is excluded on\n// purpose — it's always \"now\", so including it would mark every run as\n// changed and defeat the skip-if-unchanged check below.\nconst stableVars = {\n  League: slot.league || '',\n  Time: fmtET(game.startTime),\n  Team1: away.description,\n  Team2: home.description,\n  Spread: spA && spH ? `Spread: ${abbr(away)} ${line(spA.price.handicap)} (${price(spA)}) | ${abbr(home)} ${line(spH.price.handicap)} (${price(spH)})` : '',\n  MoneyLine: mlA && mlH ? `Moneyline: ${abbr(away)} ${price(mlA)} | ${abbr(home)} ${price(mlH)}` : '',\n  Total: ov && un ? `Total: O ${Number(ov.price.handicap)} (${price(ov)}) | U ${Number(un.price.handicap)} (${price(un)})` : '',\n};\nconst vars = { ...stableVars, OddsAsOf: fmtET(new Date()) };\n\nconst qs = Object.entries(vars).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');\nconst cleanTemplateUrl = String(tpl.url).replace(/[\"']/g, '').split('?')[0];\nconst signature = JSON.stringify({ id: game.id, ...stableVars });\n\nif (signature === slot.last_hash) {\n  return { json: { ...slot, skip: true, skipReason: 'No change since last upload' } };\n}\n\nreturn { json: {\n  ...slot,\n  skip: false,\n  eventId: game.id,\n  matchup: `${away.description} @ ${home.description}`,\n  ...vars,\n  imageUrl: `${cleanTemplateUrl}?${qs}`,\n  ftpPath,\n  publicImageUrl,\n  signature,\n} };\n"
+        "jsCode": "// Runs once per active Live Content record.\n// slot = the ERPNext record for THIS item (paired via Split Out Slots).\n// feed = the odds feed response for THIS item (from Get Odds Feed).\nconst slot = $('Split Out Slots').item.json;\nconst feed = $json;\nconst templates = $('Get Live Content Templates').first().json.data || [];\n\nconst TEAMS = {\n  'Arizona Cardinals': 'ARI', 'Atlanta Falcons': 'ATL', 'Baltimore Ravens': 'BAL', 'Buffalo Bills': 'BUF',\n  'Carolina Panthers': 'CAR', 'Chicago Bears': 'CHI', 'Cincinnati Bengals': 'CIN', 'Cleveland Browns': 'CLE',\n  'Dallas Cowboys': 'DAL', 'Denver Broncos': 'DEN', 'Detroit Lions': 'DET', 'Green Bay Packers': 'GB',\n  'Houston Texans': 'HOU', 'Indianapolis Colts': 'IND', 'Jacksonville Jaguars': 'JAX', 'Kansas City Chiefs': 'KC',\n  'Las Vegas Raiders': 'LV', 'Los Angeles Chargers': 'LAC', 'Los Angeles Rams': 'LAR', 'Miami Dolphins': 'MIA',\n  'Minnesota Vikings': 'MIN', 'New England Patriots': 'NE', 'New Orleans Saints': 'NO', 'New York Giants': 'NYG',\n  'New York Jets': 'NYJ', 'Philadelphia Eagles': 'PHI', 'Pittsburgh Steelers': 'PIT', 'San Francisco 49ers': 'SF',\n  'Seattle Seahawks': 'SEA', 'Tampa Bay Buccaneers': 'TB', 'Tennessee Titans': 'TEN', 'Washington Commanders': 'WAS',\n};\n\nif (!slot.event_id) {\n  return { json: { ...slot, skip: true, skipReason: 'No Event ID set on this slot' } };\n}\n\nconst tpl = templates.find((t) => t.name === slot.template);\nif (!tpl || !tpl.url) {\n  return { json: { ...slot, skip: true, skipReason: `No render URL found for template \"${slot.template}\"` } };\n}\n\nconst game = (feed.events || []).find((e) => String(e.id) === String(slot.event_id));\nif (!game) {\n  return { json: { ...slot, skip: true, skipReason: `Event ${slot.event_id} not found in feed (may have started or expired)` } };\n}\n\nconst slug = String(slot.uri || '').replace(/^\\/+|\\/+$/g, '');\nif (!slug) {\n  return { json: { ...slot, skip: true, skipReason: 'No URI (slug) set on this slot' } };\n}\nconst base = $('Global Config').first().json.ftpBasePath.replace(/\\/+$/, '');\nconst ftpPath = `${base}/${slug}.png`;\nconst publicUrlBase = $('Global Config').first().json.publicUrlBase.replace(/\\/+$/, '');\nconst publicImageUrl = `${publicUrlBase}${ftpPath}`;\n\nconst away = game.competitors.find((c) => !c.home);\nconst home = game.competitors.find((c) => c.home);\nconst abbr = (c) => TEAMS[c.description] || c.description;\nconst market = (code) => game.markets.find((m) => m.code === code && m.status === 'OPEN');\nconst byTeam = (m, c) => m?.outcomes.find((o) => o.competitorId === c.id);\nconst byName = (m, n) => m?.outcomes.find((o) => o.description === n);\nconst line = (h) => { const n = Number(h); return n === 0 ? 'PK' : (n > 0 ? '+' : '') + n; };\nconst price = (o) => o.price.american;\n\nconst sp = market('2W-HCAP'), ml = market('2W-12'), tot = market('2W-OU');\nconst [spA, spH] = [byTeam(sp, away), byTeam(sp, home)];\nconst [mlA, mlH] = [byTeam(ml, away), byTeam(ml, home)];\nconst [ov, un] = [byName(tot, 'Over'), byName(tot, 'Under')];\n\nconst tz = 'America/New_York';\nconst fmtET = (d) => {\n  const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: '2-digit', hour12: true }).formatToParts(new Date(d)).map((x) => [x.type, x.value]));\n  return `${p.weekday} ${p.hour}:${p.minute} ${p.dayPeriod} ET`;\n};\n\n// OddsAsOf is part of the signature on purpose: the image displays it, so the\n// image is re-rendered on every run and the timestamp never goes stale, even\n// when the odds themselves have not moved.\nconst vars = {\n  League: slot.league || '',\n  Time: fmtET(game.startTime),\n  Team1: away.description,\n  Team2: home.description,\n  Spread: spA && spH ? `Spread: ${abbr(away)} ${line(spA.price.handicap)} (${price(spA)}) | ${abbr(home)} ${line(spH.price.handicap)} (${price(spH)})` : '',\n  MoneyLine: mlA && mlH ? `Moneyline: ${abbr(away)} ${price(mlA)} | ${abbr(home)} ${price(mlH)}` : '',\n  Total: ov && un ? `Total: O ${Number(ov.price.handicap)} (${price(ov)}) | U ${Number(un.price.handicap)} (${price(un)})` : '',\n  OddsAsOf: fmtET(new Date()),\n};\n\nconst qs = Object.entries(vars).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');\nconst cleanTemplateUrl = String(tpl.url).replace(/[\"']/g, '').split('?')[0];\nconst signature = JSON.stringify({ id: game.id, ...vars });\n\nif (signature === slot.last_hash) {\n  return { json: { ...slot, skip: true, skipReason: 'No change since last upload' } };\n}\n\nreturn { json: {\n  ...slot,\n  skip: false,\n  eventId: game.id,\n  matchup: `${away.description} @ ${home.description}`,\n  ...vars,\n  imageUrl: `${cleanTemplateUrl}?${qs}`,\n  ftpPath,\n  publicImageUrl,\n  signature,\n} };\n"
       },
-      "id": "66c33e4b-4daf-4563-9b04-fa32592de663",
+      "id": "35453427-5c32-4ddd-892c-090eea26c7b8",
       "name": "Select Featured Game For Slot",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1936,
-        -384
+        2400,
+        -224
       ]
     },
     {
@@ -977,13 +1013,13 @@
         },
         "options": {}
       },
-      "id": "d78f4edf-b1f4-499b-b199-dfa906647420",
+      "id": "be35f51e-0404-4622-99f6-c2c78d7c3201",
       "name": "Has Update?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        2160,
-        -384
+        2624,
+        -224
       ]
     },
     {
@@ -998,13 +1034,13 @@
           "timeout": 30000
         }
       },
-      "id": "4a4f2cc3-a60d-499c-a0a7-52b0a8431673",
+      "id": "2dd651e1-c655-4adb-89e0-a9350ee16f26",
       "name": "Get Litmus Image",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2384,
-        -464
+        2848,
+        -304
       ],
       "continueOnFail": true
     },
@@ -1014,13 +1050,13 @@
         "path": "={{ '/' + $('Select Featured Game For Slot').item.json.name + '.tmp' }}",
         "options": {}
       },
-      "id": "7fb309e3-4d77-4df0-9eff-6d65a75cfd6a",
+      "id": "02a23146-fdde-4163-850e-f04152c08831",
       "name": "Upload to FTP (Temp)",
       "type": "n8n-nodes-base.ftp",
       "typeVersion": 1,
       "position": [
-        2592,
-        -464
+        3056,
+        -304
       ],
       "credentials": {
         "ftp": {
@@ -1039,13 +1075,13 @@
           "createDirectories": true
         }
       },
-      "id": "cfb98395-5712-4750-b558-74d47a4e890d",
+      "id": "0fa7d50c-4084-4924-bd26-0ddc9a11c8ae",
       "name": "Rename Into Place",
       "type": "n8n-nodes-base.ftp",
       "typeVersion": 1,
       "position": [
-        2768,
-        -464
+        3232,
+        -304
       ],
       "credentials": {
         "ftp": {
@@ -1060,13 +1096,13 @@
         "mode": "runOnceForEachItem",
         "jsCode": "const src = $('Select Featured Game For Slot').item.json;\nconst result = $json;\nconst uploadFailed = result.error !== undefined;\nconst out = {\n  slotName: src.name,\n  status: uploadFailed ? 'Error' : 'Success',\n  errorMessage: uploadFailed ? String(result.error?.message || result.error) : '',\n};\n// Only touch eventId/signature/imageUrl on a real success — on error, leave\n// ERPNext's existing values alone rather than overwriting with unknowns.\nif (!uploadFailed) {\n  out.eventId = src.eventId;\n  out.signature = src.signature;\n  out.imageUrl = src.publicImageUrl;\n}\nreturn { json: out };\n"
       },
-      "id": "96f239a9-94b4-4ea1-a3f9-6ad6d4f6f182",
+      "id": "8032a7d6-1a97-47a6-8ea3-bcd1bdd6b69d",
       "name": "Report Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2928,
-        -464
+        3392,
+        -304
       ]
     },
     {
@@ -1074,13 +1110,13 @@
         "mode": "runOnceForEachItem",
         "jsCode": "// Nothing changed (or nothing to render) — report the skip but don't\n// touch eventId/signature/imageUrl, so ERPNext keeps its last-known-good values.\nconst d = $json;\nreturn { json: {\n  slotName: d.name,\n  status: 'Skipped',\n  errorMessage: d.skipReason || '',\n} };\n"
       },
-      "id": "9d7e7b5f-b8fb-4f7e-ae0f-15e1437b2304",
+      "id": "bd7b7ffc-17a5-452a-93f5-e0ac2baace29",
       "name": "Report Skip",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2368,
-        -288
+        2832,
+        -128
       ]
     },
     {
@@ -1096,13 +1132,13 @@
           "timeout": 30000
         }
       },
-      "id": "415a826d-659e-4bb7-b75c-76e6592d719b",
+      "id": "debdf0cf-e4e4-405e-a364-f95d35961aad",
       "name": "Report to ERPNext",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3088,
-        -288
+        3552,
+        -128
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -1114,42 +1150,6 @@
           "name": "ERPNext account - scaicedo"
         }
       }
-    },
-    {
-      "parameters": {
-        "protocol": "sftp",
-        "operation": "upload",
-        "path": "={{ '/' + $('Select Featured Game For Slot').item.json.name + '.tmp' }}",
-        "options": {}
-      },
-      "id": "a19dc913-8a65-450c-bbdd-43be4c78152e",
-      "name": "Upload to FTP (Temp)1",
-      "type": "n8n-nodes-base.ftp",
-      "typeVersion": 1,
-      "position": [
-        1984,
-        -752
-      ],
-      "credentials": {
-        "sftp": {
-          "id": "q1WVpeQqdsHxu8Lq",
-          "name": "SFTP account"
-        }
-      },
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
-        "jsCode": "const ftp = require('basic-ftp');\nconst client = new ftp.Client();\ntry {\n  await client.access({\n    host: '10.165.128.20',\n    port: 21,\n    user: 'morrismo-ht-assetsbg',\n    password: 'i6e9mv',          // or pull from a credential/var\n    secure: true,                     // explicit FTPS (AUTH TLS)\n    secureOptions: { rejectUnauthorized: false } // internal IP / self-signed cert\n  });\n  const list = await client.list('/');\n  return list.map(f => ({ json: { name: f.name, size: f.size, type: f.type } }));\n} finally {\n  client.close();\n}"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        2336,
-        -784
-      ],
-      "id": "16234ca2-0321-40af-aae8-5313854cc9f7",
-      "name": "Code in JavaScript"
     }
   ],
   "pinData": {},
@@ -1182,6 +1182,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-10-14T19:05:49.351Z",
-  "versionId": "547b590f-2c50-4909-b19e-5cfa3ad90d02"
+  "updatedAt": "2026-10-15T19:42:29.488Z",
+  "versionId": "8f251cdf-487a-42c0-8ce5-eeaff314e5cb"
 }
