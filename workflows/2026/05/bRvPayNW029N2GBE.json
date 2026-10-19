@@ -2892,7 +2892,7 @@
     },
     "node:Schedule Trigger - Bi-weekly full MAP sync": {
       "recurrenceRules": [
-        41
+        43
       ],
       "recurrenceRuleSignatures": [
         "weeks:2"
