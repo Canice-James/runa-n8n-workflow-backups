@@ -3,33 +3,44 @@
   "activeVersion": null,
   "activeVersionId": null,
   "connections": {
-    "When chat message received": {
+    "When clicking Test workflow": {
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "TEST request config",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "OpenAI Chat Model": {
-      "ai_languageModel": [
+    "TEST request config": {
+      "main": [
         [
           {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
+            "node": "List Message Studio targets",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "When clicking ‘Execute workflow’": {
+    "List Message Studio targets": {
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "SOAP body returned",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SOAP body returned": {
+      "main": [
+        [
+          {
+            "node": "Parse SOAP response",
             "type": "main",
             "index": 0
           }
@@ -42,120 +53,166 @@
   "isArchived": false,
   "meta": {
     "templateId": "1475",
-    "templateCredsSetupCompleted": true
+    "templateCredsSetupCompleted": true,
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp"
   },
   "name": "Alejo Test",
   "nodeGroups": [],
   "nodes": [
     {
-      "parameters": {
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
-      "typeVersion": 1.4,
+      "parameters": {},
+      "id": "a2c62498-9de6-49c9-b4b4-46e7feabb021",
+      "name": "When clicking Test workflow",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
       "position": [
-        0,
-        0
-      ],
-      "id": "a4a2461e-ca92-4762-907c-703b90300282",
-      "name": "When chat message received",
-      "webhookId": "6da440d0-cc05-4edb-b6e7-89a4b30a512f"
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 3.1,
-      "position": [
-        384,
-        0
-      ],
-      "id": "629eb4e9-4538-44bb-9ec5-c80273cfed35",
-      "name": "AI Agent"
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "qwen3.8-27b",
-          "mode": "id"
-        },
-        "responsesApiEnabled": false,
-        "options": {
-          "maxTokens": 1024,
-          "timeout": 180000,
-          "maxRetries": 0
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.3,
-      "position": [
-        352,
+        240,
         304
-      ],
-      "id": "8fa3e2e8-1005-42bc-8558-edafa0cf7f1c",
-      "name": "OpenAI Chat Model",
-      "credentials": {
-        "openAiApi": {
-          "id": "xchy6iVzmuGHeUkw",
-          "name": "Wanda - scaicedo"
-        }
-      }
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "url",
+              "name": "url",
+              "type": "string",
+              "value": "https://strongview-1.test.corp-apps.com:4443/sm/services/TargetService"
+            },
+            {
+              "id": "organization",
+              "name": "organization",
+              "type": "string",
+              "value": "Bovada"
+            },
+            {
+              "id": "soapEnvelope",
+              "name": "soapEnvelope",
+              "type": "string",
+              "value": "<?xml version=\"1.0\" encoding=\"utf-8\"?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><soapenv:Header><wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\" soapenv:mustUnderstand=\"0\"><OrganizationToken xmlns=\"http://www.strongmail.com/services/v2/schema\"><organizationName>Bovada</organizationName></OrganizationToken></wsse:Security></soapenv:Header><soapenv:Body><list xmlns=\"http://www.strongmail.com/services/v2/schema\"><filter xsi:type=\"TargetFilter\"><isAscending>true</isAscending><pageNumber>0</pageNumber><recordsPerPage>10</recordsPerPage></filter></list></soapenv:Body></soapenv:Envelope>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "29c949ec-52bc-480d-8d9c-d630a6db2b39",
+      "name": "TEST request config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        480,
+        304
+      ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "https://wanda-gpu-2.lat.internal.ru.com/v1/chat/completions",
+        "url": "={{ $json.url }}",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpBearerAuth",
+        "genericAuthType": "httpBasicAuth",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
+              "name": "SOAPAction",
+              "value": "list"
+            },
+            {
               "name": "Content-Type",
-              "value": " application/json"
+              "value": "text/xml; charset=utf-8"
             }
           ]
         },
         "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "  {\n    \"model\": \"qwen3.8-27b\",\n    \"messages\": [{ \"role\": \"user\", \"content\": \"hello\" }],\n    \"max_tokens\": 1024\n  }",
+        "contentType": "raw",
+        "rawContentType": "text/xml; charset=utf-8",
+        "body": "={{ $json.soapEnvelope }}",
         "options": {
+          "allowUnauthorizedCerts": true,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
           "response": {
             "response": {
               "fullResponse": true,
-              "neverError": true
+              "neverError": true,
+              "responseFormat": "text"
             }
           },
-          "timeout": 180000
+          "timeout": 60000
         }
       },
+      "id": "d953c9b5-901a-4fc8-add1-324d093b20f4",
+      "name": "List Message Studio targets",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        496,
-        480
+        720,
+        304
       ],
-      "id": "478e615e-91e0-417d-aa4c-7ae4889fcb43",
-      "name": "HTTP Request",
+      "alwaysOutputData": true,
       "credentials": {
-        "httpBearerAuth": {
-          "id": "xFIP10IhhRO0yKmj",
-          "name": "Wanda - API"
+        "httpBasicAuth": {
+          "id": "GTd4AAPDttS9J1iO",
+          "name": "Strongview-1 - API"
         }
-      }
+      },
+      "onError": "continueRegularOutput"
     },
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
+      "parameters": {
+        "dataPropertyName": "body",
+        "options": {
+          "explicitArray": false,
+          "mergeAttrs": true
+        }
+      },
+      "id": "d7e2ae71-9303-4773-b0e0-e1b46a65e933",
+      "name": "Parse SOAP response",
+      "type": "n8n-nodes-base.xml",
       "typeVersion": 1,
       "position": [
-        272,
-        480
-      ],
-      "id": "6ffdb830-fa19-4d7d-9284-d7fcdc180074",
-      "name": "When clicking ‘Execute workflow’"
+        1184,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "has-body",
+              "leftValue": "={{ $json.body }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "3e28e211-43d4-42a6-a215-ea42cd810e5c",
+      "name": "SOAP body returned",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        960,
+        304
+      ]
     }
   ],
   "pinData": {},
@@ -179,6 +236,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-10-16T16:57:05.176Z",
-  "versionId": "9eec2153-9ccb-4ce4-ab46-a02d783a0931"
+  "updatedAt": "2026-10-20T19:03:59.248Z",
+  "versionId": "601cba81-98fb-4a3c-8e3a-e832575abdbd"
 }
