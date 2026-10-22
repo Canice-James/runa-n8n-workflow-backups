@@ -752,29 +752,6 @@
   "nodes": [
     {
       "parameters": {
-        "protocol": "sftp",
-        "operation": "upload",
-        "path": "={{ '/' + $('Select Featured Game For Slot').item.json.name + '.tmp' }}",
-        "options": {}
-      },
-      "id": "a19dc913-8a65-450c-bbdd-43be4c78152e",
-      "name": "Upload to FTP (Temp)1",
-      "type": "n8n-nodes-base.ftp",
-      "typeVersion": 1,
-      "position": [
-        1984,
-        -752
-      ],
-      "credentials": {
-        "sftp": {
-          "id": "q1WVpeQqdsHxu8Lq",
-          "name": "SFTP account"
-        }
-      },
-      "continueOnFail": true
-    },
-    {
-      "parameters": {
         "jsCode": "const ftp = require('basic-ftp');\nconst client = new ftp.Client();\ntry {\n  await client.access({\n    host: '10.165.128.20',\n    port: 21,\n    user: 'morrismo-ht-assetsbg',\n    password: 'i6e9mv',          // or pull from a credential/var\n    secure: true,                     // explicit FTPS (AUTH TLS)\n    secureOptions: { rejectUnauthorized: false } // internal IP / self-signed cert\n  });\n  const list = await client.list('/');\n  return list.map(f => ({ json: { name: f.name, size: f.size, type: f.type } }));\n} finally {\n  client.close();\n}"
       },
       "type": "n8n-nodes-base.code",
@@ -1159,11 +1136,30 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        2512,
-        -496
+        2240,
+        -592
       ],
       "id": "a9556038-810e-4363-8bf8-95a7bf54372f",
       "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "path": "assetsbg/images/2013EDM/SPORTS/"
+      },
+      "type": "n8n-nodes-ftp-tls.ftpTls",
+      "typeVersion": 1,
+      "position": [
+        2544,
+        -688
+      ],
+      "id": "2b97fe6a-a728-4c05-b0d6-a3b56b64302c",
+      "name": "FTP/FTPS with TLS",
+      "credentials": {
+        "ftpTls": {
+          "id": "ZBsVLTK58XbWbPxU",
+          "name": "FTP/FTPS with TLS account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -1196,6 +1192,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-10-20T22:00:50.639Z",
-  "versionId": "f2403842-cb26-4b49-b4c7-6e89e417b5f6"
+  "updatedAt": "2026-10-21T18:04:46.382Z",
+  "versionId": "9b291055-a782-4bb5-b2bb-dd40ab94328a"
 }
