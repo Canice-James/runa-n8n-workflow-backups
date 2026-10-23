@@ -7,40 +7,7 @@
       "main": [
         [
           {
-            "node": "TEST request config",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "TEST request config": {
-      "main": [
-        [
-          {
-            "node": "List Message Studio targets",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "List Message Studio targets": {
-      "main": [
-        [
-          {
-            "node": "SOAP body returned",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "SOAP body returned": {
-      "main": [
-        [
-          {
-            "node": "Parse SOAP response",
+            "node": "Create an issue",
             "type": "main",
             "index": 0
           }
@@ -67,152 +34,56 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        240,
-        304
+        592,
+        272
       ]
     },
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "url",
-              "name": "url",
-              "type": "string",
-              "value": "https://strongview-1.test.corp-apps.com:4443/sm/services/TargetService"
-            },
-            {
-              "id": "organization",
-              "name": "organization",
-              "type": "string",
-              "value": "Bovada"
-            },
-            {
-              "id": "soapEnvelope",
-              "name": "soapEnvelope",
-              "type": "string",
-              "value": "<?xml version=\"1.0\" encoding=\"utf-8\"?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><soapenv:Header><wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\" soapenv:mustUnderstand=\"0\"><OrganizationToken xmlns=\"http://www.strongmail.com/services/v2/schema\"><organizationName>Bovada</organizationName></OrganizationToken></wsse:Security></soapenv:Header><soapenv:Body><list xmlns=\"http://www.strongmail.com/services/v2/schema\"><filter xsi:type=\"TargetFilter\"><isAscending>true</isAscending><pageNumber>0</pageNumber><recordsPerPage>10</recordsPerPage></filter></list></soapenv:Body></soapenv:Envelope>"
-            }
-          ]
+        "jiraVersion": "server",
+        "project": {
+          "__rl": true,
+          "value": "22202",
+          "mode": "list",
+          "cachedResultName": "Marketing Activity Plan"
         },
-        "options": {}
-      },
-      "id": "29c949ec-52bc-480d-8d9c-d630a6db2b39",
-      "name": "TEST request config",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.5,
-      "position": [
-        480,
-        304
-      ]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $json.url }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpBasicAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "SOAPAction",
-              "value": "list"
-            },
-            {
-              "name": "Content-Type",
-              "value": "text/xml; charset=utf-8"
-            }
-          ]
+        "issueType": {
+          "__rl": true,
+          "value": "22100",
+          "mode": "list",
+          "cachedResultName": "Banner Build"
         },
-        "sendBody": true,
-        "contentType": "raw",
-        "rawContentType": "text/xml; charset=utf-8",
-        "body": "={{ $json.soapEnvelope }}",
-        "options": {
-          "allowUnauthorizedCerts": true,
-          "redirect": {
-            "redirect": {
-              "followRedirects": false
-            }
+        "summary": "Test",
+        "additionalFields": {
+          "customFieldsUi": {
+            "customFieldsValues": [
+              {
+                "fieldId": {
+                  "__rl": true,
+                  "mode": "id",
+                  "value": "",
+                  "__regex": "^(customfield_[0-9]{2,})"
+                }
+              }
+            ]
           },
-          "response": {
-            "response": {
-              "fullResponse": true,
-              "neverError": true,
-              "responseFormat": "text"
-            }
-          },
-          "timeout": 60000
+          "parentIssueKey": "MAP-2"
         }
       },
-      "id": "d953c9b5-901a-4fc8-add1-324d093b20f4",
-      "name": "List Message Studio targets",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.5,
-      "position": [
-        720,
-        304
-      ],
-      "alwaysOutputData": true,
-      "credentials": {
-        "httpBasicAuth": {
-          "id": "GTd4AAPDttS9J1iO",
-          "name": "Strongview-1 - API"
-        }
-      },
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "dataPropertyName": "body",
-        "options": {
-          "explicitArray": false,
-          "mergeAttrs": true
-        }
-      },
-      "id": "d7e2ae71-9303-4773-b0e0-e1b46a65e933",
-      "name": "Parse SOAP response",
-      "type": "n8n-nodes-base.xml",
+      "type": "n8n-nodes-base.jira",
       "typeVersion": 1,
       "position": [
-        1184,
-        224
-      ]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "has-body",
-              "leftValue": "={{ $json.body }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "looseTypeValidation": true,
-        "options": {}
-      },
-      "id": "3e28e211-43d4-42a6-a215-ea42cd810e5c",
-      "name": "SOAP body returned",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        960,
-        304
-      ]
+        816,
+        272
+      ],
+      "id": "3fcd1552-956c-4779-adc9-374407ab9f41",
+      "name": "Create an issue",
+      "credentials": {
+        "jiraSoftwareServerApi": {
+          "id": "oAKRcX61sJaARIzC",
+          "name": "Jira SW Server account - scaicedo"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -236,6 +107,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-10-20T19:03:59.248Z",
-  "versionId": "601cba81-98fb-4a3c-8e3a-e832575abdbd"
+  "updatedAt": "2026-10-22T15:07:42.367Z",
+  "versionId": "7a0358c5-58e4-47ba-a8a7-8b6e36dde886"
 }
