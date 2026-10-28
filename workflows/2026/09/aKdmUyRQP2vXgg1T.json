@@ -1130,7 +1130,7 @@
     },
     {
       "parameters": {
-        "url": "https://www.joefortuneonlinepokies.club/",
+        "url": "https://www.ignitionpoker.com",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -1192,6 +1192,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-10-21T18:04:46.382Z",
-  "versionId": "9b291055-a782-4bb5-b2bb-dd40ab94328a"
+  "updatedAt": "2026-10-27T14:49:05.578Z",
+  "versionId": "ef50951c-dae3-4912-a0d4-edcf5f7a5c78"
 }
