@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-10-01T18:58:11.176Z",
-    "createdAt": "2026-10-01T18:58:11.176Z",
-    "versionId": "96e8fdd8-c81a-457c-aed2-ee67018b3bfd",
+    "updatedAt": "2026-11-04T21:12:35.212Z",
+    "createdAt": "2026-11-04T21:11:22.421Z",
+    "versionId": "e8eb5b41-f7b7-4795-9b3e-2215d65a8596",
     "workflowId": "l5RJbvH5ps4dLgWa",
     "nodes": [
       {
@@ -684,7 +684,7 @@
         "type": "n8n-nodes-base.splitOut",
         "typeVersion": 1,
         "position": [
-          1120,
+          1344,
           0
         ]
       },
@@ -719,7 +719,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.7,
         "position": [
-          1344,
+          1568,
           0
         ],
         "retryOnFail": true,
@@ -788,7 +788,7 @@
         "type": "n8n-nodes-base.splitOut",
         "typeVersion": 1,
         "position": [
-          1120,
+          1344,
           192
         ]
       },
@@ -823,7 +823,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.7,
         "position": [
-          1344,
+          1568,
           192
         ],
         "retryOnFail": true,
@@ -892,7 +892,7 @@
         "type": "n8n-nodes-base.splitOut",
         "typeVersion": 1,
         "position": [
-          1120,
+          1344,
           384
         ]
       },
@@ -969,7 +969,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.7,
         "position": [
-          1344,
+          1568,
           384
         ],
         "retryOnFail": true,
@@ -1103,16 +1103,14 @@
       },
       {
         "parameters": {
-          "jsCode": "const issue = $('Prepare MAP issue fields').first().json;\nconst changelog = (issue && issue.changelog) || {};\nconst histories = changelog.histories || changelog.values || [];\nconst output = [];\nfor (let h = 0; h < histories.length; h++) {\n  const history = histories[h] || {};\n  const items = history.items || [];\n  for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {\n    const item = items[itemIndex] || {};\n    output.push({ json: {\n      changelog_id: String(history.id),\n      item_index: itemIndex,\n      issue_key: issue.issue_key,\n      issue_id: String(issue.issue_id),\n      author_key: (history.author && (history.author.key || history.author.name)) || null,\n      author_name: (history.author && history.author.displayName) || null,\n      created_at: history.created || null,\n      field: item.field || null,\n      fieldtype: item.fieldtype || null,\n      from_value: item.from || null,\n      from_string: item.fromString || null,\n      to_value: item.to || null,\n      to_string: item.toString || null\n    }});\n  }\n}\nreturn output;",
-          "language": "javaScript",
-          "mode": "runOnceForAllItems"
+          "jsCode": "const issue = $('Prepare MAP issue fields').first().json;\nconst changelog = (issue && issue.changelog) || {};\nconst histories = changelog.histories || changelog.values || [];\nconst output = [];\nfor (let h = 0; h < histories.length; h++) {\n  const history = histories[h] || {};\n  const items = history.items || [];\n  for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {\n    const item = items[itemIndex] || {};\n    output.push({ json: {\n      changelog_id: String(history.id),\n      item_index: itemIndex,\n      issue_key: issue.issue_key,\n      issue_id: String(issue.issue_id),\n      author_key: (history.author && (history.author.key || history.author.name)) || null,\n      author_name: (history.author && history.author.displayName) || null,\n      created_at: history.created || null,\n      field: item.field || null,\n      fieldtype: item.fieldtype || null,\n      from_value: item.from || null,\n      from_string: item.fromString || null,\n      to_value: item.to || null,\n      to_string: item.toString || null\n    }});\n  }\n}\nreturn output;"
         },
         "id": "4c08136d-0665-4530-bf2c-05ba773c12b7",
         "name": "Flatten changelog items",
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          1120,
+          896,
           768
         ],
         "notes": "Uses Prepare MAP issue fields for issue identity so every changelog page maps to the current issue."
@@ -1161,7 +1159,7 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.7,
         "position": [
-          1344,
+          1120,
           768
         ],
         "retryOnFail": true,
@@ -1223,14 +1221,6 @@
         ]
       },
       {
-        "id": "cac4bad7-87fc-44dd-b32a-58adb5f4ca9a",
-        "name": "Restore lists after label delete",
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.5,
-        "position": [
-          0,
-          0
-        ],
         "parameters": {
           "assignments": {
             "assignments": [
@@ -1254,21 +1244,19 @@
               }
             ]
           },
-          "includeOtherFields": false,
-          "mode": "manual",
           "options": {}
         },
-        "notes": "Delete returns {success} and drops labels_list. Re-read lists from Prepare so Split still has values."
-      },
-      {
-        "id": "ee1f274f-3f5c-4a26-8d4a-59176cc0d30b",
-        "name": "Restore lists after brand delete",
+        "id": "cac4bad7-87fc-44dd-b32a-58adb5f4ca9a",
+        "name": "Restore lists after label delete",
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.5,
         "position": [
-          0,
+          1120,
           0
         ],
+        "notes": "Delete returns {success} and drops labels_list. Re-read lists from Prepare so Split still has values."
+      },
+      {
         "parameters": {
           "assignments": {
             "assignments": [
@@ -1292,21 +1280,19 @@
               }
             ]
           },
-          "includeOtherFields": false,
-          "mode": "manual",
           "options": {}
         },
-        "notes": "Delete returns {success} and drops brands_list. Re-read lists from Prepare so Split still has values."
-      },
-      {
-        "id": "a578399f-43f1-41d7-b5a1-551399863233",
-        "name": "Restore lists after region delete",
+        "id": "ee1f274f-3f5c-4a26-8d4a-59176cc0d30b",
+        "name": "Restore lists after brand delete",
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.5,
         "position": [
-          0,
-          0
+          1120,
+          192
         ],
+        "notes": "Delete returns {success} and drops brands_list. Re-read lists from Prepare so Split still has values."
+      },
+      {
         "parameters": {
           "assignments": {
             "assignments": [
@@ -1330,10 +1316,16 @@
               }
             ]
           },
-          "includeOtherFields": false,
-          "mode": "manual",
           "options": {}
         },
+        "id": "a578399f-43f1-41d7-b5a1-551399863233",
+        "name": "Restore lists after region delete",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          1120,
+          384
+        ],
         "notes": "Delete returns {success} and drops regions_list. Re-read lists from Prepare so Split still has values."
       }
     ],
@@ -1536,12 +1528,12 @@
       }
     },
     "nodeGroups": [],
-    "authors": "Canice James (via MCP)",
-    "name": "Fix bridge inserts and Server changelogs",
-    "description": "Restore label/brand/region lists after delete so bridge inserts actually run. Flatten changelogs from the issue expand payload; missing changelog is empty, not a 404.",
-    "autosaved": false
+    "authors": "Canice James",
+    "name": "Version e8eb5b41",
+    "description": "",
+    "autosaved": true
   },
-  "activeVersionId": "96e8fdd8-c81a-457c-aed2-ee67018b3bfd",
+  "activeVersionId": "e8eb5b41-f7b7-4795-9b3e-2215d65a8596",
   "connections": {
     "When called by Jira MAP": {
       "main": [
@@ -2428,7 +2420,7 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        1120,
+        1344,
         0
       ]
     },
@@ -2463,7 +2455,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.7,
       "position": [
-        1344,
+        1568,
         0
       ],
       "retryOnFail": true,
@@ -2532,7 +2524,7 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        1120,
+        1344,
         192
       ]
     },
@@ -2567,7 +2559,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.7,
       "position": [
-        1344,
+        1568,
         192
       ],
       "retryOnFail": true,
@@ -2636,7 +2628,7 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        1120,
+        1344,
         384
       ]
     },
@@ -2713,7 +2705,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.7,
       "position": [
-        1344,
+        1568,
         384
       ],
       "retryOnFail": true,
@@ -2847,16 +2839,14 @@
     },
     {
       "parameters": {
-        "jsCode": "const issue = $('Prepare MAP issue fields').first().json;\nconst changelog = (issue && issue.changelog) || {};\nconst histories = changelog.histories || changelog.values || [];\nconst output = [];\nfor (let h = 0; h < histories.length; h++) {\n  const history = histories[h] || {};\n  const items = history.items || [];\n  for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {\n    const item = items[itemIndex] || {};\n    output.push({ json: {\n      changelog_id: String(history.id),\n      item_index: itemIndex,\n      issue_key: issue.issue_key,\n      issue_id: String(issue.issue_id),\n      author_key: (history.author && (history.author.key || history.author.name)) || null,\n      author_name: (history.author && history.author.displayName) || null,\n      created_at: history.created || null,\n      field: item.field || null,\n      fieldtype: item.fieldtype || null,\n      from_value: item.from || null,\n      from_string: item.fromString || null,\n      to_value: item.to || null,\n      to_string: item.toString || null\n    }});\n  }\n}\nreturn output;",
-        "language": "javaScript",
-        "mode": "runOnceForAllItems"
+        "jsCode": "const issue = $('Prepare MAP issue fields').first().json;\nconst changelog = (issue && issue.changelog) || {};\nconst histories = changelog.histories || changelog.values || [];\nconst output = [];\nfor (let h = 0; h < histories.length; h++) {\n  const history = histories[h] || {};\n  const items = history.items || [];\n  for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {\n    const item = items[itemIndex] || {};\n    output.push({ json: {\n      changelog_id: String(history.id),\n      item_index: itemIndex,\n      issue_key: issue.issue_key,\n      issue_id: String(issue.issue_id),\n      author_key: (history.author && (history.author.key || history.author.name)) || null,\n      author_name: (history.author && history.author.displayName) || null,\n      created_at: history.created || null,\n      field: item.field || null,\n      fieldtype: item.fieldtype || null,\n      from_value: item.from || null,\n      from_string: item.fromString || null,\n      to_value: item.to || null,\n      to_string: item.toString || null\n    }});\n  }\n}\nreturn output;"
       },
       "id": "4c08136d-0665-4530-bf2c-05ba773c12b7",
       "name": "Flatten changelog items",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1120,
+        896,
         768
       ],
       "notes": "Uses Prepare MAP issue fields for issue identity so every changelog page maps to the current issue."
@@ -2905,7 +2895,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.7,
       "position": [
-        1344,
+        1120,
         768
       ],
       "retryOnFail": true,
@@ -2967,14 +2957,6 @@
       ]
     },
     {
-      "id": "cac4bad7-87fc-44dd-b32a-58adb5f4ca9a",
-      "name": "Restore lists after label delete",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.5,
-      "position": [
-        0,
-        0
-      ],
       "parameters": {
         "assignments": {
           "assignments": [
@@ -2998,21 +2980,19 @@
             }
           ]
         },
-        "includeOtherFields": false,
-        "mode": "manual",
         "options": {}
       },
-      "notes": "Delete returns {success} and drops labels_list. Re-read lists from Prepare so Split still has values."
-    },
-    {
-      "id": "ee1f274f-3f5c-4a26-8d4a-59176cc0d30b",
-      "name": "Restore lists after brand delete",
+      "id": "cac4bad7-87fc-44dd-b32a-58adb5f4ca9a",
+      "name": "Restore lists after label delete",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        0,
+        1120,
         0
       ],
+      "notes": "Delete returns {success} and drops labels_list. Re-read lists from Prepare so Split still has values."
+    },
+    {
       "parameters": {
         "assignments": {
           "assignments": [
@@ -3036,21 +3016,19 @@
             }
           ]
         },
-        "includeOtherFields": false,
-        "mode": "manual",
         "options": {}
       },
-      "notes": "Delete returns {success} and drops brands_list. Re-read lists from Prepare so Split still has values."
-    },
-    {
-      "id": "a578399f-43f1-41d7-b5a1-551399863233",
-      "name": "Restore lists after region delete",
+      "id": "ee1f274f-3f5c-4a26-8d4a-59176cc0d30b",
+      "name": "Restore lists after brand delete",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        0,
-        0
+        1120,
+        192
       ],
+      "notes": "Delete returns {success} and drops brands_list. Re-read lists from Prepare so Split still has values."
+    },
+    {
       "parameters": {
         "assignments": {
           "assignments": [
@@ -3074,10 +3052,16 @@
             }
           ]
         },
-        "includeOtherFields": false,
-        "mode": "manual",
         "options": {}
       },
+      "id": "a578399f-43f1-41d7-b5a1-551399863233",
+      "name": "Restore lists after region delete",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1120,
+        384
+      ],
       "notes": "Delete returns {success} and drops regions_list. Re-read lists from Prepare so Split still has values."
     }
   ],
@@ -3117,6 +3101,6 @@
     }
   ],
   "triggerCount": 0,
-  "updatedAt": "2026-10-01T18:58:11.174Z",
-  "versionId": "96e8fdd8-c81a-457c-aed2-ee67018b3bfd"
+  "updatedAt": "2026-11-04T21:11:22.417Z",
+  "versionId": "e8eb5b41-f7b7-4795-9b3e-2215d65a8596"
 }
