@@ -1,9 +1,9 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-09-17T17:04:20.558Z",
-    "createdAt": "2026-09-17T17:03:55.803Z",
-    "versionId": "91518787-cf00-4417-83db-6ddfba708436",
+    "updatedAt": "2026-11-12T16:39:57.353Z",
+    "createdAt": "2026-11-12T16:27:37.097Z",
+    "versionId": "c9ceef07-7a8a-4b9d-a1d1-40027e29a3c5",
     "workflowId": "kSW3D4KClwkj7vno",
     "nodes": [
       {
@@ -25,7 +25,7 @@
       },
       {
         "parameters": {
-          "url": "=https://chat-ru.corp-apps.com/api/v4/users/me",
+          "url": "=https://chat.corp-apps.com/api/v4/users/me",
           "authentication": "predefinedCredentialType",
           "nodeCredentialType": "mattermostApi",
           "options": {}
@@ -47,7 +47,7 @@
       },
       {
         "parameters": {
-          "url": "=https://chat-ru.corp-apps.com/api/v4/users/username/{{ $json.username }}",
+          "url": "=https://chat.corp-apps.com/api/v4/users/username/{{ $json.username }}",
           "authentication": "predefinedCredentialType",
           "nodeCredentialType": "mattermostApi",
           "sendBody": true,
@@ -74,7 +74,7 @@
       {
         "parameters": {
           "method": "POST",
-          "url": "=https://chat-ru.corp-apps.com/api/v4/channels/direct",
+          "url": "=https://chat.corp-apps.com/api/v4/channels/direct",
           "authentication": "predefinedCredentialType",
           "nodeCredentialType": "mattermostApi",
           "sendBody": true,
@@ -451,7 +451,7 @@
               "thumb_url": "https://gitlab.com/uploads/-/system/user/avatar/21826781/duo-bot.png",
               "text": "=[View Public Ticket](http://martech-desk.corp-apps.com/requests/{{ $('Issue Updated').item.json.body.issue_name }}) | [View Desk Ticket](http://martech-desk.corp-apps.com/desk/issues/{{ $('Issue Updated').item.json.body.issue_name }} }})\n\nFields changed: {{ $('Issue Updated').item.json.body.changed_fields.map(item => item.label).join(\", \") }}",
               "footer": "=Visit the ticket to see the changes.",
-              "title": "=MarTech Request Updated: {{ $('Issue Updated').item.json.body.subject }}",
+              "title": "=MarTech Request Updated: {{ $('Issue Updated').item.json.body.subject }} *({{ $('Issue Updated').item.json.body.stage }})*",
               "color": "#D07300"
             }
           ],
@@ -607,6 +607,11 @@
               "node": "Call 'MarDesk'",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "Notify channel of new request",
+              "type": "main",
+              "index": 0
             }
           ]
         ]
@@ -660,11 +665,6 @@
           [
             {
               "node": "Send message",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Notify channel of new request",
               "type": "main",
               "index": 0
             }
@@ -761,17 +761,22 @@
     },
     "nodeGroups": [],
     "authors": "Canice James",
-    "name": "Version 91518787",
+    "name": "Version c9ceef07",
     "description": "",
     "autosaved": true
   },
-  "activeVersionId": "91518787-cf00-4417-83db-6ddfba708436",
+  "activeVersionId": "c9ceef07-7a8a-4b9d-a1d1-40027e29a3c5",
   "connections": {
     "Webhook": {
       "main": [
         [
           {
             "node": "Call 'MarDesk'",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notify channel of new request",
             "type": "main",
             "index": 0
           }
@@ -827,11 +832,6 @@
         [
           {
             "node": "Send message",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Notify channel of new request",
             "type": "main",
             "index": 0
           }
@@ -952,7 +952,7 @@
     },
     {
       "parameters": {
-        "url": "=https://chat-ru.corp-apps.com/api/v4/users/me",
+        "url": "=https://chat.corp-apps.com/api/v4/users/me",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "mattermostApi",
         "options": {}
@@ -974,7 +974,7 @@
     },
     {
       "parameters": {
-        "url": "=https://chat-ru.corp-apps.com/api/v4/users/username/{{ $json.username }}",
+        "url": "=https://chat.corp-apps.com/api/v4/users/username/{{ $json.username }}",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "mattermostApi",
         "sendBody": true,
@@ -1001,7 +1001,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://chat-ru.corp-apps.com/api/v4/channels/direct",
+        "url": "=https://chat.corp-apps.com/api/v4/channels/direct",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "mattermostApi",
         "sendBody": true,
@@ -1547,6 +1547,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 3,
-  "updatedAt": "2026-09-17T17:06:31.284Z",
-  "versionId": "0918141e-024f-4565-a16c-690d5893e8c3"
+  "updatedAt": "2026-11-12T16:27:37.095Z",
+  "versionId": "c9ceef07-7a8a-4b9d-a1d1-40027e29a3c5"
 }
