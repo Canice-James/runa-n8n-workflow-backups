@@ -1,0 +1,36 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {},
+  "createdAt": "2026-11-16T13:43:27.835Z",
+  "id": "dgS2gxingMHRr9Lr",
+  "isArchived": true,
+  "meta": null,
+  "name": "COL Report",
+  "nodeGroups": [],
+  "nodes": [],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-11-16T13:43:27.835Z",
+      "createdAt": "2026-11-16T13:43:27.835Z",
+      "role": "workflow:owner",
+      "workflowId": "dgS2gxingMHRr9Lr",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-11-16T14:04:04.607Z",
+  "versionId": "14741e73-a111-425f-a455-f754fc266181"
+}
