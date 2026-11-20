@@ -1,0 +1,580 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Cron Hourly": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Jira GET Live Epics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira GET Live Epics": {
+      "main": [
+        [
+          {
+            "node": "Split Epics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Epics": {
+      "main": [
+        [
+          {
+            "node": "Loop Epics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Epics": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Jira GET Children",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira GET Children": {
+      "main": [
+        [
+          {
+            "node": "Jira GET Comments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jira GET Comments": {
+      "main": [
+        [
+          {
+            "node": "Confluence Find Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confluence Find Page": {
+      "main": [
+        [
+          {
+            "node": "Build Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Payload": {
+      "main": [
+        [
+          {
+            "node": "Switch Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Action": {
+      "main": [
+        [
+          {
+            "node": "Confluence Create",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Confluence Update",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Epics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confluence Create": {
+      "main": [
+        [
+          {
+            "node": "Save Fingerprint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confluence Update": {
+      "main": [
+        [
+          {
+            "node": "Save Fingerprint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Fingerprint": {
+      "main": [
+        [
+          {
+            "node": "Mattermost Notify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mattermost Notify": {
+      "main": [
+        [
+          {
+            "node": "Loop Epics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-11-19T14:52:37.159Z",
+  "id": "s4jR7MaqNF0a2da8",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Marketing Escalations Automation v1",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "20 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "d52cadd4-fa7d-4ee2-b3ef-b313c3221471",
+      "name": "Cron Hourly",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -2608,
+        208
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "38bd6688-c592-4ecf-98b5-6a4fe17cb0fc",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2608,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "jiraBaseUrl",
+              "value": "https://jiraops.corp-apps.com"
+            },
+            {
+              "name": "confluenceBaseUrl",
+              "value": "https://wiki.corp-apps.com"
+            },
+            {
+              "name": "spaceKey",
+              "value": "CSERV"
+            },
+            {
+              "name": "targetPageStatus",
+              "value": "draft"
+            },
+            {
+              "name": "mattermostWebhookUrl",
+              "value": "https://mattermost.corp-apps.com/hooks/CHANGE_ME"
+            },
+            {
+              "name": "testEpicKey"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4d80b69f-6857-4a6e-8d6f-5b4f4e579f26",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        -2368,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.jiraBaseUrl }}/rest/api/2/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "jiraSoftwareServerApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "jql",
+              "value": "={{ $json.testEpicKey ? 'project = MAP AND key = ' + $json.testEpicKey : 'project = MAP AND issuetype = Epic AND status = Live' }}"
+            },
+            {
+              "name": "fields",
+              "value": "summary,status,issuetype,created,updated,description,customfield_11504,customfield_10004,customfield_17519,customfield_26467,customfield_11221,customfield_25508,customfield_25544,customfield_26458,labels"
+            },
+            {
+              "name": "maxResults",
+              "value": "50"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a79fde83-4e39-47cd-8610-8c2b394c05fb",
+      "name": "Jira GET Live Epics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -2128,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "issues",
+        "options": {}
+      },
+      "id": "345ae9d0-99d1-43e2-b84f-a71717db6990",
+      "name": "Split Epics",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1904,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "11061712-ae8d-4610-9121-779050d48a04",
+      "name": "Loop Epics",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1680,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').first().json.jiraBaseUrl }}/rest/api/2/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "jiraSoftwareServerApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "jql",
+              "value": "={{ 'project = MAP AND (\"Epic Link\" = ' + $json.key + ' OR parent = ' + $json.key + ')' }}"
+            },
+            {
+              "name": "fields",
+              "value": "summary,status,issuetype,updated,description,customfield_11504,customfield_26613,customfield_11246,customfield_11221,customfield_18101,customfield_18102,customfield_11236,customfield_26615,customfield_26489,customfield_26490,customfield_26491,customfield_25517,customfield_11243,customfield_26606,customfield_26481,customfield_11235,customfield_26492,customfield_26493,customfield_26494,customfield_26495"
+            },
+            {
+              "name": "maxResults",
+              "value": "100"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8bfa7e01-3a55-4953-8792-3974d90f6e42",
+      "name": "Jira GET Children",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1440,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').first().json.jiraBaseUrl }}/rest/api/2/issue/{{ $('Loop Epics').item.json.key }}/comment",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "jiraSoftwareServerApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "orderBy",
+              "value": "-created"
+            },
+            {
+              "name": "maxResults",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9114b345-06ae-424a-9e3d-083bd004957e",
+      "name": "Jira GET Comments",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1200,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').first().json.confluenceBaseUrl }}/rest/api/content/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "confluenceApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "cql",
+              "value": "={{ 'space = \"' + $('Config').first().json.spaceKey + '\" AND label = \"map-epic-' + $('Loop Epics').item.json.key.toLowerCase() + '\"' }}"
+            },
+            {
+              "name": "expand",
+              "value": "version,metadata.properties.fingerprint,ancestors"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3a65f260-ea50-42d3-98a8-bac9bf581f4e",
+      "name": "Confluence Find Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -960,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const hashStr = (s) => { let h1 = 0xdeadbeef, h2 = 0x41c6ce57; for (let i = 0; i < s.length; i++) { const ch = s.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909); return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0'); };\nconst cfg = $('Config').first().json;\nconst epic = $('Loop Epics').item.json;\nconst childrenResp = $('Jira GET Children').item.json;\nconst commentsResp = $('Jira GET Comments').item.json;\nconst confSearch = $('Confluence Find Page').item.json;\nconst fields = epic.fields || {};\nconst children = childrenResp.issues || [];\nconst comments = (commentsResp.comments || []).slice(0, 10);\nconst existingPages = confSearch.results || [];\nconst existingPage = existingPages.length > 0 ? existingPages[0] : null;\n\nconst esc = (str) => {\n  if (str === null || str === undefined) return '';\n  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;');\n};\n\nconst extractVal = (val) => {\n  if (val === null || val === undefined) return '';\n  if (Array.isArray(val)) return val.map(extractVal).filter(Boolean).join(', ');\n  if (typeof val === 'object') return val.value || val.name || val.key || JSON.stringify(val);\n  return String(val).trim();\n};\n\nconst formatEDT = (isoStr, includeTime = true) => {\n  if (!isoStr) return '';\n  const d = new Date(isoStr);\n  if (isNaN(d.getTime())) return String(isoStr);\n  const parts = new Intl.DateTimeFormat('en-US', {\n    timeZone: 'America/New_York',\n    year: 'numeric',\n    month: 'numeric',\n    day: 'numeric',\n    hour: 'numeric',\n    minute: '2-digit',\n    hour12: true\n  }).formatToParts(d);\n  const getP = (t) => (parts.find(p => p.type === t) || {}).value || '';\n  if (!includeTime) return `${getP('month')}/${getP('day')}/${getP('year')}`;\n  const ampm = getP('dayPeriod').toLowerCase().replace('m', '');\n  return `${getP('month')}/${getP('day')}/${getP('year')} ${getP('hour')}:${getP('minute')}${ampm} EDT`;\n};\n\nconst BRAND_MAP = [\n  { match: ['BVD', 'BOVADA'], name: 'Bovada', parentId: '277422571' },\n  { match: ['OZOON'], name: 'Ozoon', parentId: '277422692' },\n  { match: ['SLOTS'], name: 'Slots', parentId: '277422699' },\n  { match: ['CAFE CASINO', 'CAFE'], name: 'Cafe Casino', parentId: '277422697' },\n  { match: ['JOE FORTUNE', 'JFT'], name: 'Joe Fortune', parentId: '277422702' },\n  { match: ['BVX'], name: 'BVX', parentId: '337289266' }\n];\n\nconst rawBrand = extractVal(fields.customfield_11504).toUpperCase();\nconst summaryUpper = (fields.summary || '').toUpperCase();\nlet brandDisplay = 'All Brands';\nlet parentPageId = '277422705';\n\nif (rawBrand.includes(',')) {\n  brandDisplay = 'All Brands';\n  parentPageId = '277422705';\n} else if (rawBrand.includes('IGN')) {\n  if (rawBrand.includes('AUS') || summaryUpper.includes('AUS')) {\n    brandDisplay = 'Ignition AUS';\n    parentPageId = '459091653';\n  } else {\n    brandDisplay = 'Ignition UFM';\n    parentPageId = '277422694';\n  }\n} else {\n  for (const b of BRAND_MAP) {\n    if (b.match.some(m => rawBrand.includes(m))) {\n      brandDisplay = b.name;\n      parentPageId = b.parentId;\n      break;\n    }\n  }\n}\n\nconst promoName = extractVal(fields.customfield_10004) || (fields.summary || '').replace(/^\\[.*?\\]\\s*/, '');\nconst rawStartDate = extractVal(fields.customfield_17519) || extractVal(fields.customfield_26467);\nconst startDateEDT = formatEDT(rawStartDate, true);\nconst endDateEDT = formatEDT(extractVal(fields.customfield_11221), true);\nconst targetAudience = extractVal(fields.customfield_25508);\nconst eligibility = [extractVal(fields.customfield_25544), extractVal(fields.customfield_26458)].filter(Boolean).join(' | ');\n\nconst bonuses = children.filter(c => (c.fields?.issuetype?.name || '').toLowerCase() === 'bonus');\nconst bonusIds = bonuses.map(b => extractVal(b.fields?.customfield_11246)).filter(Boolean);\n\nconst missingFields = [];\nif (!rawBrand) missingFields.push('Brand');\nif (!promoName) missingFields.push('Name of Promotion');\nif (!rawStartDate) missingFields.push('Start Date');\nif (!targetAudience) missingFields.push('Targeted Audience');\nif (!eligibility) missingFields.push('Eligibility / Details');\nif (bonuses.length > 0 && bonusIds.length === 0) missingFields.push('CM Bonus ID');\n\nconst fingerprintSource = {\n  epicKey: epic.key,\n  status: fields.status?.name || '',\n  summary: fields.summary || '',\n  promoName,\n  rawBrand,\n  rawStartDate,\n  endDate: extractVal(fields.customfield_11221),\n  targetAudience,\n  eligibility,\n  children: children.map(c => ({\n    key: c.key,\n    type: c.fields?.issuetype?.name || '',\n    status: c.fields?.status?.name || '',\n    summary: c.fields?.summary || '',\n    updated: c.fields?.updated || '',\n    bonusId: extractVal(c.fields?.customfield_11246)\n  })).sort((a, b) => a.key.localeCompare(b.key)),\n  commentIds: comments.map(cm => `${cm.id}:${cm.updated}`).sort()\n};\n\nconst fingerprint = hashStr(JSON.stringify(fingerprintSource));\nconst prevFingerprint = existingPage?.metadata?.properties?.fingerprint?.value || '';\n\nlet action = 'create';\nif (existingPage) {\n  action = (prevFingerprint === fingerprint) ? 'noop' : 'update';\n}\n\nconst titleSuffix = startDateEDT ? ` - ${startDateEDT}` : '';\nconst pageTitle = existingPage ? existingPage.title : `${brandDisplay} | ${promoName}${titleSuffix}`;\n\nconst calloutXhtml = missingFields.length > 0\n  ? `<ac:structured-macro ac:name=\"warning\"><ac:rich-text-body><p><strong>Incomplete MAP Data (Missing Fields):</strong> ${esc(missingFields.join(', '))}</p></ac:rich-text-body></ac:structured-macro>`\n  : `<ac:structured-macro ac:name=\"info\"><ac:rich-text-body><p><strong>Status:</strong> All required v1 fields present. Last synced: ${esc(formatEDT(new Date().toISOString(), true))}</p></ac:rich-text-body></ac:structured-macro>`;\n\nconst bonusRowsXhtml = bonuses.length === 0\n  ? `<tr><td colspan=\"5\"><em>No Bonus child tickets linked yet.</em></td></tr>`\n  : bonuses.map(b => {\n      const bf = b.fields || {};\n      const bUrl = `${cfg.jiraBaseUrl}/browse/${b.key}`;\n      const bCode = extractVal(bf.customfield_11246);\n      const bPublic = extractVal(bf.customfield_26613) || bf.summary || '';\n      const bType = extractVal(bf.customfield_11243);\n      const bStatus = bf.status?.name || '';\n      return `<tr><td><a href=\"${esc(bUrl)}\">${esc(b.key)}</a></td><td>${esc(bPublic)}</td><td>${bCode ? `<strong>${esc(bCode)}</strong>` : ''}</td><td>${esc(bType)}</td><td>${esc(bStatus)}</td></tr>`;\n    }).join('');\n\nconst childrenRowsXhtml = children.length === 0\n  ? `<tr><td colspan=\"4\"><em>No linked MAP child activities found.</em></td></tr>`\n  : children.map(c => {\n      const cf = c.fields || {};\n      const cUrl = `${cfg.jiraBaseUrl}/browse/${c.key}`;\n      return `<tr><td>${esc(cf.issuetype?.name || '')}</td><td><a href=\"${esc(cUrl)}\">${esc(c.key)}</a></td><td>${esc(cf.summary || '')}</td><td>${esc(cf.status?.name || '')}</td></tr>`;\n    }).join('');\n\nconst commentsXhtml = comments.length === 0\n  ? `<p><em>No comments on Epic.</em></p>`\n  : `<ul>${comments.map(cm => `<li><strong>${esc(cm.author?.displayName || 'User')}</strong> (${esc(formatEDT(cm.created, true))}): ${esc((cm.body || '').slice(0, 500))}</li>`).join('')}</ul>`;\n\nconst epicUrl = `${cfg.jiraBaseUrl}/browse/${epic.key}`;\n\nconst storageBody = `${calloutXhtml}<h2>Campaign Overview</h2><table><tbody><tr><th>Brand</th><td>${esc(brandDisplay)}</td><th>GMO / MAP Number</th><td><a href=\"${esc(epicUrl)}\">${esc(epic.key)}</a></td></tr><tr><th>Name of Promotion</th><td>${esc(promoName)}</td><th>Epic Status</th><td>${esc(fields.status?.name || '')}</td></tr><tr><th>Start Date (EDT)</th><td>${esc(startDateEDT)}</td><th>End Date (EDT)</th><td>${esc(endDateEDT)}</td></tr><tr><th>Targeted Audience</th><td colspan=\"3\">${esc(targetAudience)}</td></tr><tr><th>Eligibility & Details</th><td colspan=\"3\">${esc(eligibility)}</td></tr></tbody></table><h2>Bonus Status & IDs</h2><table><thead><tr><th>Ticket</th><th>Bonus Name</th><th>CM Bonus ID</th><th>Type</th><th>Status</th></tr></thead><tbody>${bonusRowsXhtml}</tbody></table><h2>All Linked MAP Activities (${children.length})</h2><table><thead><tr><th>Type</th><th>MAP Key</th><th>Summary</th><th>Status</th></tr></thead><tbody>${childrenRowsXhtml}</tbody></table><h2>Last 10 Epic Comments</h2>${commentsXhtml}`;\n\nreturn {\n  json: {\n    epicKey: epic.key,\n    epicUrl,\n    action,\n    pageTitle,\n    parentPageId,\n    spaceKey: cfg.spaceKey,\n    targetPageStatus: cfg.targetPageStatus,\n    existingPageId: existingPage ? existingPage.id : null,\n    existingPageVersion: existingPage ? (existingPage.version?.number || 1) : 0,\n    fingerprint,\n    missingFields,\n    storageBody,\n    mattermostWebhookUrl: cfg.mattermostWebhookUrl\n  }\n};"
+      },
+      "id": "e07ff3f8-7f20-4be2-bb6d-b74baa5872eb",
+      "name": "Build Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.action }}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "create"
+            },
+            {
+              "value2": "update",
+              "output": 1
+            }
+          ]
+        },
+        "fallbackOutput": 2
+      },
+      "id": "f3d6e830-d836-44cf-b883-0dfb29e58ca0",
+      "name": "Switch Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.confluenceBaseUrl }}/rest/api/content",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "confluenceApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ type: 'page', title: $json.pageTitle, status: $json.targetPageStatus, space: { key: $json.spaceKey }, ancestors: [{ id: $json.parentPageId }], body: { storage: { value: $json.storageBody, representation: 'storage' } }, metadata: { labels: [{ prefix: 'global', name: 'map-epic-' + $json.epicKey.toLowerCase() }, { prefix: 'global', name: 'map-tracking-active' }] } }) }}",
+        "options": {}
+      },
+      "id": "50d0229d-a253-4549-a01a-a1db74d7e388",
+      "name": "Confluence Create",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -224,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $('Config').first().json.confluenceBaseUrl }}/rest/api/content/{{ $json.existingPageId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "confluenceApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ id: $json.existingPageId, type: 'page', title: $json.pageTitle, status: $json.targetPageStatus, version: { number: $json.existingPageVersion + 1 }, body: { storage: { value: $json.storageBody, representation: 'storage' } } }) }}",
+        "options": {}
+      },
+      "id": "3ce8d6be-f5da-4959-a039-f117291ec364",
+      "name": "Confluence Update",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -224,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "method": "={{ $('Build Payload').item.json.action === 'create' ? 'POST' : 'PUT' }}",
+        "url": "={{ $('Config').first().json.confluenceBaseUrl }}/rest/api/content/{{ $json.id }}/property/fingerprint",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "confluenceApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Build Payload').item.json.action === 'create' ? { key: 'fingerprint', value: $('Build Payload').item.json.fingerprint } : { key: 'fingerprint', value: $('Build Payload').item.json.fingerprint, version: { number: ($('Confluence Find Page').item.json.results[0]?.metadata?.properties?.fingerprint?.version?.number || 0) + 1 } }) }}",
+        "options": {}
+      },
+      "id": "3c467a13-c6e4-40b2-85b9-c419824dc420",
+      "name": "Save Fingerprint",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        48,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Build Payload').item.json.mattermostWebhookUrl }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: '[' + $('Build Payload').item.json.action.toUpperCase() + '] ' + $('Build Payload').item.json.epicKey + ' -> ' + $('Config').first().json.confluenceBaseUrl + '/pages/viewpage.action?pageId=' + ($('Save Fingerprint').item.json.content?.id || $('Build Payload').item.json.existingPageId) }) }}",
+        "options": {}
+      },
+      "id": "0f936f90-5ea0-42e7-a01b-b0a38b0fbcdc",
+      "name": "Mattermost Notify",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        288,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.metabase",
+      "typeVersion": 1,
+      "position": [
+        -1248,
+        544
+      ],
+      "id": "78f0092e-1706-42a8-b9d5-bca40b3ca8a4",
+      "name": "Get a questions",
+      "credentials": {
+        "metabaseApi": {
+          "id": "dwSjIoOcie0zoBsn",
+          "name": "Metabase account - scaicedo"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "repo_name": "runa-n8n-workflow-backups",
+  "repo_owner": "Canice-James",
+  "repo_path": "workflows/",
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "shared": [
+    {
+      "updatedAt": "2026-11-19T14:52:37.159Z",
+      "createdAt": "2026-11-19T14:52:37.159Z",
+      "role": "workflow:owner",
+      "workflowId": "s4jR7MaqNF0a2da8",
+      "projectId": "SkRIbEuclHCvj5yP"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-11-19T15:17:15.280Z",
+  "versionId": "a65e1b6e-d981-4367-9842-f352b9e1df87"
+}
