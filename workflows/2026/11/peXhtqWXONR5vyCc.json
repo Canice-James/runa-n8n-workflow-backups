@@ -1,7 +1,412 @@
 {
-  "active": false,
-  "activeVersion": null,
-  "activeVersionId": null,
+  "active": true,
+  "activeVersion": {
+    "updatedAt": "2026-11-23T14:07:53.597Z",
+    "createdAt": "2026-11-16T18:12:59.637Z",
+    "versionId": "950ef7b4-f0a0-49e5-8949-c085be4dd96a",
+    "workflowId": "peXhtqWXONR5vyCc",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "d5dcc3e8-6cf3-4f61-8c94-5eb3d92e7105",
+        "name": "Run manually",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -64,
+          112
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "runFunction",
+          "code": "export default async ({ page }) => {\n  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n  const toBase64 = (input) => {\n    if (typeof input === 'string') return input;\n    const bytes = input instanceof Uint8Array ? input : new Uint8Array(input);\n    let binary = '';\n    const chunk = 0x8000;\n    for (let i = 0; i < bytes.length; i += chunk) {\n      binary += String.fromCharCode.apply(null, Array.from(bytes.subarray(i, i + chunk)));\n    }\n    return btoa(binary);\n  };\n\n  const url =\n    'http://metabase-szaqo2-metabase-1:3000/public/dashboard/2c3f2f0f-9e45-4af1-a8c2-cdd79105308c?resolution_date=past1weeks&brand_name=&specialist__name=Felipe%20Londono&specialist__name=Andres%20Rodriguez&specialist__name=Daniel%20Ceron&specialist__name=Daniel%20Marin&specialist__name=Ismael%20Marin&specialist__name=Juan%20Trujillo&specialist__name=Juan%20David%20Reyes&specialist__name=Manuel%20Bracho&specialist__name=Ricardo%20Arteta%20Romero&ticket_type=Ad%20Hoc%20Request&ticket_type=Audience&ticket_type=Bulk%20Change&ticket_type=Bonus&ticket_type=Campaign&ticket_type=Content%20Update&ticket_type=EDM&ticket_type=Notification%20Build&ticket_type=Page%20Build&ticket_type=SMS&ticket_type=Sub-Task&ticket_type=Banner%20Build&region=';\n\n  await page.setViewport({ width: 1600, height: 900, deviceScaleFactor: 2 });\n  await page.emulateMediaType('screen');\n  await page.goto(url, { waitUntil: 'load', timeout: 20000 });\n  await page.waitForSelector('[data-testid=\"dashboard-grid\"]', { timeout: 20000 });\n  await sleep(8000);\n\n  const heightPx = await page.evaluate(() => {\n    document.querySelectorAll(\n      'html, body, #root, #Dashboard-Parameters-And-Cards-Container, [data-testid=\"dashboard-grid\"], .Dashboard, .react-grid-layout, [data-testid=\"dashcard\"], .Card, .TableInteractive, .ReactVirtualized__Grid'\n    ).forEach((el) => {\n      el.style.setProperty('overflow', 'visible', 'important');\n      el.style.setProperty('max-height', 'none', 'important');\n    });\n\n    document.querySelectorAll('.ReactVirtualized__Grid').forEach((el) => {\n      const rows = Number(el.getAttribute('aria-rowcount') || 0);\n      if (rows > 0) el.style.setProperty('height', `${rows * 37}px`, 'important');\n      else el.style.setProperty('height', 'auto', 'important');\n    });\n\n    const grid = document.querySelector('[data-testid=\"dashboard-grid\"]');\n    if (grid) grid.style.setProperty('max-width', '1500px', 'important');\n\n    const items = [...document.querySelectorAll('[data-testid=\"dashboard-grid\"] .react-grid-item, [data-testid=\"dashcard\"]')];\n    let maxBottom = 0;\n    for (const item of items) {\n      maxBottom = Math.max(maxBottom, item.offsetTop + item.offsetHeight, item.getBoundingClientRect().bottom + window.scrollY);\n    }\n    if (grid && maxBottom > 0) {\n      const layout = grid.querySelector('.react-grid-layout') || grid;\n      layout.style.setProperty('height', `${Math.ceil(maxBottom + 32)}px`, 'important');\n    }\n    return Math.ceil(\n      Math.max(\n        maxBottom + 48,\n        grid ? grid.scrollHeight : 0,\n        grid ? grid.offsetHeight : 0,\n        document.documentElement.scrollHeight,\n        document.body.scrollHeight\n      )\n    );\n  });\n\n  const viewportHeight = Math.min(Math.max(Math.ceil(heightPx * 1.1) + 48, 900), 8000);\n  await page.setViewport({ width: 1600, height: viewportHeight, deviceScaleFactor: 2 });\n  await sleep(400);\n  const heightIn = Math.min(Math.max(viewportHeight / 96 + 0.5, 12), 90);\n  const pdf = await page.pdf({\n    printBackground: true,\n    width: '18in',\n    height: `${heightIn}in`,\n    margin: { top: '8px', right: '8px', bottom: '8px', left: '8px' },\n    timeout: 20000,\n  });\n  const image = await page.screenshot({ encoding: 'base64', type: 'png' });\n  return { data: { pdf: toBase64(pdf), image, heightPx }, type: 'application/json' };\n};\n"
+        },
+        "id": "08da329f-0ca5-41c9-941e-ba68522ac0d5",
+        "name": "Capture resolved dashboard",
+        "type": "n8n-nodes-browserless-api.browserless",
+        "typeVersion": 1,
+        "position": [
+          400,
+          208
+        ],
+        "retryOnFail": false,
+        "maxTries": 3,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "browserlessApi": {
+            "id": "HvkzyW0Ix8JjViPw",
+            "name": "Browserless - api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://chat.corp-apps.com/api/v4/files",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "mattermostApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "channel_id",
+                "value": "fkb6frpfb3bafgiopqi8m1hrtr"
+              }
+            ]
+          },
+          "sendBody": true,
+          "contentType": "multipart-form-data",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "files",
+                "parameterType": "formBinaryData",
+                "inputDataFieldName": "resolvedPdf"
+              },
+              {
+                "name": "files",
+                "parameterType": "formBinaryData",
+                "inputDataFieldName": "resolvedImage"
+              },
+              {
+                "name": "files",
+                "parameterType": "formBinaryData",
+                "inputDataFieldName": "expectedPdf"
+              },
+              {
+                "name": "files",
+                "parameterType": "formBinaryData",
+                "inputDataFieldName": "expectedImage"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 60000
+          },
+          "specifyQuery": "keypair"
+        },
+        "id": "952301a9-fef9-4998-8643-797ebdf8e008",
+        "name": "Upload files to Mattermost",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1120,
+          208
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://chat.corp-apps.com/api/v4/posts",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "mattermostApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify((() => {\n  const b = (s) => String.fromCharCode(42, 42) + s + String.fromCharCode(42, 42);\n  const prepared = $('Prepare report files').item.json;\n  const files = $('Upload files to Mattermost').item.json.file_infos || [];\n  const toRange = (range) => String(range || '').replace(' - ', ' to ');\n  return {\n    channel_id: 'fkb6frpfb3bafgiopqi8m1hrtr',\n    message: '@here',\n    file_ids: files.map((f) => f.id),\n    props: {\n      attachments: [{\n        color: '#55FF00',\n        fallback: 'Weekly COL Report',\n        title: ':white_check_mark: Weekly COL Report',\n        text: b('Resolved:') + ' ' + toRange(prepared.resolvedRange) + '\\n' + b('Expected workload:') + ' ' + toRange(prepared.expectedRange),\n        thumb_url: 'https://www.freeiconspng.com/uploads/black-chart-grawth-monitoring-report-screen-statistics-icon-30.png',\n        footer: ''\n      }]\n    }\n  };\n})()) }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "0157040b-f8a6-4475-98d7-b28f4e45a65a",
+        "name": "Post files to COL team",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          1360,
+          208
+        ],
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000,
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "weeks",
+                "triggerAtDay": [
+                  1
+                ],
+                "triggerAtHour": 8
+              }
+            ]
+          }
+        },
+        "id": "10aeed58-cc79-4010-ad7b-bee7d61bd6fa",
+        "name": "Every Monday 08:00",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.3,
+        "position": [
+          -64,
+          304
+        ]
+      },
+      {
+        "parameters": {
+          "content": "### COL weekly PDF\n\nRuns **Monday 08:00 America/Bogota** or via **Run manually**. Uses the same **Browserless - api** credential as OSN. Chrome opens Metabase at `metabase-szaqo2-metabase-1:3000` on `dokploy-network` (not the nip.io host), injects `.emotion-d9z4sq { max-width: 1300px; }`, then CRM Bot uploads the PDF to **#col-team**.",
+          "height": 280,
+          "width": 380,
+          "color": 5
+        },
+        "id": "fd2e34c1-333a-43be-b144-43a8f000c679",
+        "name": "Sticky: how this runs",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -80,
+          -224
+        ]
+      },
+      {
+        "parameters": {
+          "content": "### Emotion class can drift\n\n`.emotion-d9z4sq` is generated CSS-in-JS. If a Metabase upgrade changes the hash, the width override stops applying and this selector needs updating.",
+          "height": 220,
+          "width": 320,
+          "color": 3
+        },
+        "id": "82ee81b3-6443-412d-8515-1d2882ddbd74",
+        "name": "Sticky: emotion class",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          320,
+          -224
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const now = DateTime.now().setZone('America/Bogota');\nconst lastStart = now.minus({ weeks: 1 }).startOf('week');\nconst lastEnd = lastStart.endOf('week');\nconst thisStart = now.startOf('week');\nconst thisEnd = thisStart.endOf('week');\nconst fmt = (d) => d.toFormat('dd-MM-yy');\nconst resolvedRange = `${fmt(lastStart)} - ${fmt(lastEnd)}`;\nconst expectedRange = `${fmt(thisStart)} - ${fmt(thisEnd)}`;\nconst resolved = $('Capture resolved dashboard').item.json.data ?? {};\nconst expected = $json.data ?? {};\nif (!resolved.pdf || !resolved.image) throw new Error('Resolved capture missing pdf/image');\nif (!expected.pdf || !expected.image) throw new Error('Expected capture missing pdf/image');\nconst resolvedPdf = await this.helpers.prepareBinaryData(Buffer.from(resolved.pdf, 'base64'), `COL-Team-Resolved (${resolvedRange}).pdf`, 'application/pdf');\nconst resolvedImage = await this.helpers.prepareBinaryData(Buffer.from(resolved.image, 'base64'), `COL-Team-Resolved (${resolvedRange}).png`, 'image/png');\nconst expectedPdf = await this.helpers.prepareBinaryData(Buffer.from(expected.pdf, 'base64'), `COL-Team-Expected-Workload (${expectedRange}).pdf`, 'application/pdf');\nconst expectedImage = await this.helpers.prepareBinaryData(Buffer.from(expected.image, 'base64'), `COL-Team-Expected-Workload (${expectedRange}).png`, 'image/png');\nreturn { json: { resolvedRange, expectedRange, hidden: expected.hidden, resolvedHeight: resolved.heightPx, expectedHeight: expected.heightPx }, binary: { resolvedPdf, resolvedImage, expectedPdf, expectedImage } };",
+          "language": "javaScript"
+        },
+        "id": "ed43f04a-6674-4e5b-af00-bda90bc297c8",
+        "name": "Prepare report files",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          880,
+          208
+        ]
+      },
+      {
+        "id": "5b6cb37b-3e52-4e35-8ebb-111dc46d16e7",
+        "name": "Get MarkOps public link",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          160,
+          208
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://metabase.10.161.101.24.nip.io/api/dashboard/9/public_link",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "metabaseApi",
+          "sendBody": false,
+          "options": {
+            "timeout": 30000,
+            "response": {
+              "response": {
+                "neverError": true,
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "credentials": {
+          "metabaseApi": {
+            "id": "dwSjIoOcie0zoBsn",
+            "name": "Metabase account - scaicedo"
+          }
+        }
+      },
+      {
+        "id": "9471527e-be4a-4a2d-9ad4-1e0984506c80",
+        "name": "Capture expected dashboard",
+        "type": "n8n-nodes-browserless-api.browserless",
+        "typeVersion": 1,
+        "position": [
+          640,
+          208
+        ],
+        "parameters": {
+          "operation": "runFunction",
+          "code": "export default async ({ page, context }) => {\n  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n  const toBase64 = (input) => {\n    if (typeof input === 'string') return input;\n    const bytes = input instanceof Uint8Array ? input : new Uint8Array(input);\n    let binary = '';\n    const chunk = 0x8000;\n    for (let i = 0; i < bytes.length; i += chunk) {\n      binary += String.fromCharCode.apply(null, Array.from(bytes.subarray(i, i + chunk)));\n    }\n    return btoa(binary);\n  };\n\n  const uuid = context && context.uuid;\n  if (!uuid) throw new Error('Missing MarkOps public UUID in context.uuid');\n\n  const url =\n    'http://metabase-szaqo2-metabase-1:3000/public/dashboard/' +\n    uuid +\n    '?tab=42-markops&brand=&issue_type=&status=&assignee=Andres%20Rodriguez&assignee=Daniel%20Ceron&assignee=Daniel%20Marin&assignee=Felipe%20Londono&assignee=Ismael%20Marin&assignee=Juan%20David%20Reyes&assignee=Juan%20Trujillo&assignee=Manuel%20Bracho&assignee=Ricardo%20Arteta%20Romero&owner=&created=&updated=&build_due=thisweek&resolved=&vertical=&region=&epic_parent=';\n\n  await page.setViewport({ width: 1600, height: 900, deviceScaleFactor: 2 });\n  await page.emulateMediaType('screen');\n  await page.goto(url, { waitUntil: 'load', timeout: 20000 });\n  await page.waitForSelector('[data-testid=\"dashboard-grid\"]', { timeout: 20000 });\n  await sleep(8000);\n\n  const hidden = await page.evaluate(() => {\n    const hideEl = (el) => {\n      if (!el) return false;\n      el.style.setProperty('display', 'none', 'important');\n      el.style.setProperty('height', '0', 'important');\n      el.style.setProperty('overflow', 'hidden', 'important');\n      el.style.setProperty('visibility', 'hidden', 'important');\n      return true;\n    };\n\n    document.querySelectorAll(\n      'html, body, #root, #Dashboard-Parameters-And-Cards-Container, [data-testid=\"dashboard-grid\"], .Dashboard, .react-grid-layout'\n    ).forEach((el) => {\n      el.style.setProperty('overflow', 'visible', 'important');\n      el.style.setProperty('height', 'auto', 'important');\n      el.style.setProperty('max-height', 'none', 'important');\n    });\n\n    const grid = document.querySelector('[data-testid=\"dashboard-grid\"]');\n    if (grid) grid.style.setProperty('max-width', '1500px', 'important');\n\n    const exact = document.querySelector(\n      '#Dashboard-Parameters-And-Cards-Container > div.emotion-1x2t8v2.e3g5pmu4 > div > div > div:nth-child(6)'\n    );\n    let how = 'none';\n    if (hideEl(exact)) how = 'exact';\n    else {\n      const container = document.querySelector('#Dashboard-Parameters-And-Cards-Container');\n      const nested = container && container.querySelector(':scope > div > div > div > div:nth-child(6)');\n      if (hideEl(nested)) how = 'nested-6';\n      else {\n        const gridKids = grid ? [...grid.children] : [];\n        if (gridKids.length >= 6 && hideEl(gridKids[5])) how = 'grid-child-6';\n        else {\n          const cards = [...document.querySelectorAll('[data-testid=\"dashcard\"]')];\n          const withTable = cards.filter((c) => c.querySelector('table'));\n          const lastTableCard = withTable[withTable.length - 1];\n          if (lastTableCard) {\n            hideEl(lastTableCard.closest('.react-grid-item') || lastTableCard.parentElement || lastTableCard);\n            how = 'last-table-card';\n          } else if (gridKids.length && hideEl(gridKids[gridKids.length - 1])) how = 'grid-last';\n        }\n      }\n    }\n\n    const items = [...document.querySelectorAll('[data-testid=\"dashboard-grid\"] .react-grid-item, [data-testid=\"dashcard\"]')].filter(\n      (el) => getComputedStyle(el).display !== 'none' && getComputedStyle(el).visibility !== 'hidden'\n    );\n    let maxBottom = 0;\n    for (const item of items) {\n      maxBottom = Math.max(maxBottom, item.offsetTop + item.offsetHeight, item.getBoundingClientRect().bottom + window.scrollY);\n    }\n    if (grid && maxBottom > 0) {\n      const layout = grid.querySelector('.react-grid-layout') || grid;\n      layout.style.setProperty('height', `${Math.ceil(maxBottom + 32)}px`, 'important');\n    }\n    return {\n      how,\n      heightPx: Math.ceil(\n        Math.max(\n          maxBottom + 48,\n          grid ? grid.scrollHeight : 0,\n          grid ? grid.offsetHeight : 0,\n          document.documentElement.scrollHeight,\n          document.body.scrollHeight\n        )\n      ),\n    };\n  });\n\n  const heightPx = hidden.heightPx;\n  const viewportHeight = Math.min(Math.max(Math.ceil(heightPx * 1.15) + 48, 900), 8000);\n  await page.setViewport({ width: 1600, height: viewportHeight, deviceScaleFactor: 2 });\n  await sleep(400);\n  const heightIn = Math.min(Math.max(viewportHeight / 96 + 0.5, 12), 90);\n  const pdf = await page.pdf({\n    printBackground: true,\n    width: '18in',\n    height: `${heightIn}in`,\n    margin: { top: '8px', right: '8px', bottom: '8px', left: '8px' },\n    timeout: 20000,\n  });\n  const image = await page.screenshot({ encoding: 'base64', type: 'png' });\n  return { data: { pdf: toBase64(pdf), image, hidden: hidden.how, heightPx }, type: 'application/json' };\n};\n",
+          "context": "={{ JSON.stringify({ uuid: $('Get MarkOps public link').item.json.uuid || $('Get MarkOps public link').item.json.public_uuid }) }}"
+        },
+        "credentials": {
+          "browserlessApi": {
+            "id": "HvkzyW0Ix8JjViPw",
+            "name": "Browserless - api"
+          }
+        },
+        "retryOnFail": false,
+        "maxTries": 2,
+        "waitBetweenTries": 5000
+      },
+      {
+        "id": "8e457954-3628-486d-ac99-0658688ab123",
+        "name": "On Workflow Error",
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          480
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "ad0c7cdc-9245-4577-99f7-d303caa7f59d",
+        "name": "Mattermost Error",
+        "type": "n8n-nodes-base.mattermost",
+        "typeVersion": 1,
+        "position": [
+          1360,
+          480
+        ],
+        "parameters": {
+          "resource": "message",
+          "operation": "post",
+          "channelId": "fkb6frpfb3bafgiopqi8m1hrtr",
+          "message": "@scaicedo",
+          "attachments": [
+            {
+              "color": "#FF0000",
+              "fallback": "Weekly COL report failed",
+              "footer": "",
+              "text": "={{ (() => {\n  const b = (s) => String.fromCharCode(42, 42) + s + String.fromCharCode(42, 42);\n  const err = $('On Workflow Error').item.json.execution || {};\n  const errObj = err.error || {};\n  let reason = String(errObj.stack || '').split('\\n')[0].replace(/^Error:\\s*/i, '').trim();\n  reason = reason.replace(/\\[line \\d+\\]/gi, '').replace(/\\s+/g, ' ').trim();\n  if (!reason || reason.startsWith('//') || reason === 'https') {\n    reason = String(errObj.message || 'n8n workflow failed').replace(/\\[line \\d+\\]/gi, '').trim();\n  }\n  const nodeName = err.lastNodeExecuted || 'unknown node';\n  const url = err.url || '';\n  const lines = [];\n  lines.push(b('Failed node:') + ' ' + nodeName);\n  lines.push(b('Reason:') + ' ' + reason);\n  if (url) lines.push(b('Execution:') + ' ' + url);\n  return lines.join('\\n');\n})() }}",
+              "thumb_url": "https://www.freeiconspng.com/uploads/black-chart-grawth-monitoring-report-screen-statistics-icon-30.png",
+              "title": ":x: Weekly COL report failed"
+            }
+          ],
+          "otherOptions": {}
+        },
+        "credentials": {
+          "mattermostApi": {
+            "id": "1D4PtSqWCtdoPt4d",
+            "name": "CRM Bot"
+          }
+        },
+        "onError": "continueRegularOutput",
+        "retryOnFail": true,
+        "maxTries": 3,
+        "waitBetweenTries": 5000
+      }
+    ],
+    "connections": {
+      "Run manually": {
+        "main": [
+          [
+            {
+              "node": "Get MarkOps public link",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Every Monday 08:00": {
+        "main": [
+          [
+            {
+              "node": "Get MarkOps public link",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get MarkOps public link": {
+        "main": [
+          [
+            {
+              "node": "Capture resolved dashboard",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Capture resolved dashboard": {
+        "main": [
+          [
+            {
+              "node": "Capture expected dashboard",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Capture expected dashboard": {
+        "main": [
+          [
+            {
+              "node": "Prepare report files",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare report files": {
+        "main": [
+          [
+            {
+              "node": "Upload files to Mattermost",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload files to Mattermost": {
+        "main": [
+          [
+            {
+              "node": "Post files to COL team",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "On Workflow Error": {
+        "main": [
+          [
+            {
+              "node": "Mattermost Error",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Canice James (via MCP)",
+    "name": "Rename expected files to Expected-Workload",
+    "description": "Rename expected PDF and PNG from Expected-Workflow to Expected-Workload. Do not execute.",
+    "autosaved": false
+  },
+  "activeVersionId": "950ef7b4-f0a0-49e5-8949-c085be4dd96a",
   "connections": {
     "Run manually": {
       "main": [
@@ -426,7 +831,16 @@
       "projectId": "SkRIbEuclHCvj5yP"
     }
   ],
-  "staticData": null,
+  "staticData": {
+    "node:Every Monday 08:00": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    }
+  },
   "tags": [
     {
       "updatedAt": "2026-08-14T13:51:03.329Z",
@@ -441,7 +855,7 @@
       "name": "MAP"
     }
   ],
-  "triggerCount": 0,
+  "triggerCount": 1,
   "updatedAt": "2026-11-16T18:12:59.633Z",
   "versionId": "950ef7b4-f0a0-49e5-8949-c085be4dd96a"
 }
