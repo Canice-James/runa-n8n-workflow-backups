@@ -1,131 +1,14 @@
 {
   "active": true,
   "activeVersion": {
-    "updatedAt": "2026-08-14T13:28:46.101Z",
-    "createdAt": "2026-08-14T13:28:46.101Z",
-    "versionId": "554a03e1-28d4-44e6-82a6-fd4d1074f707",
+    "updatedAt": "2026-11-26T17:04:33.576Z",
+    "createdAt": "2026-11-26T17:04:25.697Z",
+    "versionId": "efb4b548-2f59-4577-baee-14848cdcd576",
     "workflowId": "EWD9euJ3GeUdCUKY",
     "nodes": [
       {
         "parameters": {
-          "url": "=https://api.everest.validity.com/api/2.0/reputation/senderscore/{{ String($json['ip_address']).trim() }}",
-          "sendHeaders": true,
-          "headerParameters": {
-            "parameters": [
-              {
-                "name": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "name": "X-API-KEY",
-                "value": "4720e9dc8123ab35103d4f957f04a9b4a2072f6c"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          400,
-          80
-        ],
-        "id": "989e2958-4f3c-448e-a4c6-6eef77744fce",
-        "name": "Get Sender Scores from Everest1",
-        "executeOnce": false,
-        "alwaysOutputData": false,
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "operation": "select",
-          "schema": {
-            "__rl": true,
-            "mode": "list",
-            "value": "public"
-          },
-          "table": {
-            "__rl": true,
-            "value": "mailings",
-            "mode": "list",
-            "cachedResultName": "mailings"
-          },
-          "returnAll": true,
-          "where": {
-            "values": [
-              {
-                "column": "ip_address",
-                "condition": "IS NOT NULL"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 2.6,
-        "position": [
-          112,
-          32
-        ],
-        "id": "db4dfe5c-31df-4168-ac4d-baef9aedcf3a",
-        "name": "Select rows from a table",
-        "executeOnce": false,
-        "credentials": {
-          "postgres": {
-            "id": "1eZL0LK34Dt3rgRN",
-            "name": "Postgres account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "bd137cfd-eedb-4f26-ade1-bd7158924494",
-                "leftValue": "={{ $json.results.sender_score.trend }}",
-                "rightValue": "",
-                "operator": {
-                  "type": "array",
-                  "operation": "notEmpty",
-                  "singleValue": true
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.2,
-        "position": [
-          608,
-          80
-        ],
-        "id": "f18d2266-ba57-44c2-9770-f8d757c878fc",
-        "name": "If Has History"
-      },
-      {
-        "parameters": {
-          "jsCode": "const inputItems = $input.all().entries();\nconst output = [];\n\n// Get yesterday's date as YYYY-MM-DD string (no timezone issues)\nconst yesterday = new Date();\nyesterday.setDate(yesterday.getDate() - 1);\nconst cutoffDate = yesterday.toLocaleDateString('en-CA'); // en-CA gives YYYY-MM-DD format\n\n// Use a map to track the latest score per mailing+ip+date combo\nconst latestRecords = new Map();\n\nfor (const [index, item] of inputItems) {\n  const mailing = $('Select rows from a table').all()[index].json.name;\n  const ip_address = item.json.results.ip;\n  const history = item.json.results.sender_score.trend || [];\n\n  for (const row of history) {\n    const score = row.value ?? null;\n    const date = (row.day || '');\n\n    if (score !== null && date && date >= cutoffDate) {\n      const key = `${mailing}|${ip_address}|${date}`;\n      const existing = latestRecords.get(key);\n\n      // Keep the record with the highest score if duplicates exist\n      if (!existing || score > existing.score) {\n        latestRecords.set(key, { mailing, ip_address, score, date });\n      }\n    }\n  }\n}\n\nfor (const record of latestRecords.values()) {\n  output.push({ json: record });\n}\n\nreturn output;"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          816,
-          -16
-        ],
-        "id": "3a75326c-90ca-4e1a-a1af-f13d5cb7cceb",
-        "name": "Code"
-      },
-      {
-        "parameters": {
+          "operation": "upsert",
           "schema": {
             "__rl": true,
             "mode": "list",
@@ -145,7 +28,11 @@
               "ip_address": "={{ $json.ip_address }}",
               "mailing": "={{ $json.mailing }}"
             },
-            "matchingColumns": [],
+            "matchingColumns": [
+              "mailing",
+              "ip_address",
+              "date"
+            ],
             "schema": [
               {
                 "id": "score",
@@ -196,18 +83,194 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.6,
         "position": [
-          1040,
-          -16
+          1824,
+          -432
         ],
-        "id": "1d75a16f-8078-4cff-a4ff-8b7630f5f597",
-        "name": "Insert rows in a table",
+        "id": "bc044624-7746-491f-a7d4-69ec0d419028",
+        "name": "Upsert sender scores",
         "executeOnce": false,
         "credentials": {
           "postgres": {
             "id": "1eZL0LK34Dt3rgRN",
-            "name": "Postgres account"
+            "name": "Postgres account - admin"
           }
         }
+      },
+      {
+        "parameters": {
+          "databaseId": 105,
+          "tableId": 537,
+          "returnAll": true,
+          "additionalOptions": {}
+        },
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          160,
+          -512
+        ],
+        "id": "04e438e6-aaf2-44ea-a934-9d52650a04ed",
+        "name": "Get Brand Info (Baserow)",
+        "credentials": {
+          "baserowApi": {
+            "id": "MK0sZSY5DZaYOoTr",
+            "name": "Baserow account - canjames"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Baserow Brand Info is the source of truth for IPs. All brands are read:\n// \"IP Checks Enabled\" only controls alerts, not score collection.\n// Matched to Postgres `mailings` on brand name + type (Mail1/Mail2).\n// Brand code isn't unique (Ignition and IgnitionAUS are both IGN), so the\n// Baserow `Name` field is the key, stored as mailings.brand_name.\nconst brands = $input.all().map(i => i.json);\nif (brands.length === 0) {\n  // Never sync an empty list: that would switch off every mailing.\n  throw new Error('Baserow returned no brands; skipping mailings sync.');\n}\n\nconst rows = [];\nfor (const b of brands) {\n  const brand_name = String(b.Name ?? '').trim();\n  if (!brand_name) continue;\n  for (const type of ['Mail1', 'Mail2']) {\n    const ip_address = String(b[`${type} IP Address`] ?? '').trim();\n    if (ip_address) rows.push({ brand_name, type, ip_address });\n  }\n}\n\nif (rows.length === 0) throw new Error('No mailing rows built from Baserow Brand Info.');\nreturn [{ json: { rows } }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          368,
+          -512
+        ],
+        "id": "66821802-b737-4b6d-8847-a024a375be65",
+        "name": "Build mailing list"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "WITH src AS (\n  SELECT * FROM json_to_recordset($1::json) AS x(brand_name text, type text, ip_address text)\n),\nupdated AS (\n  -- IP changed in Baserow -> update Postgres\n  UPDATE mailings m\n  SET ip_address = s.ip_address\n  FROM src s\n  WHERE m.brand_name = s.brand_name\n    AND m.type = s.type\n    AND m.ip_address IS DISTINCT FROM s.ip_address\n  RETURNING m.name\n),\ndisabled AS (\n  -- Brand inactive or IP blank in Baserow -> clear the IP (history kept; ETL skips NULLs)\n  UPDATE mailings m\n  SET ip_address = NULL\n  WHERE m.ip_address IS NOT NULL\n    AND NOT EXISTS (SELECT 1 FROM src s WHERE s.brand_name = m.brand_name AND s.type = m.type)\n  RETURNING m.name\n)\nSELECT\n  (SELECT json_agg(name) FROM updated)  AS updated,\n  (SELECT json_agg(name) FROM disabled) AS disabled,\n  -- In Baserow but no Postgres row yet: add these to `mailings` with their hostname\n  (SELECT json_agg(s.brand_name || ' ' || s.type) FROM src s\n     WHERE NOT EXISTS (SELECT 1 FROM mailings m WHERE m.brand_name = s.brand_name AND m.type = s.type)\n  ) AS missing_in_postgres;",
+          "options": {
+            "queryReplacement": "={{ [ JSON.stringify($json.rows) ] }}"
+          }
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          576,
+          -512
+        ],
+        "id": "89015681-853d-4586-824b-c352354bd892",
+        "name": "Sync mailings",
+        "credentials": {
+          "postgres": {
+            "id": "1eZL0LK34Dt3rgRN",
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://api.everest.validity.com/api/2.0/reputation/senderscore/{{ String($json['ip_address']).trim() }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-API-KEY",
+                "value": "4720e9dc8123ab35103d4f957f04a9b4a2072f6c"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1184,
+          -336
+        ],
+        "id": "ab8ba071-4fe9-43f0-89b9-c4a8d35e54d3",
+        "name": "Get Sender Scores from Everest",
+        "executeOnce": false,
+        "alwaysOutputData": false,
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "mailings",
+            "mode": "list",
+            "cachedResultName": "mailings"
+          },
+          "returnAll": true,
+          "where": {
+            "values": [
+              {
+                "column": "ip_address",
+                "condition": "IS NOT NULL"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          784,
+          -512
+        ],
+        "id": "09cb5646-e48d-47b7-886f-f7f6eae76570",
+        "name": "Select rows from a table1",
+        "executeOnce": true,
+        "credentials": {
+          "postgres": {
+            "id": "1eZL0LK34Dt3rgRN",
+            "name": "Postgres account - admin"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "bd137cfd-eedb-4f26-ade1-bd7158924494",
+                "leftValue": "={{ $json.results?.sender_score?.trend ?? [] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "array",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1392,
+          -336
+        ],
+        "id": "4f04475e-264c-44c0-a41e-850fea0492fc",
+        "name": "If Has History1"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Build IP -> mailing name(s) from the source query.\n// (Pairing by index breaks as soon as the If node drops items.)\nconst ipToMailings = new Map();\nfor (const row of $('Select rows from a table1').all()) {\n  const ip = String(row.json.ip_address ?? '').trim();\n  if (!ip) continue;\n  if (!ipToMailings.has(ip)) ipToMailings.set(ip, new Set());\n  ipToMailings.get(ip).add(row.json.name);\n}\n\n// Look back several days: Everest's trend lags, and the upsert de-dupes,\n// so missed runs self-heal on the next run.\nconst LOOKBACK_DAYS = 7;\nconst cutoff = new Date();\ncutoff.setDate(cutoff.getDate() - LOOKBACK_DAYS);\nconst cutoffDate = cutoff.toISOString().slice(0, 10);\n\nconst latest = new Map();\nfor (const item of $input.all()) {\n  const results = item.json.results ?? {};\n  const ip = String(results.ip ?? '').trim();\n  const mailings = ipToMailings.get(ip);\n  if (!ip || !mailings) continue;\n\n  for (const point of results.sender_score?.trend ?? []) {\n    const score = point.value ?? null;\n    const date = String(point.day ?? '').slice(0, 10); // handles \"YYYY-MM-DD\" and ISO timestamps\n    if (score === null || !/^\\d{4}-\\d{2}-\\d{2}$/.test(date) || date < cutoffDate) continue;\n\n    for (const mailing of mailings) {\n      const key = `${mailing}|${ip}|${date}`;\n      const existing = latest.get(key);\n      if (!existing || score > existing.score) {\n        latest.set(key, { mailing, ip_address: ip, score, date });\n      }\n    }\n  }\n}\n\nreturn [...latest.values()].map(json => ({ json }));"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1600,
+          -432
+        ],
+        "id": "72d68985-d237-406a-a96f-fa5ba4626928",
+        "name": "Code1"
       },
       {
         "parameters": {
@@ -222,63 +285,96 @@
         "type": "n8n-nodes-base.scheduleTrigger",
         "typeVersion": 1.2,
         "position": [
-          -96,
-          32
+          -48,
+          -272
         ],
-        "id": "5b791768-a576-43cc-a3fa-931a7b61b188",
-        "name": "Schedule Trigger"
+        "id": "1836bdb4-b85d-4e2a-af8f-f76f4d1c544f",
+        "name": "Schedule Trigger1"
       }
     ],
     "connections": {
-      "Select rows from a table": {
+      "Get Brand Info (Baserow)": {
         "main": [
           [
             {
-              "node": "Get Sender Scores from Everest1",
+              "node": "Build mailing list",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "Get Sender Scores from Everest1": {
+      "Build mailing list": {
         "main": [
           [
             {
-              "node": "If Has History",
+              "node": "Sync mailings",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "If Has History": {
+      "Sync mailings": {
         "main": [
           [
             {
-              "node": "Code",
+              "node": "Select rows from a table1",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "Code": {
+      "Get Sender Scores from Everest": {
         "main": [
           [
             {
-              "node": "Insert rows in a table",
+              "node": "If Has History1",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "Schedule Trigger": {
+      "Select rows from a table1": {
         "main": [
           [
             {
-              "node": "Select rows from a table",
+              "node": "Get Sender Scores from Everest",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If Has History1": {
+        "main": [
+          [
+            {
+              "node": "Code1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code1": {
+        "main": [
+          [
+            {
+              "node": "Upsert sender scores",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger1": {
+        "main": [
+          [
+            {
+              "node": "Get Brand Info (Baserow)",
               "type": "main",
               "index": 0
             }
@@ -287,62 +383,95 @@
       }
     },
     "nodeGroups": [],
-    "authors": "system migration",
-    "name": null,
-    "description": null,
-    "autosaved": false
+    "authors": "Canice James",
+    "name": "Fixed",
+    "description": "",
+    "autosaved": true
   },
-  "activeVersionId": "554a03e1-28d4-44e6-82a6-fd4d1074f707",
+  "activeVersionId": "efb4b548-2f59-4577-baee-14848cdcd576",
   "connections": {
-    "Select rows from a table": {
+    "Get Brand Info (Baserow)": {
       "main": [
         [
           {
-            "node": "Get Sender Scores from Everest1",
+            "node": "Build mailing list",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Get Sender Scores from Everest1": {
+    "Build mailing list": {
       "main": [
         [
           {
-            "node": "If Has History",
+            "node": "Sync mailings",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "If Has History": {
+    "Sync mailings": {
       "main": [
         [
           {
-            "node": "Code",
+            "node": "Select rows from a table1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code": {
+    "Get Sender Scores from Everest": {
       "main": [
         [
           {
-            "node": "Insert rows in a table",
+            "node": "If Has History1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Schedule Trigger": {
+    "Select rows from a table1": {
       "main": [
         [
           {
-            "node": "Select rows from a table",
+            "node": "Get Sender Scores from Everest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Has History1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Upsert sender scores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get Brand Info (Baserow)",
             "type": "main",
             "index": 0
           }
@@ -359,124 +488,7 @@
   "nodes": [
     {
       "parameters": {
-        "url": "=https://api.everest.validity.com/api/2.0/reputation/senderscore/{{ String($json['ip_address']).trim() }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            },
-            {
-              "name": "X-API-KEY",
-              "value": "4720e9dc8123ab35103d4f957f04a9b4a2072f6c"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        400,
-        80
-      ],
-      "id": "989e2958-4f3c-448e-a4c6-6eef77744fce",
-      "name": "Get Sender Scores from Everest1",
-      "executeOnce": false,
-      "alwaysOutputData": false,
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "operation": "select",
-        "schema": {
-          "__rl": true,
-          "mode": "list",
-          "value": "public"
-        },
-        "table": {
-          "__rl": true,
-          "value": "mailings",
-          "mode": "list",
-          "cachedResultName": "mailings"
-        },
-        "returnAll": true,
-        "where": {
-          "values": [
-            {
-              "column": "ip_address",
-              "condition": "IS NOT NULL"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        112,
-        32
-      ],
-      "id": "db4dfe5c-31df-4168-ac4d-baef9aedcf3a",
-      "name": "Select rows from a table",
-      "executeOnce": false,
-      "credentials": {
-        "postgres": {
-          "id": "1eZL0LK34Dt3rgRN",
-          "name": "Postgres account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "bd137cfd-eedb-4f26-ade1-bd7158924494",
-              "leftValue": "={{ $json.results.sender_score.trend }}",
-              "rightValue": "",
-              "operator": {
-                "type": "array",
-                "operation": "notEmpty",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        608,
-        80
-      ],
-      "id": "f18d2266-ba57-44c2-9770-f8d757c878fc",
-      "name": "If Has History"
-    },
-    {
-      "parameters": {
-        "jsCode": "const inputItems = $input.all().entries();\nconst output = [];\n\n// Get yesterday's date as YYYY-MM-DD string (no timezone issues)\nconst yesterday = new Date();\nyesterday.setDate(yesterday.getDate() - 1);\nconst cutoffDate = yesterday.toLocaleDateString('en-CA'); // en-CA gives YYYY-MM-DD format\n\n// Use a map to track the latest score per mailing+ip+date combo\nconst latestRecords = new Map();\n\nfor (const [index, item] of inputItems) {\n  const mailing = $('Select rows from a table').all()[index].json.name;\n  const ip_address = item.json.results.ip;\n  const history = item.json.results.sender_score.trend || [];\n\n  for (const row of history) {\n    const score = row.value ?? null;\n    const date = (row.day || '');\n\n    if (score !== null && date && date >= cutoffDate) {\n      const key = `${mailing}|${ip_address}|${date}`;\n      const existing = latestRecords.get(key);\n\n      // Keep the record with the highest score if duplicates exist\n      if (!existing || score > existing.score) {\n        latestRecords.set(key, { mailing, ip_address, score, date });\n      }\n    }\n  }\n}\n\nfor (const record of latestRecords.values()) {\n  output.push({ json: record });\n}\n\nreturn output;"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        816,
-        -16
-      ],
-      "id": "3a75326c-90ca-4e1a-a1af-f13d5cb7cceb",
-      "name": "Code"
-    },
-    {
-      "parameters": {
+        "operation": "upsert",
         "schema": {
           "__rl": true,
           "mode": "list",
@@ -496,7 +508,11 @@
             "ip_address": "={{ $json.ip_address }}",
             "mailing": "={{ $json.mailing }}"
           },
-          "matchingColumns": [],
+          "matchingColumns": [
+            "mailing",
+            "ip_address",
+            "date"
+          ],
           "schema": [
             {
               "id": "score",
@@ -547,18 +563,194 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1040,
-        -16
+        1824,
+        -432
       ],
-      "id": "1d75a16f-8078-4cff-a4ff-8b7630f5f597",
-      "name": "Insert rows in a table",
+      "id": "bc044624-7746-491f-a7d4-69ec0d419028",
+      "name": "Upsert sender scores",
       "executeOnce": false,
       "credentials": {
         "postgres": {
           "id": "1eZL0LK34Dt3rgRN",
-          "name": "Postgres account"
+          "name": "Postgres account - admin"
         }
       }
+    },
+    {
+      "parameters": {
+        "databaseId": 105,
+        "tableId": 537,
+        "returnAll": true,
+        "additionalOptions": {}
+      },
+      "type": "n8n-nodes-base.baserow",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -512
+      ],
+      "id": "04e438e6-aaf2-44ea-a934-9d52650a04ed",
+      "name": "Get Brand Info (Baserow)",
+      "credentials": {
+        "baserowApi": {
+          "id": "MK0sZSY5DZaYOoTr",
+          "name": "Baserow account - canjames"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Baserow Brand Info is the source of truth for IPs. All brands are read:\n// \"IP Checks Enabled\" only controls alerts, not score collection.\n// Matched to Postgres `mailings` on brand name + type (Mail1/Mail2).\n// Brand code isn't unique (Ignition and IgnitionAUS are both IGN), so the\n// Baserow `Name` field is the key, stored as mailings.brand_name.\nconst brands = $input.all().map(i => i.json);\nif (brands.length === 0) {\n  // Never sync an empty list: that would switch off every mailing.\n  throw new Error('Baserow returned no brands; skipping mailings sync.');\n}\n\nconst rows = [];\nfor (const b of brands) {\n  const brand_name = String(b.Name ?? '').trim();\n  if (!brand_name) continue;\n  for (const type of ['Mail1', 'Mail2']) {\n    const ip_address = String(b[`${type} IP Address`] ?? '').trim();\n    if (ip_address) rows.push({ brand_name, type, ip_address });\n  }\n}\n\nif (rows.length === 0) throw new Error('No mailing rows built from Baserow Brand Info.');\nreturn [{ json: { rows } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        -512
+      ],
+      "id": "66821802-b737-4b6d-8847-a024a375be65",
+      "name": "Build mailing list"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH src AS (\n  SELECT * FROM json_to_recordset($1::json) AS x(brand_name text, type text, ip_address text)\n),\nupdated AS (\n  -- IP changed in Baserow -> update Postgres\n  UPDATE mailings m\n  SET ip_address = s.ip_address\n  FROM src s\n  WHERE m.brand_name = s.brand_name\n    AND m.type = s.type\n    AND m.ip_address IS DISTINCT FROM s.ip_address\n  RETURNING m.name\n),\ndisabled AS (\n  -- Brand inactive or IP blank in Baserow -> clear the IP (history kept; ETL skips NULLs)\n  UPDATE mailings m\n  SET ip_address = NULL\n  WHERE m.ip_address IS NOT NULL\n    AND NOT EXISTS (SELECT 1 FROM src s WHERE s.brand_name = m.brand_name AND s.type = m.type)\n  RETURNING m.name\n)\nSELECT\n  (SELECT json_agg(name) FROM updated)  AS updated,\n  (SELECT json_agg(name) FROM disabled) AS disabled,\n  -- In Baserow but no Postgres row yet: add these to `mailings` with their hostname\n  (SELECT json_agg(s.brand_name || ' ' || s.type) FROM src s\n     WHERE NOT EXISTS (SELECT 1 FROM mailings m WHERE m.brand_name = s.brand_name AND m.type = s.type)\n  ) AS missing_in_postgres;",
+        "options": {
+          "queryReplacement": "={{ [ JSON.stringify($json.rows) ] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        576,
+        -512
+      ],
+      "id": "89015681-853d-4586-824b-c352354bd892",
+      "name": "Sync mailings",
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.everest.validity.com/api/2.0/reputation/senderscore/{{ String($json['ip_address']).trim() }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-API-KEY",
+              "value": "4720e9dc8123ab35103d4f957f04a9b4a2072f6c"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1184,
+        -336
+      ],
+      "id": "ab8ba071-4fe9-43f0-89b9-c4a8d35e54d3",
+      "name": "Get Sender Scores from Everest",
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "mailings",
+          "mode": "list",
+          "cachedResultName": "mailings"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "ip_address",
+              "condition": "IS NOT NULL"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        784,
+        -512
+      ],
+      "id": "09cb5646-e48d-47b7-886f-f7f6eae76570",
+      "name": "Select rows from a table1",
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "1eZL0LK34Dt3rgRN",
+          "name": "Postgres account - admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bd137cfd-eedb-4f26-ade1-bd7158924494",
+              "leftValue": "={{ $json.results?.sender_score?.trend ?? [] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1392,
+        -336
+      ],
+      "id": "4f04475e-264c-44c0-a41e-850fea0492fc",
+      "name": "If Has History1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build IP -> mailing name(s) from the source query.\n// (Pairing by index breaks as soon as the If node drops items.)\nconst ipToMailings = new Map();\nfor (const row of $('Select rows from a table1').all()) {\n  const ip = String(row.json.ip_address ?? '').trim();\n  if (!ip) continue;\n  if (!ipToMailings.has(ip)) ipToMailings.set(ip, new Set());\n  ipToMailings.get(ip).add(row.json.name);\n}\n\n// Look back several days: Everest's trend lags, and the upsert de-dupes,\n// so missed runs self-heal on the next run.\nconst LOOKBACK_DAYS = 7;\nconst cutoff = new Date();\ncutoff.setDate(cutoff.getDate() - LOOKBACK_DAYS);\nconst cutoffDate = cutoff.toISOString().slice(0, 10);\n\nconst latest = new Map();\nfor (const item of $input.all()) {\n  const results = item.json.results ?? {};\n  const ip = String(results.ip ?? '').trim();\n  const mailings = ipToMailings.get(ip);\n  if (!ip || !mailings) continue;\n\n  for (const point of results.sender_score?.trend ?? []) {\n    const score = point.value ?? null;\n    const date = String(point.day ?? '').slice(0, 10); // handles \"YYYY-MM-DD\" and ISO timestamps\n    if (score === null || !/^\\d{4}-\\d{2}-\\d{2}$/.test(date) || date < cutoffDate) continue;\n\n    for (const mailing of mailings) {\n      const key = `${mailing}|${ip}|${date}`;\n      const existing = latest.get(key);\n      if (!existing || score > existing.score) {\n        latest.set(key, { mailing, ip_address: ip, score, date });\n      }\n    }\n  }\n}\n\nreturn [...latest.values()].map(json => ({ json }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        -432
+      ],
+      "id": "72d68985-d237-406a-a96f-fa5ba4626928",
+      "name": "Code1"
     },
     {
       "parameters": {
@@ -573,11 +765,11 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -96,
-        32
+        -48,
+        -272
       ],
-      "id": "5b791768-a576-43cc-a3fa-931a7b61b188",
-      "name": "Schedule Trigger"
+      "id": "1836bdb4-b85d-4e2a-af8f-f76f4d1c544f",
+      "name": "Schedule Trigger1"
     }
   ],
   "pinData": {},
@@ -586,7 +778,8 @@
   "repo_path": "workflows/",
   "settings": {
     "executionOrder": "v1",
-    "availableInMCP": true
+    "availableInMCP": true,
+    "binaryMode": "separate"
   },
   "shared": [
     {
@@ -605,10 +798,18 @@
       "recurrenceRuleSignatures": [
         null
       ]
+    },
+    "node:Schedule Trigger1": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
     }
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-08-14T14:59:41.978Z",
-  "versionId": "554a03e1-28d4-44e6-82a6-fd4d1074f707"
+  "updatedAt": "2026-11-26T17:04:25.695Z",
+  "versionId": "efb4b548-2f59-4577-baee-14848cdcd576"
 }
