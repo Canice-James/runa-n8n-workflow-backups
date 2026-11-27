@@ -259,8 +259,8 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.1,
       "position": [
-        -784,
-        1936
+        -864,
+        1680
       ]
     },
     {
@@ -270,8 +270,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -784,
-        2112
+        -864,
+        1856
       ]
     },
     {
@@ -318,8 +318,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 2,
       "position": [
-        -544,
-        2032
+        -624,
+        1776
       ]
     },
     {
@@ -332,8 +332,8 @@
       "type": "n8n-nodes-base.metabase",
       "typeVersion": 1,
       "position": [
-        -304,
-        2032
+        -384,
+        1776
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -353,8 +353,8 @@
       "type": "n8n-nodes-base.metabase",
       "typeVersion": 1,
       "position": [
-        -64,
-        2032
+        -144,
+        1776
       ],
       "executeOnce": true,
       "alwaysOutputData": true,
@@ -374,8 +374,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        192,
-        2032
+        112,
+        1776
       ]
     },
     {
@@ -387,8 +387,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        432,
-        2032
+        400,
+        1904
       ]
     },
     {
@@ -417,6 +417,7 @@
     },
     {
       "parameters": {
+        "jiraVersion": "server",
         "resource": "issueComment",
         "operation": "getAll",
         "issueKey": "={{ $('Loop Epics').first().json.epic.issue_key }}",
@@ -433,7 +434,13 @@
       ],
       "alwaysOutputData": true,
       "retryOnFail": true,
-      "maxTries": 2
+      "maxTries": 2,
+      "credentials": {
+        "jiraSoftwareServerApi": {
+          "id": "oAKRcX61sJaARIzC",
+          "name": "Jira SW Server account - scaicedo"
+        }
+      }
     },
     {
       "parameters": {
@@ -580,8 +587,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        1664,
-        2000
+        1648,
+        1936
       ],
       "retryOnFail": true,
       "maxTries": 2
@@ -603,7 +610,7 @@
       "typeVersion": 4.1,
       "position": [
         1904,
-        2000
+        1936
       ],
       "retryOnFail": true,
       "maxTries": 2
@@ -664,8 +671,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        672,
-        2256
+        592,
+        1600
       ],
       "alwaysOutputData": true,
       "credentials": {
@@ -684,8 +691,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        912,
-        2256
+        832,
+        1600
       ]
     },
     {
@@ -701,8 +708,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
       "position": [
-        1152,
-        2256
+        1072,
+        1600
       ],
       "credentials": {
         "postgres": {
@@ -723,8 +730,8 @@
       "type": "n8n-nodes-base.mattermost",
       "typeVersion": 1,
       "position": [
-        1392,
-        2256
+        1312,
+        1600
       ],
       "credentials": {
         "mattermostApi": {
@@ -755,6 +762,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-11-25T19:21:37.342Z",
-  "versionId": "4c06cd7f-38a6-490f-a741-e8b4c2554530"
+  "updatedAt": "2026-11-26T14:49:36.373Z",
+  "versionId": "ae6e5fa8-67d6-4a38-8e3c-d40b639b3464"
 }
